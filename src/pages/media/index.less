@@ -1,0 +1,110 @@
+.mediaContent {
+  display: flex;
+  min-height: 400px;
+}
+
+.mediaList {
+  flex: 1;
+}
+
+.mediaDetail {
+  width: 300px;
+  background: #f5f5f5;
+  padding: 16px;
+}
+
+.hasNoMedia {
+  line-height: 400px;
+  text-align: center;
+  font-size: 20px;
+  width: 100%;
+  color: #999;
+}
+
+.mediaItems {
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mediaItem, .mediaItemActive {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  background: #f5f5f5;
+  border: 3px solid #f5f5f5;
+  margin: 0 16px 16px 0;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mediaItemActive {
+  border-color: #108ee9;
+  cursor: default;
+}
+
+.mediaImage {
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.mediaFile {
+  line-height: 100px;
+  font-size: 60px;
+}
+
+.mediaTitle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  line-height: 24px;
+  background: rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 1);
+  text-overflow: ellipsis;
+  padding: 0 10px;
+  overflow: hidden;
+}
+
+.mediaDetailName {
+  font-weight: bold;
+  line-height: 1.2;
+  word-break: break-all;
+}
+
+.mediaDetailIntro {
+  display: flex;
+  margin: 10px 0;
+}
+
+.mediaDetailImage {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  background: #ddd;
+  text-align: center;
+  line-height: 110px;
+  font-size: 60px;
+  img {
+    position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.mediaDetailInfo {
+  flex: 1;
+  padding: 0 10px;
+}
