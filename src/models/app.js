@@ -5,6 +5,7 @@ export default {
   namespace: 'app',
   state: {
     user: {},
+    setting: {},
   },
   effects: {
     * verify({}, { select, call, put }) {
@@ -33,7 +34,15 @@ export default {
         });
         router.push('/login');
       }
-    }
+    },
+    * querySetting({ payload: values }, { call, put }) {
+      console.log('app=>model=>querySetting');
+      const result = yield call(appService.setSettingInfo);
+      yield put({
+        type: 'setSettingInfo',
+        payload: result.data,
+      });
+    },
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -42,12 +51,19 @@ export default {
           type: 'verify',
           payload: {},
         });
+        dispatch({
+          type: 'querySetting',
+          payload: {},
+        });
       });
     },
   },
   reducers: {
     setUserInfo(state, { payload: values }) {
       return { ...state, user: values };
+    },
+    setSettingInfo(state, { payload }) {
+      return { ...state, setting: payload };
     },
   },
 };

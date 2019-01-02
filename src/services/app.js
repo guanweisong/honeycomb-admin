@@ -18,3 +18,11 @@ export const logout = (id) => {
     },
   });
 };
+
+export const setSettingInfo = () => {
+  console.log('app=>service=>setSettingInfo');
+  return request({
+    url: '/settings',
+    method: 'get',
+  })
+}

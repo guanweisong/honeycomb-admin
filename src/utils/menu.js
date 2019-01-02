@@ -9,6 +9,7 @@ export default [
     key: "post",
     label: "文章",
     icon: "file-text",
+    link: "/post",
     child: [
       {
         key: "post/edit",
@@ -31,6 +32,7 @@ export default [
     key: "page",
     label: "页面",
     icon: "file",
+    link: "/page",
     child: [
       {
         key: "page/edit",

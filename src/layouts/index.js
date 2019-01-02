@@ -3,8 +3,9 @@ import { Layout, Menu, Icon, Button } from 'antd';
 import { connect } from 'dva'
 import Redirect from 'umi/redirect';
 import Link from 'umi/link';
-import menuData from '../utils/menu.js';
-import { userLevelMap } from '../utils/mapping.js';
+import menuData from '@/utils/menu.js';
+import Breakcrumbs from '@/components/Breakcrumbs/Breakcrumbs';
+import { userLevelMap } from '@/utils/mapping.js';
 import styles from './index.less';
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -68,7 +69,7 @@ class BasicLayout extends PureComponent {
     return (
       <Layout style={{minHeight: "100%"}}>
         <Sider theme="light" className={styles.sideBar}>
-          <div className={styles.logo}>Honeycomb</div>
+          <div className={styles.logo}>{this.props.app.setting.site_name}</div>
           {this.renderMenu()}
         </Sider>
         <Content>
@@ -87,7 +88,7 @@ class BasicLayout extends PureComponent {
               欢迎回来：{this.props.app.user.user_name}&ensp;
               级别：{userLevelMap.find(item => item.value === this.props.app.user.user_level).text}
             </Header>
-            {/* <div className={styles.breadcrumb}>breadcrumb</div> */}
+            <div className={styles.breadcrumb}><Breakcrumbs /></div>
             <Content className={styles.content}>
               { this.props.children }
             </Content>
