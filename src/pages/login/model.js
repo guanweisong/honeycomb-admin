@@ -12,7 +12,7 @@ export default {
       console.log(result);
       if (result.status === 200) {
         message.success('登陆成功');
-        router.push('/dashboard');
+        router.push('/');
       }
     },
   },

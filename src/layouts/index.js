@@ -64,7 +64,7 @@ class BasicLayout extends PureComponent {
       }
     }
     if (this.props.app.user._id && this.props.location.pathname === '/login') {
-      return <Redirect to='/dashboard' />
+      return <Redirect to='/' />
     }
     return (
       <Layout style={{minHeight: "100%"}}>

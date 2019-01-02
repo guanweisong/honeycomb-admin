@@ -20,7 +20,6 @@ export default {
           type: 'setUserInfo',
           payload: result.data.list[0],
         });
-        // router.push('/dashboard');
       }
     },
     * logout({payload}, { call, put }) {
