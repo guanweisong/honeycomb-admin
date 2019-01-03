@@ -101,5 +101,3 @@ class BasicLayout extends PureComponent {
 }
 
 export default BasicLayout;
-
-

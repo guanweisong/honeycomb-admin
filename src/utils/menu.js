@@ -3,7 +3,7 @@ export default [
     key: "dashboard",
     label: "控制面板",
     icon: "windows-o",
-    link: "/dashboard",
+    link: "/",
   },
   {
     key: "post",

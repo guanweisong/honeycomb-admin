@@ -33,7 +33,9 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
+    "@antv/data-set": "^0.10.1",
     "axios": "^0.18.0",
+    "bizcharts": "^3.4.2",
     "md5": "^2.2.1",
     "moment": "^2.22.2",
     "react-copy-to-clipboard": "^5.0.1",

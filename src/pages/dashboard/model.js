@@ -1,9 +1,7 @@
 import * as statisticsService from './service';
 export default {
   namespace: 'statistics',
-  state: {
-    data: {},
-  },
+  state: {},
   effects: {
     * index({}, { select, call, put }) {
       console.log('statistics=>model=>index');
@@ -11,7 +9,7 @@ export default {
       if (result.status === 200 ) {
         yield put({
           type: 'setData',
-          payload: result.data.list[0],
+          payload: result.data,
         });
       }
     },
@@ -30,7 +28,7 @@ export default {
   },
   reducers: {
     setData(state, { payload: values }) {
-      return { ...state, data: values };
+      return values;
     },
   },
 };
