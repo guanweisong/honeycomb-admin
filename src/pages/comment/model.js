@@ -6,10 +6,15 @@ export default {
   state: {
     list: [],
     total: null,
+    loading: false,
   },
   effects: {
     * index({ payload: values }, { call, put }) {
       console.log('comments=>model=>index', values);
+      yield put({
+        type: 'switchLoading',
+        payload: true,
+      });
       const result = yield call(commentsService.index, values);
       yield put({
         type: 'saveListData',
@@ -17,6 +22,10 @@ export default {
           list: result.data.list,
           total: result.data.total,
         },
+      });
+      yield put({
+        type: 'switchLoading',
+        payload: false,
       });
     },
     * update({ payload: { id, values } }, { call, put }) {
@@ -53,6 +62,9 @@ export default {
   reducers: {
     saveListData(state, { payload: { list, total } }) {
       return { ...state, list, total };
+    },
+    switchLoading(state, { payload }) {
+      return { ...state, loading: payload };
     },
   },
 };

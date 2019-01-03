@@ -171,6 +171,7 @@ class Comment extends PureComponent {
               pageSize: this.props.location.query.limit * 1,
             }}
             onChange={this.handleTableChange}
+            loading={this.props.comments.loading}
           />
         </Card>
       </div>

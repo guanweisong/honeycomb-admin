@@ -197,6 +197,7 @@ class Tag extends PureComponent {
               pageSize: this.props.location.query.limit * 1,
             }}
             onChange={this.handleTableChange}
+            loading={this.props.tags.loading}
           />
         </Card>
         <Modal

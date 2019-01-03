@@ -9,10 +9,15 @@ export default {
     currentItem: {},
     showModal: false,
     modalType: 0, // 0:增加,1:修改
+    loading: false,
   },
   effects: {
     * index({ payload: values }, { call, put }) {
       console.log('users=>model=>index', values);
+      yield put({
+        type: 'switchLoading',
+        payload: true,
+      });
       const result = yield call(usersService.index, values);
       yield put({
         type: 'saveListData',
@@ -20,6 +25,10 @@ export default {
           list: result.data.list,
           total: result.data.total,
         },
+      });
+      yield put({
+        type: 'switchLoading',
+        payload: false,
       });
     },
     * distory({ payload: id }, { call, put }) {
@@ -84,6 +93,9 @@ export default {
     },
     switchModalType(state, { payload }) {
       return { ...state, modalType: payload };
+    },
+    switchLoading(state, { payload }) {
+      return { ...state, loading: payload };
     },
   },
 };

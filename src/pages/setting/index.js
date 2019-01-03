@@ -69,6 +69,22 @@ class Setting extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
+              label="版权信息"
+              maxLength={100}
+            >
+              {getFieldDecorator('site_copyright', {
+                rules: [{ required: true, message: '请填写版权信息' }],
+                initialValue: this.props.app.setting.site_copyright || '',
+              })(
+                <TextArea
+                  rows={3}
+                  maxLength={100}
+                  placeholder="请填写版权信息"
+                />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
               label="统计代码"
             >
               {getFieldDecorator('site_statistics', {

@@ -155,6 +155,7 @@ class Post extends PureComponent {
               postSize: this.props.location.query.limit * 1,
             }}
             onChange={this.handleTableChange}
+            loading={this.props.posts.loading}
           />
         </Card>
       </div>

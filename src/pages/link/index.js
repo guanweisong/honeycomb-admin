@@ -210,6 +210,7 @@ class Link extends PureComponent {
               total: this.props.links.total,
               pageSize: this.props.location.query.limit * 1,
             }}
+            loading={this.props.links.loading}
             onChange={this.handleTableChange}
           />
         </Card>

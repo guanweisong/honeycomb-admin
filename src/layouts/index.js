@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Layout, Menu, Icon, Button } from 'antd';
-import { connect } from 'dva'
+import { connect } from 'dva';
+import moment from 'moment';
 import Redirect from 'umi/redirect';
 import Link from 'umi/link';
 import menuData from '@/utils/menu.js';
@@ -92,7 +93,7 @@ class BasicLayout extends PureComponent {
             <Content className={styles.content}>
               { this.props.children }
             </Content>
-            <Footer>footer</Footer>
+            <Footer className={styles.footer}>©{moment().format('YYYY')}&nbsp;{this.props.app.setting.site_copyright}</Footer>
           </Layout>
         </Content>
       </Layout>

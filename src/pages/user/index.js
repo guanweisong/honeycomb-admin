@@ -69,9 +69,11 @@ class User extends PureComponent {
         render: (text, record) => (
           <p>
             <a onClick={() => this.handleEditItem(record)}>编辑</a>&nbsp;
-            <Popconfirm title="确定要删除吗？" onConfirm={() => this.handleDeleteItem(record._id)}>
-              <a>删除</a>
-            </Popconfirm>
+            <If condition={record.user_level !== 1}>
+              <Popconfirm title="确定要删除吗？" onConfirm={() => this.handleDeleteItem(record._id)}>
+                <a>删除</a>
+              </Popconfirm>
+            </If>
           </p>
         ),
       }
@@ -236,6 +238,7 @@ class User extends PureComponent {
               pageSize: this.props.location.query.limit * 1,
             }}
             onChange={this.handleTableChange}
+            loading={this.props.users.loading}
           />
         </Card>
         <Modal
@@ -299,6 +302,7 @@ class User extends PureComponent {
               })(
                 <Radio.Group
                   buttonStyle="solid"
+                  disabled={this.props.users.currentItem.user_level === 1}
                 >
                   <Radio.Button value="1">管理员</Radio.Button>
                   <Radio.Button value="2">编辑</Radio.Button>
@@ -315,6 +319,7 @@ class User extends PureComponent {
               })(
                 <Radio.Group
                   buttonStyle="solid"
+                  disabled={this.props.users.currentItem.user_level === 1}
                 >
                   <Radio.Button value="1">启用</Radio.Button>
                   <Radio.Button value="0">禁用</Radio.Button>
