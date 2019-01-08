@@ -15,6 +15,7 @@ const mapStateToProps = (state) => state;
 
 @Form.create()
 @connect(mapStateToProps)
+
 class Post extends PureComponent {
   constructor(props) {
     super(props);
@@ -29,7 +30,7 @@ class Post extends PureComponent {
         values: data,
       },
     });
-  }
+  };
   handleSubmit = (status) => {
     const data = this.props.form.getFieldsValue();
     data.post_status = status;
@@ -38,37 +39,42 @@ class Post extends PureComponent {
       type: 'posts/create',
       payload: data,
     });
-  }
-  onAddTag = (value) =>{
+  };
+  onAddTag = (name, value) =>{
     this.props.dispatch({
-      type: 'tags/create',
+      type: 'posts/createTag',
       payload: {
-        'tag_name': value
+        name,
+        tag_name: value,
       }
     });
-  }
-  onUpdateDetail = (name, values) => {
-    alert(name, values);
-    // dispatch({
-    //   type: 'postDetail/updateDetail',
-    //   payload: {
-    //     name: name,
-    //     values: values,
-    //   },
-    // });
+  };
+  onUpdateTags = (name, values) => {
+    console.log('onUpdateTags', name, values);
+    this.props.dispatch({
+      type: 'posts/updateDetailTags',
+      payload: {
+        name: name,
+        values: values,
+      },
+    });
   };
   render() {
     const { getFieldDecorator } = this.props.form;
-    const currentItem = this.props.posts.currentItem;
+    const currentItem = {...this.props.posts.currentItem, ...this.props.posts.detail};
     const formValues = this.props.form.getFieldsValue();
     console.log('postDetail', currentItem);
     console.log('postDetail', formValues);
-    const galleryStyleProps = {
+    const tagProps = {
       currentItem,
-      name: 'gallery_style',
-      onTagsChange: this.onUpdateDetail,
+      onTagsChange: this.onUpdateTags,
       onAddTag: this.onAddTag,
+      form: this.props.form,
     };
+    const galleryStyleProps = {...tagProps, name: 'gallery_style'};
+    const movieDirectorProps = {...tagProps, name: 'movie_director'};
+    const movieActorProps = {...tagProps, name: 'movie_actor'};
+    const movieStyleProps = {...tagProps, name: 'movie_style'};
     return (
       <Card>
         <Form>
@@ -217,19 +223,19 @@ class Post extends PureComponent {
                 <dl className={styles.block}>
                   <dt className={styles.blockTitle}>导演</dt>
                   <dd className={styles.blockContent}>
-                    {/*<MultiTag {...movieDirectorProps} />*/}
+                    <MultiTag {...movieDirectorProps} />
                   </dd>
                 </dl>
                 <dl className={styles.block}>
                   <dt className={styles.blockTitle}>演员</dt>
                   <dd className={styles.blockContent}>
-                    {/*<MultiTag {...movieActorProps} />*/}
+                    <MultiTag {...movieActorProps} />
                   </dd>
                 </dl>
                 <dl className={styles.block}>
                   <dt className={styles.blockTitle}>电影风格</dt>
                   <dd className={styles.blockContent}>
-                    {/*<MultiTag {...movieStyleProps} />*/}
+                    <MultiTag {...movieStyleProps} />
                   </dd>
                 </dl>
               </If>

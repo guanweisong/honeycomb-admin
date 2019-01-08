@@ -1,45 +1,27 @@
 import React, { PureComponent } from 'react';
-import { Tag, Button, Select } from 'antd';
+import { Tag, Button, Select, Form, Input, AutoComplete } from 'antd';
 import { index } from '../../../../tag/service';
 
-let timeout;
-let currentValue;
-function fetch(value, callback) {
-  if (timeout) {
-    clearTimeout(timeout);
-    timeout = null;
-  }
-  currentValue = value;
-  function fake() {
-    index({tag_name: value})
-      .then((result)=>{
-        if (currentValue === value){
-          const data = [];
-          console.log(result.data.list);
-          result.data.list.forEach((r) => {
-            data.push({
-              value: r._id,
-              text: r.tag_name,
-            });
-          });
-          callback(data);
-        }
-      });
-  }
-  timeout = setTimeout(fake, 300);
-}
+const FormItem = Form.Item;
+const Option = Select.Option;
 
 class MultiTag extends PureComponent {
-  state = {
-    inputVisible: false,
-    data: [],
-    value: '',
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputVisible: false,
+      data: [],
+    };
+    this.const = {
+      timeout: null,
+    }
+  }
   getTags = () => {
-    return this.props.currentItem[this.props.name] && this.props.currentItem[this.props.name].value || [];
+    return this.props.currentItem[this.props.name] || [];
   };
   handleClose = (removedTag) => {
-    const tags = this.getTags().filter(tag => tag !== removedTag);
+    console.log('handleClose', removedTag);
+    const tags = this.getTags().filter(tag => tag._id !== removedTag);
     this.props.onTagsChange(this.props.name, tags);
   };
   showInput = () => {
@@ -47,33 +29,72 @@ class MultiTag extends PureComponent {
   };
   handleChange = (value) => {
     this.setState({ value });
-    fetch(value, data => this.setState({ data }));
+    this.fetchTagsList(value, data => this.setState({ data }));
   };
-  handleInputConfirm = (value) => {
-    console.log(value);
-    this.handleUpdateTags(value);
+  handleInputConfirm = (value, option) => {
+    console.log('handleInputConfirm', value, option.props.children);
+    this.handleUpdateTags({_id: value, tag_name: option.props.children});
     this.handleInputVisibleState(false);
   };
-  handleUpdateTags = (value) => {
-    let tags = this.getTags();
-    if (value && tags.indexOf(value) === -1) {
-      this.props.onAddTag(value);
-      tags = [...tags, value];
+  handleBlur = (value) => {
+    console.log('handleBlur', value);
+    if (value.length === 0) {
+      return;
     }
-    this.props.onTagsChange(this.props.name, tags);
+    this.props.onAddTag(this.props.name, value);
+    this.handleInputVisibleState(false);
+  };
+  handleUpdateTags = (tag) => {
+    console.log('handleUpdateTags', tag);
+    let tags = this.getTags();
+    if (tags.some((item) => item._id === tag._id)) {
+      return;
+    }
+    this.props.onTagsChange(this.props.name, [...tags, tag]);
   };
   handleInputVisibleState = (state) => {
     this.setState({
       inputVisible: state
     });
   };
+  fetchTagsList = (value, callback) => {
+    if (this.const.timeout) {
+      clearTimeout(this.const.timeout);
+      this.const.timeout = null;
+    }
+    const fake = async () => {
+      const result = await index({keyword: value});
+      const data = [];
+      console.log(result.data.list);
+      result.data.list.forEach((r) => {
+        data.push({
+          value: r._id,
+          text: r.tag_name,
+        });
+      });
+      callback(data);
+    };
+    this.const.timeout = setTimeout(fake, 300);
+  };
+  getHiddenInputValue = () => {
+    let ids = [];
+    this.props.currentItem[this.props.name].forEach((item) => {
+      ids.push(item._id);
+    });
+    return ids.join(',');
+  };
   render() {
     const {inputVisible} = this.state;
-    const options = this.state.data.map(d => <Option key={d.text}>{d.text}</Option>);
     return (
       <div>
-        {this.getTags().map((tag, index) => {
-          console.log('tag', tag);
+        <FormItem style={{display: 'none'}}>
+          {this.props.form.getFieldDecorator(this.props.name, {
+            initialValue: this.getHiddenInputValue(),
+          })(
+            <Input type="text"/>
+          )}
+        </FormItem>
+        {this.getTags().map((tag) => {
           const tagElem = (
             <Tag key={tag._id} closable={true} afterClose={() => this.handleClose(tag._id)}>
               {tag.tag_name}
@@ -82,20 +103,16 @@ class MultiTag extends PureComponent {
           return tagElem;
         })}
         {inputVisible && (
-          <Select
-            mode = "combobox"
+          <AutoComplete
             autoFocus = {true}
-            showArrow = {false}
             filterOption = {false}
-            value = {this.state.value}
             size = "small"
             style = {{width: 78}}
-            onBlur = {this.handleInputConfirm}
+            dataSource={this.state.data}
             onSelect = {this.handleInputConfirm}
             onChange = {this.handleChange}
-          >
-            {options}
-          </Select>
+            onBlur={this.handleBlur}
+          />
         )}
         {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+ 添加</Button>}
       </div>

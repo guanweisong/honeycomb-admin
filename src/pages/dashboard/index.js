@@ -28,21 +28,23 @@ class Dashboard extends PureComponent {
       <Row gutter={24} style={{ height: '100px' }}>
         <Col span={6} >
           <Card>
-            <ChartItem data={this.getItem(this.props.statistics.post, postTypeMap)} title="文章" total={this.getTotal(this.props.statistics.post)}/>
+            <ChartItem data={this.getItem(this.props.statistics.postType, postTypeMap)} title="文章" total={this.getTotal(this.props.statistics.postType)}/>
           </Card>
         </Col>
         <Col span={6} >
           <Card>
-            <ChartItem data={this.getItem(this.props.statistics.comment, commentStatusMap)} title="评论" total={this.getTotal(this.props.statistics.comment)}/>
+            <ChartItem data={this.getItem(this.props.statistics.commentStutas, commentStatusMap)} title="评论" total={this.getTotal(this.props.statistics.commentStutas)}/>
           </Card>
         </Col>
         <Col span={6} >
           <Card>
-            <ChartItem data={this.getItem(this.props.statistics.user, userLevelMap)} title="用户" total={this.getTotal(this.props.statistics.user)}/>
+            <ChartItem data={this.getItem(this.props.statistics.userType, userLevelMap)} title="用户" total={this.getTotal(this.props.statistics.userType)}/>
           </Card>
         </Col>
         <Col span={6} >
-          <Card>1</Card>
+          <Card>
+            <ChartItem data={this.props.statistics.userPost} title="贡献" total={this.getTotal(this.props.statistics.userPost)}/>
+          </Card>
         </Col>
       </Row>
     )

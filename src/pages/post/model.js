@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import * as postsService from './service';
+import * as tagsService from '../tag/service';
 
 export default {
   namespace: 'posts',
@@ -11,6 +12,12 @@ export default {
     showModal: false,
     modalType: 0, // 0:增加,1:修改
     loading: false,
+    detail: {
+      gallery_style: [],
+      movie_director: [],
+      movie_actor: [],
+      movie_style: [],
+    },
   },
   effects: {
     * index({ payload: values }, { call, put }) {
@@ -80,6 +87,20 @@ export default {
         }))
       }
     },
+    * createTag ({ payload }, { select, call, put }) {
+      console.log('posts=>model=>createTag', payload);
+      const result = yield call(tagsService.create, { tag_name: payload.tag_name });
+      const tags =  yield select(state => state.posts.detail[payload.name]);
+      if (result.status === 201) {
+        yield put({
+          type: 'updateDetailTags',
+          payload: {
+            name: payload.name,
+            values: [...tags , {_id: result.data._id, tag_name: result.data.tag_name}],
+          },
+        });
+      }
+    }
   },
   subscriptions: {
     setup({ dispatch, history}) {
@@ -117,6 +138,10 @@ export default {
     },
     switchLoading(state, { payload }) {
       return { ...state, loading: payload };
+    },
+    updateDetailTags(state, { payload }) {
+      console.log('updateDetailTags', payload);
+      return { ...state, detail: { ...state.detail, [payload.name]: payload.values }}
     },
   },
 };
