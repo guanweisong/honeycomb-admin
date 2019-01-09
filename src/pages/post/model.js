@@ -21,6 +21,7 @@ export default {
       movie_style: [],
       post_cover: {},
       movie_photo: {},
+      post_category: '0',
     },
   },
   effects: {

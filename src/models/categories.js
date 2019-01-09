@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import * as categoriesService from './service';
+import * as categoriesService from '@/services/categories';
 
 export default {
   namespace: 'categories',

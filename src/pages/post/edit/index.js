@@ -5,8 +5,10 @@ import moment from 'moment';
 import SimpleMDE from 'react-simplemde-editor';
 import PhotoPickerItem from './components/PhotoPickerItem';
 import PhotoPickerModal from '@/components/PhotoPicker';
+import AddCategoryModal from '../category/components/AddCategoryModal';
 import MultiTag from './components/MultiTag';
 import { postTypeMap } from '@/utils/mapping';
+import { creatCategoryTitleByDepth } from '@/utils/help';
 import "simplemde/dist/simplemde.min.css";
 import styles from './index.less';
 
@@ -21,6 +23,12 @@ class Post extends PureComponent {
   constructor(props) {
     super(props);
   }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'categories/index',
+      payload: {},
+    });
+  };
   handleUpdate = (status) => {
     const data = this.props.form.getFieldsValue();
     data.post_status = status;
@@ -35,7 +43,19 @@ class Post extends PureComponent {
   handleSubmit = (status) => {
     const data = this.props.form.getFieldsValue();
     data.post_status = status;
-    data.post_author = '5bcc93b8f6ca8315941b5aaf';
+    data.post_author = this.props.app.user._id;
+    if (data.gallery_style) {
+      data.gallery_style = data.gallery_style.split(',');
+    }
+    if (data.movie_director) {
+      data.movie_director = data.movie_director.split(',');
+    }
+    if (data.movie_actor) {
+      data.movie_actor = data.movie_actor.split(',');
+    }
+    if (data.movie_style) {
+      data.movie_style = data.movie_style.split(',');
+    }
     this.props.dispatch({
       type: 'posts/create',
       payload: data,
@@ -91,9 +111,22 @@ class Post extends PureComponent {
       },
     });
   };
+  handleAddNewCategory = () => {
+    this.props.dispatch({
+      type: 'categories/saveCurrentItem',
+      payload: {},
+    });
+    this.props.dispatch({
+      type: 'categories/switchModalType',
+      payload: 0,
+    });
+    this.props.dispatch({
+      type: 'categories/setModalShow'
+    });
+  };
   render() {
     const { getFieldDecorator } = this.props.form;
-    const currentItem = {...this.props.posts.currentItem, ...this.props.posts.detail};
+    const currentItem = this.props.posts.currentItem._id ? {...this.props.posts.currentItem} : {...this.props.posts.currentItem, ...this.props.posts.detail};
     const formValues = this.props.form.getFieldsValue();
     console.log('postDetail', currentItem);
     console.log('postDetail', formValues);
@@ -180,7 +213,7 @@ class Post extends PureComponent {
                 <dd className={styles.blockContent}>
                   <FormItem>
                     {getFieldDecorator('post_category', {
-                      initialValue: (!!currentItem.post_category ? currentItem.post_category : "未分类"),
+                      initialValue: (currentItem._id ? currentItem.post_category._id : currentItem.post_category),
                     })(
                       <Select
                         showSearch
@@ -188,15 +221,15 @@ class Post extends PureComponent {
                         filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                       >
                         <Option value="0">未分类</Option>
-                        {/*<For each="item" of={ list }>*/}
-                          {/*<Option value={item._id} key={item._id}>*/}
-                            {/*{creatCategoryTitleByDepth(item.category_title, item)}*/}
-                          {/*</Option>*/}
-                        {/*</For>*/}
+                        <For each="item" of={ this.props.categories.list }>
+                          <Option value={item._id} key={item._id}>
+                            {creatCategoryTitleByDepth(item.category_title, item)}
+                          </Option>
+                        </For>
                       </Select>
                     )}
                   </FormItem>
-                  <Button type="dashed" icon="plus" /*onClick={onAddCategory}*/>新建分类</Button>
+                  <Button type="dashed" icon="plus" onClick={this.handleAddNewCategory}>新建分类</Button>
                 </dd>
               </dl>
               <PhotoPickerItem {...postCoverProps} />
@@ -269,6 +302,7 @@ class Post extends PureComponent {
           handlePhotoPickerOk={this.handlePhotoPickerOk}
           handlePhotoPickerCancel={this.handlePhotoPickerCancel}
         />
+        <AddCategoryModal />
       </Card>
     )
   }

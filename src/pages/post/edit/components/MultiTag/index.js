@@ -38,6 +38,10 @@ class MultiTag extends PureComponent {
   };
   handleBlur = (value) => {
     console.log('handleBlur', value);
+    if (typeof value === 'undefined') {
+      this.handleInputVisibleState(false);
+      return;
+    }
     if (value.length === 0) {
       return;
     }
