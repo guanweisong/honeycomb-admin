@@ -12,11 +12,15 @@ export default {
     showModal: false,
     modalType: 0, // 0:增加,1:修改
     loading: false,
+    showPhotoPicker: false,
+    insertPhotoType: '',
     detail: {
       gallery_style: [],
       movie_director: [],
       movie_actor: [],
       movie_style: [],
+      post_cover: {},
+      movie_photo: {},
     },
   },
   effects: {
@@ -93,13 +97,24 @@ export default {
       const tags =  yield select(state => state.posts.detail[payload.name]);
       if (result.status === 201) {
         yield put({
-          type: 'updateDetailTags',
+          type: 'updateDetail',
           payload: {
             name: payload.name,
             values: [...tags , {_id: result.data._id, tag_name: result.data.tag_name}],
           },
         });
       }
+    },
+    * addPhoto ({ payload }, { select, call, put }) {
+      const type = yield select(state => state.posts.insertPhotoType);
+      const photoItem =  yield select(state => state.media.currentItem);
+      yield put({
+        type: 'updateDetail',
+        payload: {
+          name: type,
+          values: photoItem
+        }
+      })
     }
   },
   subscriptions: {
@@ -139,9 +154,14 @@ export default {
     switchLoading(state, { payload }) {
       return { ...state, loading: payload };
     },
-    updateDetailTags(state, { payload }) {
-      console.log('updateDetailTags', payload);
+    updateDetail(state, { payload }) {
       return { ...state, detail: { ...state.detail, [payload.name]: payload.values }}
+    },
+    openPhotoPicker(state, { payload }) {
+      return { ...state, showPhotoPicker: true, insertPhotoType: payload }
+    },
+    closePhotoPicker(state, { payload }) {
+      return { ...state, showPhotoPicker: false}
     },
   },
 };

@@ -3,8 +3,9 @@ import { connect } from 'dva';
 import { Card, Form, Input, Button, Select, Icon, DatePicker } from 'antd';
 import moment from 'moment';
 import SimpleMDE from 'react-simplemde-editor';
-// import PhotoPickerModal from '../../components/common/photoPicker/photoPicker';
-import MultiTag from './components/MultiTag/MultiTag';
+import PhotoPickerItem from './components/PhotoPickerItem';
+import PhotoPickerModal from '@/components/PhotoPicker';
+import MultiTag from './components/MultiTag';
 import { postTypeMap } from '@/utils/mapping';
 import "simplemde/dist/simplemde.min.css";
 import styles from './index.less';
@@ -52,10 +53,41 @@ class Post extends PureComponent {
   onUpdateTags = (name, values) => {
     console.log('onUpdateTags', name, values);
     this.props.dispatch({
-      type: 'posts/updateDetailTags',
+      type: 'posts/updateDetail',
       payload: {
         name: name,
         values: values,
+      },
+    });
+  };
+  openPhotoPicker = (type = '') => {
+    this.props.dispatch({
+      type: 'posts/openPhotoPicker',
+      payload: type,
+    });
+  };
+  closePhotoPicker = () => {
+    this.props.dispatch({
+      type: 'posts/closePhotoPicker',
+      payload: {},
+    });
+  };
+  handlePhotoPickerOk = () => {
+    this.closePhotoPicker();
+    this.props.dispatch({
+      type: 'posts/addPhoto',
+      payload: {},
+    })
+  };
+  handlePhotoPickerCancel = () => {
+    this.closePhotoPicker();
+  };
+  handlePhotoClear = (type) => {
+    this.props.dispatch({
+      type: 'posts/updateDetail',
+      payload: {
+        name: type,
+        values: {},
       },
     });
   };
@@ -70,11 +102,21 @@ class Post extends PureComponent {
       onTagsChange: this.onUpdateTags,
       onAddTag: this.onAddTag,
       form: this.props.form,
+      styles,
     };
-    const galleryStyleProps = {...tagProps, name: 'gallery_style'};
-    const movieDirectorProps = {...tagProps, name: 'movie_director'};
-    const movieActorProps = {...tagProps, name: 'movie_actor'};
-    const movieStyleProps = {...tagProps, name: 'movie_style'};
+    const galleryStyleProps = {...tagProps, name: 'gallery_style', title: '照片风格'};
+    const movieDirectorProps = {...tagProps, name: 'movie_director', title: '导演'};
+    const movieActorProps = {...tagProps, name: 'movie_actor', title: '演员'};
+    const movieStyleProps = {...tagProps, name: 'movie_style', title: '电影风格'};
+    const photoProps = {
+      currentItem,
+      styles,
+      form: this.props.form,
+      handlePhotoClear: this.handlePhotoClear,
+      openPhotoPicker: this.openPhotoPicker,
+    };
+    const postCoverProps = {...photoProps, name: 'post_cover', title: '封面', size: '1200*675'};
+    const moviePhotoProps = {...photoProps, name: 'movie_photo', title: '主图', size: '2560*1440'}
     return (
       <Card>
         <Form>
@@ -157,43 +199,9 @@ class Post extends PureComponent {
                   <Button type="dashed" icon="plus" /*onClick={onAddCategory}*/>新建分类</Button>
                 </dd>
               </dl>
-              <dl className={styles.block}>
-                <dt className={styles.blockTitle}>封面<span className={styles.blockTitleTip}>（尺寸：360*480）</span></dt>
-                <dd className={styles.blockContent}>
-                  <Choose>
-                    <When condition={currentItem.post_cover}>
-                      <div className={styles.coverWrap}>
-                        <img src={currentItem.post_cover}/>
-                      </div>
-                      <Button /*onClick={handlePhotoClear.bind(null, 'post_cover')} className={styles.rightButton}*/>
-                        <Icon type="delete"/>清除图片</Button>
-                      <Button /*onClick={onPhotoPicker.bind(null, 'post_cover')}*/ ><Icon type="upload"/>重新上传</Button>
-                    </When>
-                    <Otherwise>
-                      <Button /*onClick={onPhotoPicker.bind(null, 'post_cover')}*/><Icon type="upload"/>点击上传</Button>
-                    </Otherwise>
-                  </Choose>
-                </dd>
-              </dl>
+              <PhotoPickerItem {...postCoverProps} />
               <If condition={formValues.post_type === 1}>
-                <dl className={styles.block}>
-                  <dt className={styles.blockTitle}>主图<span className={styles.blockTitleTip}>（尺寸：2560*1440）</span></dt>
-                  <dd className={styles.blockContent}>
-                    <Choose>
-                      <When condition={!!currentItem.movie_photo}>
-                        <div className={styles.coverWrap}>
-                          <img src={currentItem.movie_photo}/>
-                        </div>
-                        <Button /*onClick={handlePhotoClear.bind(null, 'movie_photo')}*/ className={styles.rightButton}>
-                          <Icon type="delete"/>清除图片</Button>
-                        <Button /*onClick={onPhotoPicker.bind(null, 'movie_photo')}*/><Icon type="upload"/>重新上传</Button>
-                      </When>
-                      <Otherwise>
-                        <Button /*onClick={onPhotoPicker.bind(null, 'movie_photo')}*/><Icon type="upload"/>点击上传</Button>
-                      </Otherwise>
-                    </Choose>
-                  </dd>
-                </dl>
+                <PhotoPickerItem {...moviePhotoProps} />
                 <dl className={styles.block}>
                   <dt className={styles.blockTitle}>电影英文名</dt>
                   <dd className={styles.blockContent}>
@@ -220,24 +228,9 @@ class Post extends PureComponent {
                     </FormItem>
                   </dd>
                 </dl>
-                <dl className={styles.block}>
-                  <dt className={styles.blockTitle}>导演</dt>
-                  <dd className={styles.blockContent}>
-                    <MultiTag {...movieDirectorProps} />
-                  </dd>
-                </dl>
-                <dl className={styles.block}>
-                  <dt className={styles.blockTitle}>演员</dt>
-                  <dd className={styles.blockContent}>
-                    <MultiTag {...movieActorProps} />
-                  </dd>
-                </dl>
-                <dl className={styles.block}>
-                  <dt className={styles.blockTitle}>电影风格</dt>
-                  <dd className={styles.blockContent}>
-                    <MultiTag {...movieStyleProps} />
-                  </dd>
-                </dl>
+                <MultiTag {...movieDirectorProps} />
+                <MultiTag {...movieActorProps} />
+                <MultiTag {...movieStyleProps} />
               </If>
               <If condition={formValues.post_type === 2}>
                 <dl className={styles.block}>
@@ -266,16 +259,16 @@ class Post extends PureComponent {
                     </FormItem>
                   </dd>
                 </dl>
-                <dl className={styles.block}>
-                  <dt className={styles.blockTitle}>照片风格</dt>
-                  <dd className={styles.blockContent}>
-                    <MultiTag {...galleryStyleProps} />
-                  </dd>
-                </dl>
+                <MultiTag {...galleryStyleProps} />
               </If>
             </div>
           </div>
         </Form>
+        <PhotoPickerModal
+          showPhotoPicker={this.props.posts.showPhotoPicker}
+          handlePhotoPickerOk={this.handlePhotoPickerOk}
+          handlePhotoPickerCancel={this.handlePhotoPickerCancel}
+        />
       </Card>
     )
   }

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Popconfirm, Card, Form, Tabs, Upload, Spin, Icon, message, Button, icon } from 'antd';
+import { Popconfirm, Card, Form, Tabs, Upload, Spin, Icon, message, Button } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import moment from 'moment';
 import styles from './index.less';
@@ -45,24 +45,30 @@ class Media extends PureComponent {
       },
     }
   }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'media/index',
+      payload:{}
+    });
+  }
   onEditItem = (item) => {
     this.props.dispatch({
       type: 'media/saveCurrentItem',
       payload: item,
     });
-  }
+  };
   onDeleteItem = (id) => {
     this.props.dispatch({
       type: 'media/distory',
       payload: id,
     });
-  }
+  };
   handelSwitchTab = (value) => {
     this.props.dispatch({
       type: 'media/setCurrentTab',
       payload: value,
     });
-  }
+  };
   render() {
     const currentItem = this.props.media.currentItem;
     return (

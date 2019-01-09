@@ -25,6 +25,11 @@ class Category extends PureComponent {
         ),
       },
       {
+        title: '分类英文名',
+        dataIndex: 'category_title_en',
+        key: 'category_title_en',
+      },
+      {
         title: '分类描述',
         dataIndex: 'category_description',
         key: 'category_description',
@@ -161,11 +166,11 @@ class Category extends PureComponent {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 4 },
+        sm: { span: 6 },
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 20 },
+        sm: { span: 18 },
       },
     };
     const { getFieldDecorator } = this.props.form;
@@ -201,6 +206,21 @@ class Category extends PureComponent {
                 ]
               })(
                 <Input />
+              )}
+            </FormItem>
+
+            <FormItem
+              {...formItemLayout}
+              label="分类英文名"
+            >
+              {getFieldDecorator('category_title_en',{
+                initialValue: this.getFormDefaultValue(this.props.categories.currentItem.category_title_en, ""),
+                rules: [
+                  {required:true, message: '请输入分类英文名'},
+                  {max: 20, message: '最多只能输入20个字符'}
+                ]
+              })(
+                <Input placeHolder="输入小写字母，单词间以中划线分隔，用于URL显示"/>
               )}
             </FormItem>
             <FormItem

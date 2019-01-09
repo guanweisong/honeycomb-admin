@@ -85,37 +85,41 @@ class MultiTag extends PureComponent {
   };
   render() {
     const {inputVisible} = this.state;
+    const { styles } = this.props;
     return (
-      <div>
-        <FormItem style={{display: 'none'}}>
-          {this.props.form.getFieldDecorator(this.props.name, {
-            initialValue: this.getHiddenInputValue(),
-          })(
-            <Input type="text"/>
+      <dl className={styles.block}>
+        <dt className={styles.blockTitle}>{this.props.title}</dt>
+        <dd className={styles.blockContent}>
+          <FormItem style={{display: 'none'}}>
+            {this.props.form.getFieldDecorator(this.props.name, {
+              initialValue: this.getHiddenInputValue(),
+            })(
+              <Input type="text"/>
+            )}
+          </FormItem>
+          {this.getTags().map((tag) => {
+            const tagElem = (
+              <Tag key={tag._id} closable={true} afterClose={() => this.handleClose(tag._id)}>
+                {tag.tag_name}
+              </Tag>
+            );
+            return tagElem;
+          })}
+          {inputVisible && (
+            <AutoComplete
+              autoFocus = {true}
+              filterOption = {false}
+              size = "small"
+              style = {{width: 78}}
+              dataSource={this.state.data}
+              onSelect = {this.handleInputConfirm}
+              onChange = {this.handleChange}
+              onBlur={this.handleBlur}
+            />
           )}
-        </FormItem>
-        {this.getTags().map((tag) => {
-          const tagElem = (
-            <Tag key={tag._id} closable={true} afterClose={() => this.handleClose(tag._id)}>
-              {tag.tag_name}
-            </Tag>
-          );
-          return tagElem;
-        })}
-        {inputVisible && (
-          <AutoComplete
-            autoFocus = {true}
-            filterOption = {false}
-            size = "small"
-            style = {{width: 78}}
-            dataSource={this.state.data}
-            onSelect = {this.handleInputConfirm}
-            onChange = {this.handleChange}
-            onBlur={this.handleBlur}
-          />
-        )}
-        {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+ 添加</Button>}
-      </div>
+          {!inputVisible && <Button size="small" type="dashed" onClick={this.showInput}>+ 添加</Button>}
+        </dd>
+      </dl>
     )
   }
 }

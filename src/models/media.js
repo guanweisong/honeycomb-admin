@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import * as mediaService from './service';
+import * as mediaService from '@/services/media';
 
 export default {
   namespace: 'media',
@@ -49,18 +49,7 @@ export default {
       }
     },
   },
-  subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen(({ pathname }) => {
-        if (pathname === '/media') {
-          dispatch({
-            type: 'index',
-            payload: history.location.query,
-          });
-        }
-      });
-    },
-  },
+  subscriptions: {},
   reducers: {
     saveListData(state, { payload: { list, total } }) {
       return { ...state, list, total };
