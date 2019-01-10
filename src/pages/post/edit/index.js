@@ -148,7 +148,7 @@ class Post extends PureComponent {
       handlePhotoClear: this.handlePhotoClear,
       openPhotoPicker: this.openPhotoPicker,
     };
-    const postCoverProps = {...photoProps, name: 'post_cover', title: '封面', size: '1200*675'};
+    const postCoverProps = {...photoProps, name: 'post_cover', title: '封面', size: '1280*720'};
     const moviePhotoProps = {...photoProps, name: 'movie_photo', title: '主图', size: '2560*1440'}
     return (
       <Card>
