@@ -90,7 +90,7 @@ class BasicLayout extends PureComponent {
               级别：{userLevelMap.find(item => item.value === this.props.app.user.user_level).text}
             </Header>
             <div className={styles.breadcrumb}><Breakcrumbs /></div>
-            <Content className={styles.content}>
+            <Content className={styles.content} style={{position: 'relative', zIndex: 600}}>
               { this.props.children }
             </Content>
             <Footer className={styles.footer}>©{moment().format('YYYY')}&nbsp;{this.props.app.setting.site_copyright}</Footer>

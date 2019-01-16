@@ -58,13 +58,6 @@ class Tag extends PureComponent {
       })
     );
   }
-  handleStatusChange = (e) => {
-    this.props.dispatch(
-      routerRedux.push({
-        query: {...this.props.location.query, tag_status: e.target.value}
-      })
-    );
-  }
   handelSearchChange = (value) => {
     this.props.dispatch(
       routerRedux.push({
