@@ -29,7 +29,7 @@ class ChartItem extends PureComponent {
     const cols = {
       percent: {
         formatter: val => {
-          val = val * 100 + "%";
+          val = (val * 100).toFixed(0) + "%";
           return val;
         }
       }

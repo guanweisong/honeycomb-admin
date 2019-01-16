@@ -13,6 +13,7 @@ import "simplemde/dist/simplemde.min.css";
 import styles from './index.less';
 
 const FormItem = Form.Item;
+const { TextArea } = Input;
 const Option = Select.Option;
 const mapStateToProps = (state) => state;
 
@@ -158,6 +159,9 @@ class Post extends PureComponent {
               <FormItem>
                 {getFieldDecorator('post_title', {
                   initialValue: currentItem.post_title,
+                  rules: [
+                    {max: 20, message: '最多只能输入20个字符'}
+                  ]
                 })(
                   <Input type="text" size="large" placeholder="在此输入文章标题"/>
                 )}
@@ -165,8 +169,21 @@ class Post extends PureComponent {
               <FormItem>
                 {getFieldDecorator('post_content', {
                   initialValue: currentItem.post_content,
+                  rules: [
+                    {max: 20000, message: '最多只能输入20000个字符'}
+                  ]
                 })(
-                  <SimpleMDE />
+                  <SimpleMDE/>
+                )}
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('post_excerpt', {
+                  initialValue: currentItem.post_excerpt,
+                  rules: [
+                    {max: 200, message: '最多只能输入200个字符'}
+                  ]
+                })(
+                  <TextArea rows={4} placeholder="内容简介"/>
                 )}
               </FormItem>
             </div>

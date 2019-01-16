@@ -83,7 +83,7 @@ class Post extends PureComponent {
         width: 100,
         render: (text, record) => (
           <p>
-            <Link to={`/post/edit?id=${record._id}`}>编辑</Link>&nbsp;
+            <Link to={`/post/edit?_id=${record._id}`}>编辑</Link>&nbsp;
             <Popconfirm title="确定要删除吗？" onConfirm={() => this.handleDeleteItem(record._id)}>
               <a>删除</a>
             </Popconfirm>

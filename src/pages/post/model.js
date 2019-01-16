@@ -47,7 +47,7 @@ export default {
     * detail({payload: values }, { call, put}) {
       console.log('posts=>model=>detial', values);
       let result;
-      if (typeof values.id !== 'undefined') {
+      if (typeof values._id !== 'undefined') {
         result = yield call(postsService.index, values);
         result = result.data.list[0];
       } else {

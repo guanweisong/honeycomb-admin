@@ -35,6 +35,11 @@ class Comment extends PureComponent {
         key: 'comment_author',
       },
       {
+        title: '评论人邮箱',
+        dataIndex: 'comment_email',
+        key: 'comment_email',
+      },
+      {
         title: '评论IP',
         dataIndex: 'comment_ip',
         key: 'comment_ip',
