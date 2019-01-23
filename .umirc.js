@@ -12,7 +12,7 @@ export default {
         webpackChunkName: true,
         loadingComponent: './components/Loader/Loader'
       },
-      title: 'honeycomb-admin',
+      title: '管理系统',
       dll: true,
       routes: {
         exclude: [

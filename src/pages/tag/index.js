@@ -188,6 +188,7 @@ class Tag extends PureComponent {
             pagination={{
               total: this.props.tags.total,
               pageSize: this.props.location.query.limit * 1,
+              current: this.props.location.query.page * 1,
             }}
             onChange={this.handleTableChange}
             loading={this.props.tags.loading}

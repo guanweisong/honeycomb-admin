@@ -209,6 +209,7 @@ class Link extends PureComponent {
             pagination={{
               total: this.props.links.total,
               pageSize: this.props.location.query.limit * 1,
+              current: this.props.location.query.page * 1,
             }}
             loading={this.props.links.loading}
             onChange={this.handleTableChange}

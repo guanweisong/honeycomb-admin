@@ -236,6 +236,7 @@ class User extends PureComponent {
             pagination={{
               total: this.props.users.total,
               pageSize: this.props.location.query.limit * 1,
+              current: this.props.location.query.page * 1,
             }}
             onChange={this.handleTableChange}
             loading={this.props.users.loading}

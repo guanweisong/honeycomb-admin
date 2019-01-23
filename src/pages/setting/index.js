@@ -84,20 +84,6 @@ class Setting extends PureComponent {
               )}
             </FormItem>
             <FormItem
-              {...formItemLayout}
-              label="统计代码"
-            >
-              {getFieldDecorator('site_statistics', {
-                initialValue: this.props.app.setting.site_statistics || '',
-              })(
-                <TextArea
-                  rows={5}
-                  maxLength={500}
-                  placeholder="插入GA等第三方统计代码"
-                />
-              )}
-            </FormItem>
-            <FormItem
               wrapperCol={{ offset: 4 }}
             >
               <Button type="primary" htmlType="submit">保存</Button>

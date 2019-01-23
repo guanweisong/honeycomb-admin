@@ -20,7 +20,7 @@ class Login extends PureComponent {
       }
       dispatch({ type: 'login/login', payload: {...values, password: md5(values.password)} })
     })
-  }
+  };
   render() {
     const { loading, form } = this.props;
     const { getFieldDecorator } = form;
@@ -28,7 +28,6 @@ class Login extends PureComponent {
       <Fragment>
         <div className={styles.form}>
           <div className={styles.logo}>
-            {/* <img alt="logo" src={} /> */}
             <span>网站名称</span>
           </div>
           <form>

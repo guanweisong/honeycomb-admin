@@ -34,8 +34,12 @@ export default {
         router.push('/login');
       }
     },
-    * querySetting({ payload: values }, { call, put }) {
+    * querySetting({ payload: values }, {select, call, put }) {
       console.log('app=>model=>querySetting');
+      const setting = yield select(state => state.app.setting);
+      if (setting._id) {
+        return;
+      }
       const result = yield call(appService.setSettingInfo);
       yield put({
         type: 'setSettingInfo',
@@ -46,14 +50,16 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(({ pathname }) => {
-        dispatch({
-          type: 'verify',
-          payload: {},
-        });
-        dispatch({
-          type: 'querySetting',
-          payload: {},
-        });
+        if (pathname !== '/login') {
+          dispatch({
+            type: 'verify',
+            payload: {},
+          });
+          dispatch({
+            type: 'querySetting',
+            payload: {},
+          });
+        }
       });
     },
   },
