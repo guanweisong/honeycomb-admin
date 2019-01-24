@@ -1,5 +1,3 @@
-import {Tag} from 'antd';
-
 export const userLevelMap = [
   {
     'text': '管理员',
@@ -8,10 +6,6 @@ export const userLevelMap = [
   {
     'text': '编辑',
     'value': 2,
-  },
-  {
-    'text': '投稿者',
-    'value': 3,
   },
 ]
 

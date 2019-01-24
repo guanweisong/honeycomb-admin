@@ -46,14 +46,16 @@ class BasicLayout extends PureComponent {
   }
   renderMenuItem(item) {
     return (
-      <Menu.Item key={item.key}>
-        <Link to={item.link}>
-          <If condition={item.icon}>
-            <Icon type={item.icon} />
-          </If>
-          {item.label}
-        </Link>
-      </Menu.Item>
+      <If condition={!item.roleAuthority || item.roleAuthority.includes(this.props.app.user.user_level)}>
+        <Menu.Item key={item.key}>
+          <Link to={item.link}>
+            <If condition={item.icon}>
+              <Icon type={item.icon} />
+            </If>
+            {item.label}
+          </Link>
+        </Menu.Item>
+      </If>
     )
   }
   render() {

@@ -69,6 +69,7 @@ export default [
     label: "用户",
     icon: "user",
     link: "/user",
+    roleAuthority: [1],
   },
   {
     key: "link",
@@ -81,5 +82,6 @@ export default [
     label: "设置",
     icon: "setting",
     link: "/setting",
+    roleAuthority: [1],
   },
 ]
