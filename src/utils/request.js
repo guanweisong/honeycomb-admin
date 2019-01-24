@@ -2,7 +2,7 @@ import axios from 'axios';
 import { message } from 'antd';
 
 const instance = axios.create({
-  baseURL: 'http://127.0.0.1:7001',
+  baseURL: process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:7001' : 'http://api.guanweisong.com',
   withCredentials: true,
   timeout: 10000,
   headers: {},
