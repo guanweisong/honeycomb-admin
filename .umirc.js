@@ -13,7 +13,7 @@ export default {
         loadingComponent: './components/Loader/Loader'
       },
       title: '管理系统',
-      dll: false,
+      dll: true,
       routes: {
         exclude: [
           /model\.(j|t)sx?$/,
