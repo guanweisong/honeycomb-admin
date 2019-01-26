@@ -30,21 +30,9 @@ class Post extends PureComponent {
       payload: {},
     });
   };
-  handleUpdate = (status) => {
+  handleSubmit = (status, type) => {
     const data = this.props.form.getFieldsValue();
     data.post_status = status;
-    this.props.dispatch({
-      type: 'posts/update',
-      payload: {
-        id: this.props.posts.currentItem._id,
-        values: data,
-      },
-    });
-  };
-  handleSubmit = (status) => {
-    const data = this.props.form.getFieldsValue();
-    data.post_status = status;
-    data.post_author = this.props.app.user._id;
     if (data.gallery_style) {
       data.gallery_style = data.gallery_style.split(',');
     }
@@ -57,10 +45,25 @@ class Post extends PureComponent {
     if (data.movie_style) {
       data.movie_style = data.movie_style.split(',');
     }
-    this.props.dispatch({
-      type: 'posts/create',
-      payload: data,
-    });
+    switch (type) {
+      case 'create':
+        data.post_author = this.props.app.user._id;
+        this.props.dispatch({
+          type: 'posts/create',
+          payload: data,
+        });
+        break;
+      case 'update':
+        this.props.dispatch({
+          type: 'posts/update',
+          payload: {
+            id: this.props.posts.currentItem._id,
+            values: data,
+          },
+        });
+        break;
+      default:;
+    }
   };
   onAddTag = (name, value) =>{
     this.props.dispatch({
@@ -194,17 +197,17 @@ class Post extends PureComponent {
                   <Choose>
                     <When condition={!!currentItem._id}>
                       <If condition={currentItem.post_status === 0}>
-                        <Button type="primary" onClick={this.handleUpdate.bind(null, 0)}>更新</Button>
+                        <Button type="primary" onClick={() => this.handleSubmit(0, 'update')}>更新</Button>
                       </If>
                       <If condition={currentItem.post_status === 1}>
                         <Button type="primary" className={styles.rightButton}
-                                onClick={this.handleUpdate.bind(null, 0)}>发布</Button>
-                        <Button onClick={this.handleUpdate.bind(null, 1)}>保存</Button>
+                                onClick={() => this.handleSubmit(0, 'update')}>发布</Button>
+                        <Button onClick={() => this.handleUpdate(1, 'update')}>保存</Button>
                       </If>
                     </When>
                     <Otherwise>
-                      <Button type="primary" className={styles.rightButton} onClick={this.handleSubmit.bind(null, 0)}>发布</Button>
-                      <Button onClick={this.handleSubmit.bind(null, 1)}>保存草稿</Button>
+                      <Button type="primary" className={styles.rightButton} onClick={() => this.handleSubmit(0, 'create')}>发布</Button>
+                      <Button onClick={() => this.handleSubmit(1, 'create')}>保存草稿</Button>
                     </Otherwise>
                   </Choose>
                 </dd>
@@ -300,7 +303,7 @@ class Post extends PureComponent {
                   <dd className={styles.blockContent}>
                     <FormItem className={styles.lastMargin}>
                       {getFieldDecorator('gallery_time', {
-                        initialValue: currentItem.gallery_time,
+                        initialValue: moment(currentItem.gallery_time),
                       })(
                         <DatePicker
                           placeholder="请选择拍摄时间"

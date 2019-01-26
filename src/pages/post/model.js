@@ -74,7 +74,7 @@ export default {
         yield put(routerRedux.push({
           pathname: '/post/edit',
           query: {
-            id,
+            _id: id,
           },
         }))
       }
@@ -87,7 +87,7 @@ export default {
         yield put(routerRedux.push({
           pathname: '/post/edit',
           query: {
-            id: result.data._id,
+            _id: result.data._id,
           },
         }))
       }
