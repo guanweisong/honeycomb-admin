@@ -18,7 +18,8 @@ class Media extends PureComponent {
       name: 'file',
       multiple: true,
       showUploadList: false,
-      action: `${process.env.NODE_ENV === 'development' ? '//127.0.0.1:7001' : '//api.guanweisong.com'}/media/`,
+      action: `${process.env.NODE_ENV === 'development' ? '//127.0.0.1:7001' : '//api.guanweisong.com'}/media`,
+      withCredentials: true,
       onChange(info) {
         props.dispatch({type: 'media/showLoading'});
         const response = info.file.response;
