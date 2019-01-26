@@ -21,7 +21,6 @@ export default {
       movie_style: [],
       post_cover: {},
       movie_photo: {},
-      post_category: '0',
     },
   },
   effects: {
@@ -50,6 +49,17 @@ export default {
       if (typeof values._id !== 'undefined') {
         result = yield call(postsService.index, values);
         result = result.data.list[0];
+        yield put({
+          type: 'updateDetailAll',
+          payload: {
+            gallery_style: result.gallery_style || [],
+            movie_director: result.movie_director || [],
+            movie_actor: result.movie_actor || [],
+            movie_style: result.movie_style || [],
+            post_cover: result.post_cover || {},
+            movie_photo: result.movie_photo || {},
+          },
+        });
       } else {
         result = {};
       }
@@ -157,6 +167,9 @@ export default {
     },
     updateDetail(state, { payload }) {
       return { ...state, detail: { ...state.detail, [payload.name]: payload.values }}
+    },
+    updateDetailAll(state, { payload }) {
+      return { ...state, detail: payload }
     },
     openPhotoPicker(state, { payload }) {
       return { ...state, showPhotoPicker: true, insertPhotoType: payload }

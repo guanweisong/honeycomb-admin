@@ -17,7 +17,7 @@ class MultiTag extends PureComponent {
     }
   }
   getTags = () => {
-    return this.props.currentItem[this.props.name] || [];
+    return this.props.detail[this.props.name] || [];
   };
   handleClose = (removedTag) => {
     console.log('handleClose', removedTag);
@@ -82,7 +82,7 @@ class MultiTag extends PureComponent {
   };
   getHiddenInputValue = () => {
     let ids = [];
-    this.props.currentItem[this.props.name].forEach((item) => {
+    this.props.detail[this.props.name].forEach((item) => {
       ids.push(item._id);
     });
     return ids.join(',');

@@ -130,12 +130,13 @@ class Post extends PureComponent {
   };
   render() {
     const { getFieldDecorator } = this.props.form;
-    const currentItem = this.props.posts.currentItem._id ? {...this.props.posts.currentItem} : {...this.props.posts.currentItem, ...this.props.posts.detail};
+    const currentItem = this.props.posts.currentItem;
+    const detail = this.props.posts.detail;
     const formValues = this.props.form.getFieldsValue();
     console.log('postDetail', currentItem);
     console.log('postDetail', formValues);
     const tagProps = {
-      currentItem,
+      detail,
       onTagsChange: this.onUpdateTags,
       onAddTag: this.onAddTag,
       form: this.props.form,
@@ -146,8 +147,8 @@ class Post extends PureComponent {
     const movieActorProps = {...tagProps, name: 'movie_actor', title: '演员'};
     const movieStyleProps = {...tagProps, name: 'movie_style', title: '电影风格'};
     const photoProps = {
-      currentItem,
       styles,
+      detail,
       form: this.props.form,
       handlePhotoClear: this.handlePhotoClear,
       openPhotoPicker: this.openPhotoPicker,
@@ -233,7 +234,7 @@ class Post extends PureComponent {
                 <dd className={styles.blockContent}>
                   <FormItem>
                     {getFieldDecorator('post_category', {
-                      initialValue: (currentItem._id ? currentItem.post_category._id : currentItem.post_category),
+                      initialValue: (currentItem._id ? currentItem.post_category._id : '0'),
                     })(
                       <Select
                         showSearch

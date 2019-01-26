@@ -8,22 +8,22 @@ class PhotoPickerItem extends PureComponent {
     super(props);
   }
   render() {
-    const { styles, currentItem, name, title, size } = this.props;
+    const { styles, detail, name, title, size } = this.props;
     return (
       <dl className={styles.block}>
         <dt className={styles.blockTitle}>{title}<span className={styles.blockTitleTip}>（尺寸：{size}）</span></dt>
         <dd className={styles.blockContent}>
           <FormItem style={{display: 'none'}}>
             {this.props.form.getFieldDecorator(name, {
-              initialValue: currentItem[name]._id || '',
+              initialValue: detail[name]._id || '',
             })(
               <Input type="text"/>
             )}
           </FormItem>
           <Choose>
-            <When condition={currentItem[name]._id}>
+            <When condition={detail[name]._id}>
               <div className={styles.coverWrap}>
-                <img src={`//${currentItem[name].media_url}`}/>
+                <img src={`//${detail[name].media_url}`}/>
               </div>
               <Button onClick={() => this.props.handlePhotoClear(name)} className={styles.rightButton}>
                 <Icon type="delete"/>清除图片
