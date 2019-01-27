@@ -271,13 +271,14 @@ class Link extends PureComponent {
               label="状态"
             >
               {getFieldDecorator('link_status', {
-                initialValue: this.getFormDefaultValue(this.props.links.currentItem.link_status, 1) + ""
+                initialValue: this.getFormDefaultValue(this.props.links.currentItem.link_status, 1)
               })(
                 <Radio.Group
                   buttonStyle="solid"
                 >
-                  <Radio.Button value="1">启用</Radio.Button>
-                  <Radio.Button value="0">禁用</Radio.Button>
+                  <For each="item" index="index" of={enableStatusMap}>
+                    <Radio.Button value={item.value} key={index}>{item.text}</Radio.Button>
+                  </For>
                 </Radio.Group>
               )}
             </FormItem>

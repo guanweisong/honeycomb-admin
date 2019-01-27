@@ -20,7 +20,6 @@ export default {
       movie_actor: [],
       movie_style: [],
       post_cover: {},
-      movie_photo: {},
     },
   },
   effects: {
@@ -57,7 +56,6 @@ export default {
             movie_actor: result.movie_actor || [],
             movie_style: result.movie_style || [],
             post_cover: result.post_cover || {},
-            movie_photo: result.movie_photo || {},
           },
         });
       } else {

@@ -154,7 +154,6 @@ class Post extends PureComponent {
       openPhotoPicker: this.openPhotoPicker,
     };
     const postCoverProps = {...photoProps, name: 'post_cover', title: '封面', size: '1280*720'};
-    const moviePhotoProps = {...photoProps, name: 'movie_photo', title: '主图', size: '2560*1440'}
     return (
       <Card>
         <Form>
@@ -255,7 +254,6 @@ class Post extends PureComponent {
               </dl>
               <PhotoPickerItem {...postCoverProps} />
               <If condition={formValues.post_type === 1}>
-                <PhotoPickerItem {...moviePhotoProps} />
                 <dl className={styles.block}>
                   <dt className={styles.blockTitle}>电影英文名</dt>
                   <dd className={styles.blockContent}>
