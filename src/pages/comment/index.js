@@ -75,7 +75,12 @@ class Comment extends PureComponent {
         key: 'operation',
         width: 100,
         render: (text, record) => (
-          this.renderOpt(record)
+          <div>
+            {this.renderOpt(record)}&nbsp;
+            <Popconfirm title="确定要删除吗？" onConfirm={() => this.handleDelete(record._id)}>
+              <a>删除</a>
+            </Popconfirm>
+          </div>
         )
       }
     ];
@@ -93,46 +98,52 @@ class Comment extends PureComponent {
               <a>驳回</a>
             </Popconfirm>
           </p>
-        )
+        );
         break;
       case 1:
         dom = (
           <Popconfirm title="确定要屏蔽吗？" onConfirm={() => this.handleSetStatus(record._id, 3)}>
             <a>屏蔽</a>
           </Popconfirm>
-        )
+        );
         break;
       case 2:
         dom = (
           <Popconfirm title="确定要通过吗？" onConfirm={() => this.handleSetStatus(record._id, 1)}>
             <a>通过</a>
           </Popconfirm>
-        )
+        );
         break;
       case 3:
         dom = (
           <Popconfirm title="确定要解除屏蔽吗？" onConfirm={() => this.handleSetStatus(record._id, 1)}>
             <a>解除屏蔽</a>
           </Popconfirm>
-        )
+        );
         break;
       default:;
     }
     return dom;
-  }
+  };
   handleSetStatus = (id, type) => {
     this.props.dispatch({
       type: 'comments/update',
       payload: {id: id , values: { 'comment_status': type }},
     });
-  }
+  };
+  handleDelete = (id) => {
+    this.props.dispatch({
+      type: 'comments/distory',
+      payload: id,
+    });
+  };
   handelSearchChange = (value) => {
     this.props.dispatch(
       routerRedux.push({
         query: { ...this.props.location.query, keyword: value }
       })
     );
-  }
+  };
   handleTableChange = (pagination, filters, sorter) => {
     console.log(pagination, filters, sorter);
     this.props.dispatch(
@@ -140,7 +151,7 @@ class Comment extends PureComponent {
         query: {...this.props.location.query, page: pagination.current, limit: pagination.pageSize, ...filters}
       })
     );
-  }
+  };
   render() {
     const formItemLayout = {
       labelCol: {

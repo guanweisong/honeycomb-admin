@@ -36,6 +36,14 @@ export default {
         message.success('更新成功');
       }
     },
+    * distory({ payload: id }, { call, put }) {
+      console.log('comments=>model=>distory', id);
+      const result = yield call(commentsService.distory, id);
+      if (result.status === 204) {
+        yield put({ type: 'index', payload: {} });
+        message.success('删除成功');
+      }
+    },
     * checkExist({ payload: values }, { call, select }) {
       console.log('comments=>model=>checkExist', values);
       let exist = false;
