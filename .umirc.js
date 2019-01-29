@@ -26,6 +26,7 @@ export default {
       hardSource: true,
     }],
   ],
+  hash: true,
   extraBabelPlugins: [
     "jsx-control-statements"
   ],
