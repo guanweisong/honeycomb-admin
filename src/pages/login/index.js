@@ -11,14 +11,32 @@ const mapStateToProps = (state) => state;
 @connect(mapStateToProps)
 @Form.create()
 class Login extends PureComponent {
+  componentDidMount() {
+    this.captcha = new TencentCaptcha('2090829333', (res) => {
+      if (res.ret === 0) {
+        const values = this.props.form.getFieldsValue();
+        this.props.dispatch({
+          type: 'login/login',
+          payload: {
+            ...values,
+            password: md5(values.password),
+            captcha: {
+              ticket: res.ticket,
+              randstr: res.randstr
+            },
+          }
+        })
+      }
+    });
+  };
   handleOk = () => {
-    const { dispatch, form } = this.props;
+    const { form } = this.props;
     const { validateFieldsAndScroll } = form;
-    validateFieldsAndScroll((errors, values) => {
+    validateFieldsAndScroll((errors) => {
       if (errors) {
         return
       }
-      dispatch({ type: 'login/login', payload: {...values, password: md5(values.password)} })
+      this.captcha.show();
     })
   };
   render() {
@@ -28,7 +46,7 @@ class Login extends PureComponent {
       <Fragment>
         <div className={styles.form}>
           <div className={styles.logo}>
-            <span>网站名称</span>
+            <span>管理系统</span>
           </div>
           <form>
             <FormItem hasFeedback>
