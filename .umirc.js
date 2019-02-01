@@ -26,6 +26,7 @@ export default {
       hardSource: true,
     }],
   ],
+  ignoreMomentLocale: true,
   hash: true,
   extraBabelPlugins: [
     "jsx-control-statements"
