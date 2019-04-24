@@ -29,7 +29,7 @@ class Page extends PureComponent {
   handleSubmit = (status) => {
     const data = this.props.form.getFieldsValue();
     data.page_status = status;
-    data.page_author = '5bcc93b8f6ca8315941b5aaf';
+    data.page_author = this.props.app.user._id;
     this.props.dispatch({
       type: 'pages/create',
       payload: data,
