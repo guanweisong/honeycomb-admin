@@ -86,7 +86,7 @@ class Media extends PureComponent {
                             onClick={() => this.onEditItem(item)}>
                           <Choose>
                             <When condition={ item.media_type.indexOf('image') != -1 }>
-                              <img src={`//${item.media_url}`} className={styles.mediaImage}/>
+                              <img src={`//${item.media_url_360p || item.media_url}`} className={styles.mediaImage}/>
                             </When>
                             <Otherwise>
                               <Icon type="file" className={styles.mediaFile}/>

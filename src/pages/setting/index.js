@@ -69,6 +69,22 @@ class Setting extends PureComponent {
             </FormItem>
             <FormItem
               {...formItemLayout}
+              label="签名"
+              maxLength={100}
+            >
+              {getFieldDecorator('site_signature', {
+                rules: [{ required: true, message: '请填写签名' }],
+                initialValue: this.props.app.setting.site_signature || '',
+              })(
+                <TextArea
+                  rows={3}
+                  maxLength={100}
+                  placeholder="请填写签名"
+                />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
               label="版权信息"
               maxLength={100}
             >

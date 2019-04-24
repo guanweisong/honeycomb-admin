@@ -95,7 +95,10 @@ class BasicLayout extends PureComponent {
             <Content className={styles.content} style={{position: 'relative', zIndex: 600}}>
               { this.props.children }
             </Content>
-            <Footer className={styles.footer}>©{moment().format('YYYY')}&nbsp;{this.props.app.setting.site_copyright}</Footer>
+            <Footer className={styles.footer}>
+              <div>{this.props.app.setting.site_signature}</div>
+              <div>©{moment().format('YYYY')}&nbsp;{this.props.app.setting.site_copyright}</div>
+            </Footer>
           </Layout>
         </Content>
       </Layout>
