@@ -9,7 +9,7 @@ export default {
     currentItem: {},
     tab: 'all',
     showModal: false,
-    loading: true,
+    loading: false,
   },
   effects: {
     * index({ payload: values }, { call, put }) {
