@@ -96,7 +96,7 @@ class Post extends PureComponent {
     console.log(pagination, filters, sorter);
     this.props.dispatch(
       routerRedux.push({
-        query: {...this.props.location.query, page: pagination.current, limit: pagination.postSize, ...filters}
+        query: {...this.props.location.query, page: pagination.current, limit: pagination.pageSize, ...filters}
       })
     );
   }
