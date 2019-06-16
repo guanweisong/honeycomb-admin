@@ -68,7 +68,7 @@ class ChartItem extends PureComponent {
           tooltip={[
             "item*percent",
             (item, percent) => {
-              percent = percent * 100 + "%";
+              percent = (percent * 100).toFixed(0) + "%";
               return {
                 name: item,
                 value: percent
