@@ -175,5 +175,17 @@ export default {
     closePhotoPicker(state, { payload }) {
       return { ...state, showPhotoPicker: false}
     },
+    resetDetailState(state) {
+      return {
+        ...state,
+        detail: {
+          gallery_style: [],
+          movie_director: [],
+          movie_actor: [],
+          movie_style: [],
+          post_cover: {},
+        }
+      };
+    },
   },
 };

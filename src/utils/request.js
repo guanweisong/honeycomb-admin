@@ -15,6 +15,7 @@ instance.interceptors.response.use(res=>{
   switch (err.response.status) {
     case 401:
     case 403:
+    case 500:
       message.error(err.response.data.error);
       break;
     default: message.error('操作失败，请稍后再试');

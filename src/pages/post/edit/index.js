@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Form, Input, Button, Select, Icon, DatePicker } from 'antd';
+import { Card, Form, Input, Button, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import SimpleMDE from 'react-simplemde-editor';
 import PhotoPickerItem from './components/PhotoPickerItem';
@@ -30,40 +30,54 @@ class Post extends PureComponent {
       payload: {},
     });
   };
+  componentWillUnmount() {
+    this.props.dispatch({
+      type: 'posts/resetDetailState',
+    });
+  };
   handleSubmit = (status, type) => {
-    const data = this.props.form.getFieldsValue();
-    data.post_status = status;
-    if (data.gallery_style) {
-      data.gallery_style = data.gallery_style.split(',');
-    }
-    if (data.movie_director) {
-      data.movie_director = data.movie_director.split(',');
-    }
-    if (data.movie_actor) {
-      data.movie_actor = data.movie_actor.split(',');
-    }
-    if (data.movie_style) {
-      data.movie_style = data.movie_style.split(',');
-    }
-    switch (type) {
-      case 'create':
-        data.post_author = this.props.app.user._id;
-        this.props.dispatch({
-          type: 'posts/create',
-          payload: data,
-        });
-        break;
-      case 'update':
-        this.props.dispatch({
-          type: 'posts/update',
-          payload: {
-            id: this.props.posts.currentItem._id,
-            values: data,
-          },
-        });
-        break;
-      default:;
-    }
+    this.props.form.validateFields((error, value) => {
+      console.log('handleSubmit', error);
+      if (!error) {
+        const data = value;
+        data.post_status = status;
+        if (data.gallery_style) {
+          data.gallery_style = data.gallery_style.split(',');
+        }
+        if (data.movie_director) {
+          data.movie_director = data.movie_director.split(',');
+        }
+        if (data.movie_actor) {
+          data.movie_actor = data.movie_actor.split(',');
+        }
+        if (data.movie_style) {
+          data.movie_style = data.movie_style.split(',');
+        }
+        if (!data.post_cover) {
+          message.error('请上传封面');
+          return;
+        }
+        switch (type) {
+          case 'create':
+            data.post_author = this.props.app.user._id;
+            this.props.dispatch({
+              type: 'posts/create',
+              payload: data,
+            });
+            break;
+          case 'update':
+            this.props.dispatch({
+              type: 'posts/update',
+              payload: {
+                id: this.props.posts.currentItem._id,
+                values: data,
+              },
+            });
+            break;
+          default:;
+        }
+      }
+    });
   };
   onAddTag = (name, value) =>{
     this.props.dispatch({
@@ -133,8 +147,9 @@ class Post extends PureComponent {
     const currentItem = this.props.posts.currentItem;
     const detail = this.props.posts.detail;
     const formValues = this.props.form.getFieldsValue();
-    console.log('postDetail', currentItem);
-    console.log('postDetail', formValues);
+    console.log('currentItem', currentItem);
+    console.log('formValues', formValues);
+    console.log('detail', detail);
     const tagProps = {
       detail,
       onTagsChange: this.onUpdateTags,
@@ -153,7 +168,7 @@ class Post extends PureComponent {
       handlePhotoClear: this.handlePhotoClear,
       openPhotoPicker: this.openPhotoPicker,
     };
-    const postCoverProps = {...photoProps, name: 'post_cover', title: '封面', size: '1280*720'};
+    const postCoverProps = {...photoProps, name: 'post_cover', title: '封面', size: '1920*1080'};
     return (
       <Card>
         <Form>
@@ -161,9 +176,10 @@ class Post extends PureComponent {
             <div className={styles.mainArea}>
               <FormItem>
                 {getFieldDecorator('post_title', {
-                  initialValue: currentItem.post_title,
+                  initialValue: currentItem.post_title || '',
                   rules: [
-                    {max: 20, message: '最多只能输入20个字符'}
+                    {max: 20, message: '最多只能输入20个字符'},
+                    {required: true, message: '请输入标题'}
                   ]
                 })(
                   <Input type="text" size="large" placeholder="在此输入文章标题"/>
@@ -171,9 +187,10 @@ class Post extends PureComponent {
               </FormItem>
               <FormItem>
                 {getFieldDecorator('post_content', {
-                  initialValue: currentItem.post_content,
+                  initialValue: currentItem.post_content || '',
                   rules: [
-                    {max: 20000, message: '最多只能输入20000个字符'}
+                    {max: 20000, message: '最多只能输入20000个字符'},
+                    {required: true, message: '请输入内容'}
                   ]
                 })(
                   <SimpleMDE/>
@@ -181,7 +198,7 @@ class Post extends PureComponent {
               </FormItem>
               <FormItem>
                 {getFieldDecorator('post_excerpt', {
-                  initialValue: currentItem.post_excerpt,
+                  initialValue: currentItem.post_excerpt || '',
                   rules: [
                     {max: 200, message: '最多只能输入200个字符'}
                   ]
@@ -233,14 +250,17 @@ class Post extends PureComponent {
                 <dd className={styles.blockContent}>
                   <FormItem>
                     {getFieldDecorator('post_category', {
-                      initialValue: (currentItem._id ? currentItem.post_category._id : '0'),
+                      initialValue: (currentItem._id ? currentItem.post_category._id : ''),
+                      rules: [
+                        {required: true, message: '请选择分类'}
+                      ]
                     })(
                       <Select
                         showSearch
                         optionFilterProp="children"
                         filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                       >
-                        <Option value="0">未分类</Option>
+                        <Option value="">未分类</Option>
                         <For each="item" of={ this.props.categories.list }>
                           <Option value={item._id} key={item._id}>
                             {creatCategoryTitleByDepth(item.category_title, item)}
