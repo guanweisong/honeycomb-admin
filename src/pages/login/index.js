@@ -86,6 +86,7 @@ class Login extends PureComponent {
               >
                 Sign in
               </Button>
+              <div className={styles.tips}>访客身份：guest 123456</div>
             </Row>
           </form>
         </div>

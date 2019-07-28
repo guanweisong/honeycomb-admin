@@ -7,6 +7,10 @@ export const userLevelMap = [
     'text': '编辑',
     'value': 2,
   },
+  {
+    'text': '访客',
+    'value': 3,
+  },
 ]
 
 export const postStatusMap = [
