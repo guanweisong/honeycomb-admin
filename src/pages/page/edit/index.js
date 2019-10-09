@@ -6,6 +6,9 @@ import SimpleMDE from 'react-simplemde-editor';
 import "simplemde/dist/simplemde.min.css";
 import styles from './index.less';
 
+const showdown  = require('showdown');
+const converter = new showdown.Converter();
+
 const FormItem = Form.Item;
 const mapStateToProps = (state) => state;
 
@@ -52,7 +55,7 @@ class Page extends PureComponent {
               </FormItem>
               <FormItem>
                 {getFieldDecorator('page_content', {
-                  initialValue: currentItem.page_content,
+                  initialValue: currentItem.page_content ? converter.makeMarkdown(currentItem.page_content) : '',
                 })(
                   <SimpleMDE />
                 )}

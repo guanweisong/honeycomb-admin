@@ -12,6 +12,9 @@ import { creatCategoryTitleByDepth } from '@/utils/help';
 import "simplemde/dist/simplemde.min.css";
 import styles from './index.less';
 
+const showdown  = require('showdown');
+const converter = new showdown.Converter();
+
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const Option = Select.Option;
@@ -187,7 +190,7 @@ class Post extends PureComponent {
               </FormItem>
               <FormItem>
                 {getFieldDecorator('post_content', {
-                  initialValue: currentItem.post_content || '',
+                  initialValue: currentItem.post_content ? converter.makeMarkdown(currentItem.post_content) : '',
                   rules: [
                     {max: 20000, message: '最多只能输入20000个字符'},
                     {required: true, message: '请输入内容'}

@@ -42,6 +42,7 @@
     "moment": "^2.22.2",
     "react-copy-to-clipboard": "^5.0.1",
     "react-router-breadcrumbs-hoc": "^2.3.1",
-    "react-simplemde-editor": "^3.6.21"
+    "react-simplemde-editor": "^3.6.21",
+    "showdown": "^1.9.0"
   }
 }
