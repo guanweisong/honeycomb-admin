@@ -38,7 +38,7 @@ class User extends PureComponent {
         filters: enableStatusMap,
         filteredValue: props.location.query.link_status,
         render: (text, record) => (
-          enableStatusMap.find(item => item.value === text).text
+          enableStatusMap.find(item => item.value === text).tag
         ),
       },
       {
@@ -69,7 +69,7 @@ class User extends PureComponent {
         render: (text, record) => (
           <p>
             <a onClick={() => this.handleEditItem(record)}>编辑</a>&nbsp;
-            <If condition={record.user_level !== 1}>
+            <If condition={record.user_level !== 1 && record.user_status !== -1}>
               <Popconfirm title="确定要删除吗？" onConfirm={() => this.handleDeleteItem(record._id)}>
                 <a>删除</a>
               </Popconfirm>
@@ -233,6 +233,11 @@ class User extends PureComponent {
             columns={this.columns}
             rowKey={record => record._id}
             dataSource={this.props.users.list}
+            rowClassName={(record, index)=> {
+              if (record.user_status === -1) {
+                return 'gray'
+              }
+            }}
             pagination={{
               total: this.props.users.total,
               pageSize: this.props.location.query.limit * 1,

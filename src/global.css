@@ -4,3 +4,6 @@ html, body, #root {
 body {
   margin: 0;
 }
+.gray {
+  color: #ccc;
+}
