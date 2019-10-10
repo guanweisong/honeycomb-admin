@@ -79,6 +79,7 @@ class Post extends PureComponent {
         title: '点击量',
         dataIndex: 'post_views',
         key: 'post_views',
+        sorter: true,
       },
       {
         title: '操作',
