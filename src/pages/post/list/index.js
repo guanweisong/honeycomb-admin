@@ -60,6 +60,7 @@ class Post extends PureComponent {
         title: '发表时间',
         dataIndex: 'created_at',
         key: 'created_at',
+        sorter: true,
         render: (text) => (
           moment(text).format('YYYY-MM-DD HH:mm:ss')
         ),
@@ -68,6 +69,8 @@ class Post extends PureComponent {
         title: '最后更新日期',
         dataIndex: 'updated_at',
         key: 'updated_at',
+        sorter: true,
+        defaultSortOrder: 'descend',
         render: (text) => (
           moment(text).format('YYYY-MM-DD HH:mm:ss')
         ),
@@ -96,7 +99,7 @@ class Post extends PureComponent {
     console.log(pagination, filters, sorter);
     this.props.dispatch(
       routerRedux.push({
-        query: {...this.props.location.query, page: pagination.current, limit: pagination.pageSize, ...filters}
+        query: {...this.props.location.query, page: pagination.current, limit: pagination.pageSize, ...filters, sortField: sorter.field, sortOrder: sorter.order}
       })
     );
   }
