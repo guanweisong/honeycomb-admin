@@ -51,6 +51,7 @@ class User extends PureComponent {
         dataIndex: 'created_at',
         key: 'created_at',
         sorter: true,
+        defaultSortOrder: 'descend',
         render: (text) => (
           moment(text).format('YYYY-MM-DD HH:mm:ss')
         ),
@@ -60,7 +61,6 @@ class User extends PureComponent {
         dataIndex: 'updated_at',
         key: 'updated_at',
         sorter: true,
-        defaultSortOrder: 'descend',
         render: (text) => (
           moment(text).format('YYYY-MM-DD HH:mm:ss')
         ),

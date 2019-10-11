@@ -61,6 +61,7 @@ class Post extends PureComponent {
         dataIndex: 'created_at',
         key: 'created_at',
         sorter: true,
+        defaultSortOrder: 'descend',
         render: (text) => (
           moment(text).format('YYYY-MM-DD HH:mm:ss')
         ),
@@ -70,7 +71,6 @@ class Post extends PureComponent {
         dataIndex: 'updated_at',
         key: 'updated_at',
         sorter: true,
-        defaultSortOrder: 'descend',
         render: (text) => (
           moment(text).format('YYYY-MM-DD HH:mm:ss')
         ),
@@ -155,6 +155,7 @@ class Post extends PureComponent {
             rowKey={record => record._id}
             dataSource={this.props.posts.list}
             pagination={{
+              showSizeChanger: true,
               total: this.props.posts.total,
               postSize: this.props.location.query.limit * 1,
               current: this.props.location.query.page * 1,
