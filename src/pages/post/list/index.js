@@ -21,6 +21,11 @@ class Post extends PureComponent {
         key: 'post_title',
       },
       {
+        title: '引用内容',
+        dataIndex: 'quote_content',
+        key: 'quote_content',
+      },
+      {
         title: '分类',
         dataIndex: 'post_category',
         key: 'post_category',
@@ -141,7 +146,7 @@ class Post extends PureComponent {
                   <Search
                     defaultValue={this.props.location.query.keyword || ''}
                     onSearch={this.handelSearchChange}
-                    placeholder="按文章名"
+                    placeholder="按文章名、引用内容、引用作者"
                   />
                 </FormItem>
               </Col>

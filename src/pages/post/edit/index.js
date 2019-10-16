@@ -56,7 +56,7 @@ class Post extends PureComponent {
         if (data.movie_style) {
           data.movie_style = data.movie_style.split(',');
         }
-        if (!data.post_cover) {
+        if (!data.post_cover && [0, 1, 2].includes(data.post_type)) {
           message.error('请上传封面');
           return;
         }
@@ -177,38 +177,64 @@ class Post extends PureComponent {
         <Form>
           <div className={styles.main}>
             <div className={styles.mainArea}>
-              <FormItem>
-                {getFieldDecorator('post_title', {
-                  initialValue: currentItem.post_title || '',
-                  rules: [
-                    {max: 20, message: '最多只能输入20个字符'},
-                    {required: true, message: '请输入标题'}
-                  ]
-                })(
-                  <Input type="text" size="large" placeholder="在此输入文章标题"/>
-                )}
-              </FormItem>
-              <FormItem>
-                {getFieldDecorator('post_content', {
-                  initialValue: currentItem.post_content ? converter.makeMarkdown(currentItem.post_content) : '',
-                  rules: [
-                    {max: 20000, message: '最多只能输入20000个字符'},
-                    {required: true, message: '请输入内容'}
-                  ]
-                })(
-                  <SimpleMDE/>
-                )}
-              </FormItem>
-              <FormItem>
-                {getFieldDecorator('post_excerpt', {
-                  initialValue: currentItem.post_excerpt || '',
-                  rules: [
-                    {max: 200, message: '最多只能输入200个字符'}
-                  ]
-                })(
-                  <TextArea rows={4} placeholder="内容简介"/>
-                )}
-              </FormItem>
+              <If condition={[0, 1, 2].includes(formValues.post_type)}>
+                <FormItem>
+                  {getFieldDecorator('post_title', {
+                    initialValue: currentItem.post_title || '',
+                    rules: [
+                      {max: 20, message: '最多只能输入20个字符'},
+                      {required: true, message: '请输入标题'}
+                    ]
+                  })(
+                    <Input type="text" size="large" placeholder="在此输入文章标题"/>
+                  )}
+                </FormItem>
+                <FormItem>
+                  {getFieldDecorator('post_content', {
+                    initialValue: currentItem.post_content ? converter.makeMarkdown(currentItem.post_content) : '',
+                    rules: [
+                      {max: 20000, message: '最多只能输入20000个字符'},
+                      {required: true, message: '请输入内容'}
+                    ]
+                  })(
+                    <SimpleMDE/>
+                  )}
+                </FormItem>
+                <FormItem>
+                  {getFieldDecorator('post_excerpt', {
+                    initialValue: currentItem.post_excerpt || '',
+                    rules: [
+                      {max: 200, message: '最多只能输入200个字符'}
+                    ]
+                  })(
+                    <TextArea rows={4} placeholder="内容简介"/>
+                  )}
+                </FormItem>
+              </If>
+              <If condition={[3].includes(formValues.post_type)}>
+                <FormItem>
+                  {getFieldDecorator('quote_content', {
+                    initialValue: currentItem.quote_content || '',
+                    rules: [
+                      {max: 500, message: '最多只能输入500个字符'},
+                      {required: true, message: '请输入内容'}
+                    ]
+                  })(
+                    <TextArea rows={4} placeholder="请输入话语"/>
+                  )}
+                </FormItem>
+                <FormItem>
+                  {getFieldDecorator('quote_author', {
+                    initialValue: currentItem.quote_author || '',
+                    rules: [
+                      {max: 50, message: '最多只能输入20个字符'},
+                      {required: true, message: '请输入作者名'}
+                    ]
+                  })(
+                    <Input type="text" size="large" placeholder="请输入作者"/>
+                  )}
+                </FormItem>
+              </If>
             </div>
             <div className={styles.sider}>
               <dl className={styles.block}>
@@ -275,7 +301,9 @@ class Post extends PureComponent {
                   <Button type="dashed" icon="plus" onClick={this.handleAddNewCategory}>新建分类</Button>
                 </dd>
               </dl>
-              <PhotoPickerItem {...postCoverProps} />
+              <If condition={[0, 1, 2].includes(formValues.post_type)}>
+                <PhotoPickerItem {...postCoverProps} />
+              </If>
               <If condition={formValues.post_type === 1}>
                 <dl className={styles.block}>
                   <dt className={styles.blockTitle}>电影英文名</dt>

@@ -61,6 +61,10 @@ export const postTypeMap = [
     'text': '画廊',
     'value': 2,
   },
+  {
+    'text': '引用',
+    'value': 3,
+  },
 ]
 
 export const commentStatusMap = [
