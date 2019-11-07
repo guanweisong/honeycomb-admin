@@ -61,7 +61,7 @@ class Tag extends PureComponent {
   handelSearchChange = (value) => {
     this.props.dispatch(
       routerRedux.push({
-        query: { ...this.props.location.query, keyword: value }
+        query: { ...this.props.location.query, page: 1, keyword: value }
       })
     );
   }
