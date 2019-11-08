@@ -252,7 +252,7 @@ class User extends PureComponent {
           />
         </Card>
         <Modal
-          title={this.props.users.modalType ? '修改链接' : '添加新链接'}
+          title={this.props.users.modalType ? '修改用户' : '添加新用户'}
           visible={this.props.users.showModal}
           onOk={this.handleModalOk}
           onCancel={this.handleModalCancel}
