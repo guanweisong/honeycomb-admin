@@ -29,7 +29,7 @@ export default {
         type: 'switchLoading',
         payload: true,
       });
-      const result = yield call(postsService.index, values);
+      const result = yield call(postsService.indexPostList, values);
       yield put({
         type: 'saveListData',
         payload: {
@@ -46,8 +46,8 @@ export default {
       console.log('posts=>model=>detial', values);
       let result;
       if (typeof values._id !== 'undefined') {
-        result = yield call(postsService.index, values);
-        result = result.data.list[0];
+        result = yield call(postsService.indexPostDetail, values);
+        result = result.data;
         yield put({
           type: 'updateDetailAll',
           payload: {

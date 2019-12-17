@@ -1,11 +1,18 @@
 import request from '@/utils/request';
 
-export const index = (params) => {
-  console.log('posts=>service=>index', params);
+export const indexPostList = (params) => {
+  console.log('posts=>service=>indexPostList', params);
   return request({
-    url: '/posts',
+    url: '/posts/list',
     method: 'get',
     params: params,
+  })
+}
+export const indexPostDetail = (params) => {
+  console.log('post=>service=>indexPostDetail');
+  return request({
+    url: `/posts/detail/${params._id}`,
+    method: 'get',
   })
 }
 export const create = (params) => {
