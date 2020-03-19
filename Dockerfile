@@ -18,3 +18,6 @@ RUN yarn run build
 FROM nginx
 # 将dist文件中的内容复制到 /usr/share/nginx/html/ 这个目录下面
 COPY --from=Builder /usr/src/honeycomb-admin/dist  /usr/share/nginx/html
+
+# 覆盖nginx配置
+COPY --from=Builder /usr/src/honeycomb-admin/nginx.conf	/etc/nginx/conf.d/default.conf
