@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Form, Input, Button } from 'antd';
+import { Card, Form, Input, Button, Divider } from 'antd';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -39,6 +39,7 @@ class Setting extends PureComponent {
       <div>
         <Card>
           <Form style={{maxWidth: '600px'}} onSubmit={this.handleSubmit}>
+            <Divider dashed={true} orientation={"left"}>基础信息</Divider>
             <FormItem
               {...formItemLayout}
               label="站点名称"
@@ -96,6 +97,33 @@ class Setting extends PureComponent {
                   rows={3}
                   maxLength={100}
                   placeholder="请填写版权信息"
+                />
+              )}
+            </FormItem>
+            <Divider dashed={true} orientation={"left"}>备案信息</Divider>
+            <FormItem
+              {...formItemLayout}
+              label="备案号"
+              maxLength={100}
+            >
+              {getFieldDecorator('site_record_no', {
+                initialValue: this.props.app.setting.site_record_no || '',
+              })(
+                <Input
+                  placeholder="用填写备案号"
+                />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="工信部网址"
+              maxLength={100}
+            >
+              {getFieldDecorator('site_record_url', {
+                initialValue: this.props.app.setting.site_record_url || '',
+              })(
+                <Input
+                  placeholder="用填写工信部网址，有备案号时显示链接"
                 />
               )}
             </FormItem>
