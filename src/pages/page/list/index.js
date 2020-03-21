@@ -133,6 +133,7 @@ class Page extends PureComponent {
             rowKey={record => record._id}
             dataSource={this.props.pages.list}
             pagination={{
+              showSizeChanger: true,
               total: this.props.pages.total,
               pageSize: this.props.location.query.limit * 1,
               current: this.props.location.query.page * 1,

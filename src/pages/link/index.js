@@ -207,6 +207,7 @@ class Link extends PureComponent {
             rowKey={record => record._id}
             dataSource={this.props.links.list}
             pagination={{
+              showSizeChanger: true,
               total: this.props.links.total,
               pageSize: this.props.location.query.limit * 1,
               current: this.props.location.query.page * 1,

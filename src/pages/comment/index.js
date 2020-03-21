@@ -183,6 +183,7 @@ class Comment extends PureComponent {
             rowKey={record => record._id}
             dataSource={this.props.comments.list}
             pagination={{
+              showSizeChanger: true,
               total: this.props.comments.total,
               pageSize: this.props.location.query.limit * 1,
               current: this.props.location.query.page * 1,
