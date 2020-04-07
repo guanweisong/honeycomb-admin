@@ -1,19 +1,30 @@
-import { message } from 'antd';
-import router from 'umi/router'
-import * as loginService from './service';
+import { message } from 'antd'
+import { history } from 'umi'
+import { createModel } from 'hox'
+import { useState } from 'react'
+import * as loginService from './service'
 
-export default {
-  namespace: 'login',
-  state: {},
-  effects: {
-    * login({ payload: values }, { call, put }) {
-      console.log('login=>model=>login', values);
-      const result = yield call(loginService.login, values);
-      console.log(result);
-      if (result.status === 200) {
-        message.success('登陆成功');
-        router.push('/');
-      }
-    },
-  },
-};
+function UseLogin() {
+  const [loading, setLoading] = useState(false)
+
+  /**
+   * 登录
+   */
+  const login = async ({ targetUrl, ...rest }) => {
+    setLoading(true)
+    const result = await loginService.login(rest)
+    console.log(result)
+    setLoading(false)
+    if (result && result.status === 200) {
+      message.success('登陆成功')
+      history.replace(targetUrl || '/')
+    }
+  }
+
+  return {
+    loading,
+    login,
+  }
+}
+
+export default createModel(UseLogin)

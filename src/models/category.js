@@ -1,30 +1,25 @@
 import { message } from 'antd'
+import * as categoryService from '@/services/category'
 import { createModel } from 'hox'
 import { useState } from 'react'
-import * as tagsService from './service'
 
-function UseTag() {
+function UseCategory() {
   const [list, setList] = useState([])
-  const [total, setTotal] = useState(0)
   const [currentItem, setCurrentItem] = useState({})
   const [showModal, setShowModal] = useState(false)
   const [modalType, setModalType] = useState(0) // 0:增加,1:修改
-  const [loading, setLoading] = useState(false)
 
   const index = async (values) => {
-    console.log('tags=>model=>index', values)
-    setLoading(true)
-    const result = await tagsService.index(values)
+    console.log('category=>model=>index', values)
+    const result = await categoryService.index(values)
     if (result.status === 200) {
-      setList(result.data.list)
-      setTotal(result.data.total)
+      setList(result.data.son)
     }
-    setLoading(false)
   }
 
   const distory = async (id) => {
-    console.log('tags=>model=>distory', id)
-    const result = await tagsService.distory(id)
+    console.log('category=>model=>distory', id)
+    const result = await categoryService.distory(id)
     if (result.status === 204) {
       index()
       message.success('删除成功')
@@ -32,8 +27,8 @@ function UseTag() {
   }
 
   const update = async (id, values) => {
-    console.log('tags=>model=>update', id, values)
-    const result = await tagsService.update(id, values)
+    console.log('category=>model=>update', id, values)
+    const result = await categoryService.update(id, values)
     if (result.status === 201) {
       index()
       message.success('更新成功')
@@ -41,8 +36,8 @@ function UseTag() {
   }
 
   const create = async (values) => {
-    console.log('tags=>model=>create', values)
-    const result = await tagsService.create(values)
+    console.log('category=>model=>create', values)
+    const result = await categoryService.create(values)
     if (result.status === 201) {
       index()
       message.success('添加成功')
@@ -50,9 +45,9 @@ function UseTag() {
   }
 
   const checkExist = async (values) => {
-    console.log('tags=>model=>checkExist', values)
+    console.log('category=>model=>checkExist', values)
     let exist = false
-    const result = await tagsService.index(values)
+    const result = await categoryService.index(values)
     const currentId = currentItem._id
     if (result.data.total > 0 && result.data.list[0]._id !== currentId) {
       exist = true
@@ -62,14 +57,12 @@ function UseTag() {
 
   return {
     list,
-    total,
     currentItem,
     setCurrentItem,
     showModal,
     setShowModal,
     modalType,
     setModalType,
-    loading,
     index,
     distory,
     update,
@@ -78,4 +71,4 @@ function UseTag() {
   }
 }
 
-export default createModel(UseTag)
+export default createModel(UseCategory)

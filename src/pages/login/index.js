@@ -1,98 +1,83 @@
-import React, { PureComponent, Fragment } from 'react';
-import { connect } from 'dva';
-import { Button, Row, Form, Icon, Input } from 'antd';
-import md5 from 'md5';
+import React, { useEffect } from 'react'
+import { Button, Row, Input, Form } from 'antd'
+import md5 from 'md5'
+import { useLocation } from 'umi'
+import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import useLoginModel from './model'
+import styles from './index.less'
 
-import styles from './index.less';
-const FormItem = Form.Item;
+const Login = () => {
+  const location = useLocation()
+  const loginModel = useLoginModel()
+  const [form] = Form.useForm()
 
-const mapStateToProps = (state) => state;
+  let captcha = null
 
-@connect(mapStateToProps)
-@Form.create()
-class Login extends PureComponent {
-  componentDidMount() {
-    this.captcha = new TencentCaptcha('2090829333', (res) => {
+  useEffect(() => {
+    captcha = new TencentCaptcha('2090829333', (res) => {
       if (res.ret === 0) {
-        const values = this.props.form.getFieldsValue();
-        this.props.dispatch({
-          type: 'login/login',
-          payload: {
-            ...values,
-            password: md5(values.password),
-            captcha: {
-              ticket: res.ticket,
-              randstr: res.randstr
-            },
-          }
+        const values = form.getFieldsValue()
+        const { targetUrl } = location.query
+        loginModel.login({
+          ...values,
+          password: md5(values.password),
+          captcha: {
+            ticket: res.ticket,
+            randstr: res.randstr,
+          },
+          targetUrl,
         })
       }
-    });
-  };
-  handleOk = () => {
-    const { form } = this.props;
-    const { validateFieldsAndScroll } = form;
-    validateFieldsAndScroll((errors) => {
-      if (errors) {
-        return
-      }
-      this.captcha.show();
     })
-  };
-  render() {
-    const { loading, form } = this.props;
-    const { getFieldDecorator } = form;
-    return (
-      <Fragment>
-        <div className={styles.form}>
-          <div className={styles.logo}>
-            <span>管理系统</span>
-          </div>
-          <form>
-            <FormItem hasFeedback>
-              {getFieldDecorator('username', {
-                rules: [
-                  {
-                    required: true,
-                  },
-                ],
-              })(
-                <Input
-                  onPressEnter={this.handleOk}
-                  placeholder={`Username`}
-                />
-              )}
-            </FormItem>
-            <FormItem hasFeedback>
-              {getFieldDecorator('password', {
-                rules: [
-                  {
-                    required: true,
-                  },
-                ],
-              })(
-                <Input
-                  type="password"
-                  onPressEnter={this.handleOk}
-                  placeholder={`Password`}
-                />
-              )}
-            </FormItem>
-            <Row>
-              <Button
-                type="primary"
-                onClick={this.handleOk}
-                loading={loading.effects.login}
-              >
-                Sign in
-              </Button>
-              <div className={styles.tips}>访客身份：guest 123456</div>
-            </Row>
-          </form>
-        </div>
-      </Fragment>
-    )
+  }, [])
+
+  const handleOk = () => {
+    form
+      .validateFields()
+      .then(() => {
+        captcha.show()
+      })
+      .catch((errorInfo) => {
+        console.error('errorInfo', errorInfo)
+      })
   }
+
+  return (
+    <div className={styles.form}>
+      <div className={styles.logo}>
+        <span>管理系统</span>
+      </div>
+      <Form onFinish={handleOk} form={form}>
+        <Form.Item
+          name="username"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input prefix={<UserOutlined />} placeholder="Username" />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          type="password"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+        </Form.Item>
+        <Row>
+          <Button type="primary" htmlType="submit" loading={loginModel.loading}>
+            Sign in
+          </Button>
+          <div className={styles.tips}>访客身份：guest 123456</div>
+        </Row>
+      </Form>
+    </div>
+  )
 }
 
-export default Login;
+export default Login

@@ -1,293 +1,228 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
-import { Table, Popconfirm, Card, Form, Row, Col, Input, Radio, Button, Modal } from 'antd';
-import moment from 'moment';
-import { routerRedux } from 'dva/router';
-import { enableStatusMap } from '@/utils/mapping';
+import React, { useEffect } from 'react'
+import { Table, Popconfirm, Card, Row, Col, Input, Radio, Button, Modal, Form } from 'antd'
+import moment from 'moment'
+import { enableStatusMap } from '@/utils/mapping'
+import { useLocation, history } from 'umi'
+import useLinkModel from './model'
 
-const FormItem = Form.Item;
-const Search = Input.Search;
-const mapStateToProps = (state) => state;
+const Link = () => {
+  const linkModel = useLinkModel()
+  const location = useLocation()
+  const [form] = Form.useForm()
 
-@Form.create()
-@connect(mapStateToProps)
-class Link extends PureComponent {
-  constructor(props) {
-    super(props)
-    this.columns = [
-      {
-        title: '链接名称',
-        dataIndex: 'link_name',
-        key: 'link_name',
+  const columns = [
+    {
+      title: '链接名称',
+      dataIndex: 'link_name',
+      key: 'link_name',
+    },
+    {
+      title: 'URL',
+      dataIndex: 'link_url',
+      key: 'link_url',
+    },
+    {
+      title: '状态',
+      dataIndex: 'link_status',
+      key: 'link_status',
+      filters: enableStatusMap,
+      filteredValue: location.query.link_status,
+      render: (text, record) => enableStatusMap.find((item) => item.value === text).tag,
+    },
+    {
+      title: '链接描述',
+      dataIndex: 'link_description',
+      key: 'link_description',
+    },
+    {
+      title: '添加时间',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: '最后更新日期',
+      dataIndex: 'updated_at',
+      key: 'updated_at',
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: '操作',
+      key: 'operation',
+      width: 100,
+      render: (text, record) => (
+        <p>
+          <a onClick={() => handleEditItem(record)}>编辑</a>&nbsp;
+          <Popconfirm title="确定要删除吗？" onConfirm={() => handleDeleteItem(record._id)}>
+            <a>删除</a>
+          </Popconfirm>
+        </p>
+      ),
+    },
+  ]
+
+  useEffect(() => {
+    linkModel.index(location.query)
+  }, [location])
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    console.log(pagination, filters, sorter)
+    history.push({
+      query: {
+        ...location.query,
+        page: pagination.current,
+        limit: pagination.pageSize,
+        ...filters,
       },
-      {
-        title: 'URL',
-        dataIndex: 'link_url',
-        key: 'link_url',
-      },
-      {
-        title: '状态',
-        dataIndex: 'link_status',
-        key: 'link_status',
-        filters: enableStatusMap,
-        filteredValue: props.location.query.link_status,
-        render: (text, record) => (
-          enableStatusMap.find(item => item.value === text).text
-        ),
-      },
-      {
-        title: '链接描述',
-        dataIndex: 'link_description',
-        key: 'link_description',
-      },
-      {
-        title: '添加时间',
-        dataIndex: 'created_at',
-        key: 'created_at',
-        render: (text) => (
-          moment(text).format('YYYY-MM-DD HH:mm:ss')
-        ),
-      },
-      {
-        title: '最后更新日期',
-        dataIndex: 'updated_at',
-        key: 'updated_at',
-        render: (text) => (
-          moment(text).format('YYYY-MM-DD HH:mm:ss')
-        ),
-      },
-      {
-        title: '操作',
-        key: 'operation',
-        width: 100,
-        render: (text, record) => (
-          <p>
-            <a onClick={() => this.handleEditItem(record)}>编辑</a>&nbsp;
-            <Popconfirm title="确定要删除吗？" onConfirm={() => this.handleDeleteItem(record._id)}>
-              <a>删除</a>
-            </Popconfirm>
-          </p>
-        ),
-      }
-    ];
-  }
-  handleTableChange = (pagination, filters, sorter) => {
-    console.log(pagination, filters, sorter);
-    this.props.dispatch(
-      routerRedux.push({
-        query: {...this.props.location.query, page: pagination.current, limit: pagination.pageSize, ...filters}
-      })
-    );
-  }
-  handelSearchChange = (value) => {
-    this.props.dispatch(
-      routerRedux.push({
-        query: { ...this.props.location.query, page: 1, keyword: value }
-      })
-    );
-  }
-  handleModalOk = () => {
-    this.props.form.validateFields((errors) => {
-      if (errors) {
-        return;
-      }
-      const data = this.props.form.getFieldsValue();
-      if (this.props.links.modalType === 0) {
-        this.props.dispatch({
-          type: 'links/create',
-          payload: data,
-        });
-      } else {
-        this.props.dispatch({
-          type: 'links/update',
-          payload: {id: this.props.links.currentItem._id , values: data},
-        });
-      }
-      this.props.dispatch({
-        type: 'links/setModalHide'
-      });
     })
   }
-  handleModalCancel = () => {
-    this.props.dispatch({
-      type: 'links/setModalHide'
-    });
+
+  const handelSearchChange = (value) => {
+    history.push({
+      query: { ...location.query, page: 1, keyword: value },
+    })
   }
-  handleAddNew = () => {
-    this.props.form.resetFields();
-    this.props.dispatch({
-      type: 'links/saveCurrentItem',
-      payload: {},
-    });
-    this.props.dispatch({
-      type: 'links/switchModalType',
-      payload: 0,
-    });
-    this.props.dispatch({
-      type: 'links/setModalShow'
-    });
-  }
-  handleDeleteItem = (id) => {
-    this.props.dispatch({
-      type: 'links/distory',
-      payload: id,
-    });
-  }
-  handleEditItem = (record) => {
-    this.props.form.resetFields();
-    this.props.dispatch({
-      type: 'links/saveCurrentItem',
-      payload: record,
-    });
-    this.props.dispatch({
-      type: 'links/switchModalType',
-      payload: 1,
-    });
-    this.props.dispatch({
-      type: 'links/setModalShow'
-    });
-  }
-  getFormDefaultValue = (stateValue, defaultValue) => {
-    return (typeof stateValue === "undefined" ? defaultValue : stateValue);
-  }
-  validateLinkUrl = (rule, value, callback) => {
-    if (value && value.length > 0) {
-      this.props.dispatch({
-        type: "links/checkExist",
-        payload: {
-          link_url: value
-        }
-      }).then(data => {
-        if ( data ) {
-          callback(new Error('抱歉，URL已存在，请换一个URL'));
+
+  const handleModalOk = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        if (linkModel.modalType === 0) {
+          linkModel.create(values)
         } else {
-          callback();
+          linkModel.update(linkModel.currentItem._id, values)
         }
+        linkModel.setShowModal(false)
       })
-    } else {
-      callback();
+      .catch((e) => {
+        console.error(e)
+      })
+  }
+
+  const handleAddNew = () => {
+    linkModel.setModalType(0)
+    linkModel.setShowModal(true)
+    linkModel.setCurrentItem({})
+    form.resetFields()
+    form.setFieldsValue({ link_status: 1 })
+  }
+
+  const handleDeleteItem = (id) => {
+    linkModel.distory(id)
+  }
+
+  const handleEditItem = (record) => {
+    form.setFieldsValue({ link_status: 1, ...record })
+    linkModel.setCurrentItem(record)
+    linkModel.setModalType(1)
+    linkModel.setShowModal(true)
+  }
+
+  const validateLinkUrl = async (rule, value) => {
+    if (value && value.length > 0) {
+      const result = await linkModel.checkExist({ link_url: value })
+      if (result) {
+        return Promise.reject('抱歉，URL已存在，请换一个URL')
+      }
+      return Promise.resolve()
     }
+    return Promise.resolve()
   }
-  render() {
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 4 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 20 },
-      },
-    };
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <div>
-        <Card>
-          <Form layout="inline" style={{marginBottom: "20px"}}>
-            <Row>
-              <Col span={14}>
-                <FormItem
-                  {...formItemLayout}
-                  label="搜索"
-                >
-                  <Search
-                    defaultValue={this.props.location.query.keyword || ''}
-                    onSearch={this.handelSearchChange}
-                    placeholder="按链接名称或者URL"
-                  />
-                </FormItem>
-              </Col>
-              <Col span={10} style={{textAlign: "right"}}>
-                <Button type="primary" onClick={this.handleAddNew}>添加新链接</Button>
-              </Col>
-            </Row>
-          </Form>
-          <Table
-            columns={this.columns}
-            rowKey={record => record._id}
-            dataSource={this.props.links.list}
-            pagination={{
-              showSizeChanger: true,
-              total: this.props.links.total,
-              pageSize: this.props.location.query.limit * 1,
-              current: this.props.location.query.page * 1,
-            }}
-            loading={this.props.links.loading}
-            onChange={this.handleTableChange}
-          />
-        </Card>
-        <Modal
-          title={this.props.links.modalType ? '修改链接' : '添加新链接'}
-          visible={this.props.links.showModal}
-          onOk={this.handleModalOk}
-          onCancel={this.handleModalCancel}
-        >
-          <Form>
-            <FormItem
-              {...formItemLayout}
-              label="链接名称"
-            >
-              {getFieldDecorator('link_name',{
-                initialValue: this.getFormDefaultValue(this.props.links.currentItem.link_name, ""),
-                rules: [
-                  {required:true, message: '请输入链接名称'},
-                  {max: 20, message: '最多只能输入20个字符'}
-                ]
-              })(
-                <Input />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="链接URL"
-            >
-              {getFieldDecorator('link_url',{
-                initialValue: this.getFormDefaultValue(this.props.links.currentItem.link_url, ""),
-                rules: [
-                  {required:true, message: '请输入链接URL'},
-                  {max: 20, message: '最多只能输入20个字符'},
-                  {type: 'url', message: '请输入正确的链接地址'},
-                  {validator: this.validateLinkUrl},
-                ]
-              })(
-                <Input placeholder="请以http://或者https://开头" autoComplete="off"/>
-              )}
-            </FormItem>
-            <FormItem
-              label="链接描述："
-              {...formItemLayout}
-            >
-              {getFieldDecorator('link_description', {
-                initialValue: this.getFormDefaultValue(this.props.links.currentItem.link_description, ""),
-                rules: [
-                  {required:true, message: '请输入链接描述'},
-                  {max: 20, message: '最多只能输入20个字符'}
-                ]
-              })(
-                <Input type="textarea" rows={3} autoComplete="off"/>
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="状态"
-            >
-              {getFieldDecorator('link_status', {
-                initialValue: this.getFormDefaultValue(this.props.links.currentItem.link_status, 1)
-              })(
-                <Radio.Group
-                  buttonStyle="solid"
-                >
-                  <For each="item" index="index" of={enableStatusMap}>
-                    <Radio.Button value={item.value} key={index}>{item.text}</Radio.Button>
-                  </For>
-                </Radio.Group>
-              )}
-            </FormItem>
-          </Form>
-        </Modal>
-      </div>
-    )
+
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 4 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 20 },
+    },
   }
+
+  return (
+    <div>
+      <Card>
+        <Form layout="inline" style={{ marginBottom: '20px' }}>
+          <Row style={{ width: '100%' }}>
+            <Col span={12}>
+              <Form.Item {...formItemLayout}>
+                <Input.Search
+                  defaultValue={location.query.keyword || ''}
+                  onSearch={handelSearchChange}
+                  placeholder="按链接名称或者URL"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12} style={{ textAlign: 'right' }}>
+              <Button type="primary" onClick={handleAddNew}>
+                添加新链接
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+        <Table
+          columns={columns}
+          rowKey={(record) => record._id}
+          dataSource={linkModel.list}
+          pagination={{
+            showSizeChanger: true,
+            total: linkModel.total,
+            pageSize: parseInt(location.query.limit || 10, 10),
+            current: parseInt(location.query.page || 1, 10),
+          }}
+          loading={linkModel.loading}
+          onChange={handleTableChange}
+        />
+      </Card>
+      <Modal
+        title={linkModel.modalType ? '修改链接' : '添加新链接'}
+        visible={linkModel.showModal}
+        onOk={handleModalOk}
+        onCancel={() => linkModel.setShowModal(false)}
+      >
+        <Form form={form} onFinish={handleModalOk}>
+          <Form.Item
+            {...formItemLayout}
+            name="link_name"
+            label="链接名称"
+            rules={[{ required: true, message: '请输入链接名称' }]}
+          >
+            <Input maxLength={20} />
+          </Form.Item>
+          <Form.Item
+            {...formItemLayout}
+            name="link_url"
+            label="链接URL"
+            rules={[
+              { required: true, message: '请输入链接URL' },
+              { type: 'url', message: '请输入正确的链接地址' },
+              { validator: validateLinkUrl },
+            ]}
+          >
+            <Input placeholder="请以http://或者https://开头" autoComplete="off" maxLength={20} />
+          </Form.Item>
+          <Form.Item
+            {...formItemLayout}
+            name="link_description"
+            label="链接描述："
+            rules={[{ required: true, message: '请输入链接描述' }]}
+          >
+            <Input type="textarea" rows={3} autoComplete="off" maxLength={20} />
+          </Form.Item>
+          <Form.Item {...formItemLayout} name="link_status" label="状态">
+            <Radio.Group buttonStyle="solid">
+              <For each="item" index="index" of={enableStatusMap}>
+                <Radio.Button value={item.value} key={index}>
+                  {item.text}
+                </Radio.Button>
+              </For>
+            </Radio.Group>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  )
 }
 
-export default Link;
+export default Link

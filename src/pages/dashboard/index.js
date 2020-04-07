@@ -1,54 +1,70 @@
-import React, { PureComponent } from 'react';
-import { Row, Col, Card } from 'antd';
-import { connect } from 'dva';
-import ChartItem from './components/chartItem';
-import { postTypeMap, commentStatusMap, userLevelMap } from '@/utils/mapping';
+import React, { useEffect } from 'react'
+import { Row, Col, Card } from 'antd'
+import ChartItem from './components/chartItem'
+import { postTypeMap, commentStatusMap, userLevelMap } from '@/utils/mapping'
+import useStatisticsModel from './model'
 
-const mapStateToProps = (state) => state;
+const Dashboard = () => {
+  const statisticsModel = useStatisticsModel()
 
-@connect(mapStateToProps)
-class Dashboard extends PureComponent {
-  constructor(props){
-    super(props);
-  }
-  getItem = (data = [], mapping) => {
-    return data.map(n => {
-      return { ...n, item: mapping.find(m => m.value === n.item).text }
-    });
-  }
-  getTotal = (data = []) => {
-    let num = 0;
-    data.forEach(item => {
-      num += item.count;
+  useEffect(() => {
+    statisticsModel.index()
+  }, [])
+
+  const getItem = (data = [], mapping) => {
+    return data.map((n) => {
+      return { ...n, item: mapping.find((m) => m.value === n.item).text }
     })
-    return num;
   }
-  render() {
-    return (
-      <Row gutter={24} style={{ height: '100px' }}>
-        <Col span={6} >
-          <Card>
-            <ChartItem data={this.getItem(this.props.statistics.postType, postTypeMap)} title="文章" total={this.getTotal(this.props.statistics.postType)}/>
-          </Card>
-        </Col>
-        <Col span={6} >
-          <Card>
-            <ChartItem data={this.getItem(this.props.statistics.commentStutas, commentStatusMap)} title="评论" total={this.getTotal(this.props.statistics.commentStutas)}/>
-          </Card>
-        </Col>
-        <Col span={6} >
-          <Card>
-            <ChartItem data={this.getItem(this.props.statistics.userType, userLevelMap)} title="用户" total={this.getTotal(this.props.statistics.userType)}/>
-          </Card>
-        </Col>
-        <Col span={6} >
-          <Card>
-            <ChartItem data={this.props.statistics.userPost} title="贡献" total={this.getTotal(this.props.statistics.userPost)}/>
-          </Card>
-        </Col>
-      </Row>
-    )
+
+  const getTotal = (data = []) => {
+    let num = 0
+    data.forEach((item) => {
+      num += item.count
+    })
+    return num
   }
+
+  return (
+    <Row gutter={24}>
+      <Col span={6}>
+        <Card>
+          <ChartItem
+            data={getItem(statisticsModel.statistics.postType, postTypeMap)}
+            title="文章"
+            total={getTotal(statisticsModel.statistics.postType)}
+          />
+        </Card>
+      </Col>
+      <Col span={6}>
+        <Card>
+          <ChartItem
+            data={getItem(statisticsModel.statistics.commentStutas, commentStatusMap)}
+            title="评论"
+            total={getTotal(statisticsModel.statistics.commentStutas)}
+          />
+        </Card>
+      </Col>
+      <Col span={6}>
+        <Card>
+          <ChartItem
+            data={getItem(statisticsModel.statistics.userType, userLevelMap)}
+            title="用户"
+            total={getTotal(statisticsModel.statistics.userType)}
+          />
+        </Card>
+      </Col>
+      <Col span={6}>
+        <Card>
+          <ChartItem
+            data={statisticsModel.statistics.userPost}
+            title="贡献"
+            total={getTotal(statisticsModel.statistics.userPost)}
+          />
+        </Card>
+      </Col>
+    </Row>
+  )
 }
 
-export default Dashboard;
+export default Dashboard

@@ -1,25 +1,28 @@
-import axios from 'axios';
-import { message } from 'antd';
+import axios from 'axios'
+import { message } from 'antd'
 
 const instance = axios.create({
   baseURL: process.env.NODE_ENV === 'development' ? '//127.0.0.1:7001' : '//api.guanweisong.com',
   withCredentials: true,
   timeout: 10000,
   headers: {},
-});
-
-
-instance.interceptors.response.use(res=>{
-  return res;
-}, err => {
-  switch (err.response.status) {
-    case 401:
-    case 403:
-    case 500:
-      message.error(err.response.data.error);
-      break;
-    default: message.error('操作失败，请稍后再试');
-  }
 })
 
-export default instance;
+instance.interceptors.response.use(
+  (res) => {
+    return res
+  },
+  (err) => {
+    switch (err.response.status) {
+      case 401:
+      case 403:
+      case 500:
+        message.error(err.response.data.error)
+        break
+      default:
+        message.error('操作失败，请稍后再试')
+    }
+  },
+)
+
+export default instance

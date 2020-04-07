@@ -1,17 +1,23 @@
-import { message } from 'antd';
-import * as tagsService from './service';
+import { message } from 'antd'
+import { createModel } from 'hox'
+import * as tagsService from './service'
+import useAppModel from '../../models/app'
 
-export default {
-  namespace: 'settings',
-  state: {},
-  effects: {
-    * update({ payload }, { call, put }) {
-      console.log('settings=>model=>update', payload);
-      const result = yield call(tagsService.update, payload);
-      if (result.status === 201) {
-        yield put({ type: 'app/querySetting', payload: {} });
-        message.success('更新成功');
-      }
-    },
-  },
-};
+function UseSettings() {
+  const appModel = useAppModel()
+
+  const update = async (payload) => {
+    console.log('settings=>model=>update', payload)
+    const result = await tagsService.update(payload)
+    if (result.status === 201) {
+      appModel.querySetting(true)
+      message.success('更新成功')
+    }
+  }
+
+  return {
+    update,
+  }
+}
+
+export default createModel(UseSettings)

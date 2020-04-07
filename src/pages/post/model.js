@@ -1,191 +1,156 @@
-import { message } from 'antd';
-import { routerRedux } from 'dva/router';
-import * as postsService from './service';
-import * as tagsService from '../tag/service';
+import { message } from 'antd'
+import { createModel } from 'hox'
+import { useState } from 'react'
+import { history } from 'umi'
+import moment from 'moment'
+import useMediaModel from '@/models/media'
+import * as postsService from './service'
+import * as tagsService from '../tag/service'
 
-export default {
-  namespace: 'posts',
-  state: {
-    list: [],
-    total: null,
-    currentItem: {},
-    showModal: false,
-    modalType: 0, // 0:增加,1:修改
-    loading: false,
-    showPhotoPicker: false,
-    insertPhotoType: '',
-    detail: {
+const showdown = require('showdown')
+
+const converter = new showdown.Converter()
+
+function UsePost() {
+  const mediaModel = useMediaModel()
+
+  const [list, setList] = useState([])
+  const [total, setTotal] = useState(0)
+  const [showModal, setShowModal] = useState(false)
+  const [modalType, setModalType] = useState(0) // 0:增加,1:修改
+  const [loading, setLoading] = useState(false)
+  const [showPhotoPicker, setShowPhotoPicker] = useState('')
+  const [detail, setDetail] = useState({
+    gallery_style: [],
+    movie_director: [],
+    movie_actor: [],
+    movie_style: [],
+    post_cover: {},
+    post_type: 0,
+    post_category: '',
+  })
+
+  const resetDetail = () => {
+    setDetail({
       gallery_style: [],
       movie_director: [],
       movie_actor: [],
       movie_style: [],
       post_cover: {},
-    },
-  },
-  effects: {
-    * index({ payload: values }, { call, put }) {
-      console.log('posts=>model=>index', values);
-      yield put({
-        type: 'switchLoading',
-        payload: true,
-      });
-      const result = yield call(postsService.indexPostList, values);
-      yield put({
-        type: 'saveListData',
-        payload: {
-          list: result.data.list,
-          total: result.data.total,
+      post_type: 0,
+      post_category: '',
+    })
+  }
+
+  const index = async (values) => {
+    console.log('post=>model=>index', values)
+    setLoading(true)
+    const result = await postsService.indexPostList(values)
+    if (result.status === 200) {
+      setList(result.data.list)
+      setTotal(result.data.total)
+    }
+    setLoading(false)
+  }
+
+  const indexDetail = async (values) => {
+    console.log('post=>model=>detial', values)
+    let result
+    if (typeof values._id !== 'undefined') {
+      result = await postsService.indexPostDetail(values)
+      result = result.data
+      if (result.movie_time) {
+        result.movie_time = moment(result.movie_time)
+      }
+      if (result.gallery_time) {
+        result.gallery_time = moment(result.movie_time)
+      }
+      if (result.post_content) {
+        result.post_content = converter.makeMd(result.post_content)
+      }
+      result.post_category = result.post_category ? result.post_category._id : ''
+      result.post_type = result.post_type ? result.post_type : 0
+      result.post_cover = result.post_cover ? result.post_cover : {}
+      setDetail(result)
+    }
+  }
+
+  const distory = async (id) => {
+    console.log('post=>model=>distory', id)
+    const result = await postsService.distory(id)
+    if (result.status === 204) {
+      index()
+      message.success('删除成功')
+    }
+  }
+
+  const update = async (id, values) => {
+    console.log('post=>model=>update', id, values)
+    const result = await postsService.update(id, values)
+    if (result.status === 201) {
+      message.success('更新成功')
+      indexDetail({ _id: id })
+    }
+  }
+
+  const create = async (values) => {
+    console.log('post=>model=>create', values)
+    const result = await postsService.create(values)
+    if (result.status === 201) {
+      message.success('添加成功')
+      history.push({
+        pathname: '/post/edit',
+        query: {
+          _id: result.data._id,
         },
-      });
-      yield put({
-        type: 'switchLoading',
-        payload: false,
-      });
-    },
-    * detail({payload: values }, { call, put}) {
-      console.log('posts=>model=>detial', values);
-      let result;
-      if (typeof values._id !== 'undefined') {
-        result = yield call(postsService.indexPostDetail, values);
-        result = result.data;
-        yield put({
-          type: 'updateDetailAll',
-          payload: {
-            gallery_style: result.gallery_style || [],
-            movie_director: result.movie_director || [],
-            movie_actor: result.movie_actor || [],
-            movie_style: result.movie_style || [],
-            post_cover: result.post_cover || {},
-          },
-        });
-      } else {
-        result = {};
-      }
-      yield put({
-        type: 'saveCurrentItem',
-        payload: result,
-      });
-    },
-    * distory({ payload: id }, { call, put }) {
-      console.log('posts=>model=>distory', id);
-      const result = yield call(postsService.distory, id);
-      if (result.status === 204) {
-        yield put({ type: 'index', payload: {} });
-        message.success('删除成功');
-      }
-    },
-    * update({ payload: { id, values } }, { call, put }) {
-      console.log('posts=>model=>update', id, values);
-      const result = yield call(postsService.update, id, values);
-      if (result.status === 201) {
-        message.success('更新成功');
-        yield put(routerRedux.push({
-          pathname: '/post/edit',
-          query: {
-            _id: id,
-          },
-        }))
-      }
-    },
-    * create({ payload: values }, { call, put }) {
-      console.log('posts=>model=>create', values);
-      const result = yield call(postsService.create, values);
-      if (result.status === 201) {
-        message.success('添加成功');
-        yield put(routerRedux.push({
-          pathname: '/post/edit',
-          query: {
-            _id: result.data._id,
-          },
-        }))
-      }
-    },
-    * createTag ({ payload }, { select, call, put }) {
-      console.log('posts=>model=>createTag', payload);
-      const result = yield call(tagsService.create, { tag_name: payload.tag_name });
-      const tags =  yield select(state => state.posts.detail[payload.name]);
-      if (result.status === 201) {
-        yield put({
-          type: 'updateDetail',
-          payload: {
-            name: payload.name,
-            values: [...tags , {_id: result.data._id, tag_name: result.data.tag_name}],
-          },
-        });
-      }
-    },
-    * addPhoto ({ payload }, { select, call, put }) {
-      const type = yield select(state => state.posts.insertPhotoType);
-      const photoItem =  yield select(state => state.media.currentItem);
-      yield put({
-        type: 'updateDetail',
-        payload: {
-          name: type,
-          values: photoItem
-        }
       })
     }
-  },
-  subscriptions: {
-    setup({ dispatch, history}) {
-      return history.listen(({ pathname }) => {
-        if (pathname === '/post/list') {
-          dispatch({
-            type: 'index',
-            payload: history.location.query,
-          });
-        }
-        if (pathname === '/post/edit') {
-          dispatch({
-            type: 'detail',
-            payload: history.location.query,
-          });
-        }
-      });
-    },
-  },
-  reducers: {
-    saveListData(state, { payload: { list, total } }) {
-      return { ...state, list, total };
-    },
-    saveCurrentItem(state, { payload }) {
-      return { ...state, currentItem: payload };
-    },
-    setModalShow(state) {
-      return { ...state, showModal: true };
-    },
-    setModalHide(state) {
-      return { ...state, showModal: false };
-    },
-    switchModalType(state, { payload }) {
-      return { ...state, modalType: payload };
-    },
-    switchLoading(state, { payload }) {
-      return { ...state, loading: payload };
-    },
-    updateDetail(state, { payload }) {
-      return { ...state, detail: { ...state.detail, [payload.name]: payload.values }}
-    },
-    updateDetailAll(state, { payload }) {
-      return { ...state, detail: payload }
-    },
-    openPhotoPicker(state, { payload }) {
-      return { ...state, showPhotoPicker: true, insertPhotoType: payload }
-    },
-    closePhotoPicker(state, { payload }) {
-      return { ...state, showPhotoPicker: false}
-    },
-    resetDetailState(state) {
-      return {
-        ...state,
-        detail: {
-          gallery_style: [],
-          movie_director: [],
-          movie_actor: [],
-          movie_style: [],
-          post_cover: {},
-        }
-      };
-    },
-  },
-};
+  }
+
+  const createTag = async (name, tag_name) => {
+    console.log('posts=>model=>createTag', name, tag_name)
+    const result = await tagsService.create({ tag_name })
+    if (result && result.status === 201) {
+      setDetail({
+        ...detail,
+        [name]: [...detail[name], { _id: result.data._id, tag_name: result.data.tag_name }],
+      })
+    }
+  }
+
+  const updateTag = (name, tags) => {
+    setDetail({
+      ...detail,
+      [name]: tags,
+    })
+  }
+
+  const addPhoto = () => {
+    setDetail({ ...detail, [showPhotoPicker]: mediaModel.currentItem })
+  }
+
+  return {
+    list,
+    total,
+    showModal,
+    setShowModal,
+    modalType,
+    setModalType,
+    loading,
+    showPhotoPicker,
+    setShowPhotoPicker,
+    detail,
+    setDetail,
+    resetDetail,
+    index,
+    indexDetail,
+    distory,
+    update,
+    create,
+    createTag,
+    updateTag,
+    addPhoto,
+  }
+}
+
+export default createModel(UsePost)

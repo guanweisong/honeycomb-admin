@@ -1,10 +1,10 @@
-import React, { PureComponent } from 'react';
-import Redirect from 'umi/redirect';
+import React, { PureComponent } from 'react'
+import { Redirect } from 'umi'
 
 class Index extends PureComponent {
   render() {
-    return <Redirect to='/dashboard' />
+    return <Redirect to="/dashboard" />
   }
 }
 
-export default Index;
+export default Index

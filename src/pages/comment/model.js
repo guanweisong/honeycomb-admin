@@ -1,78 +1,50 @@
-import { message } from 'antd';
-import * as commentsService from './service';
+import { message } from 'antd'
+import { createModel } from 'hox'
+import { useState } from 'react'
+import * as commentsService from './service'
 
-export default {
-  namespace: 'comments',
-  state: {
-    list: [],
-    total: null,
-    loading: false,
-  },
-  effects: {
-    * index({ payload: values }, { call, put }) {
-      console.log('comments=>model=>index', values);
-      yield put({
-        type: 'switchLoading',
-        payload: true,
-      });
-      const result = yield call(commentsService.index, values);
-      yield put({
-        type: 'saveListData',
-        payload: {
-          list: result.data.list,
-          total: result.data.total,
-        },
-      });
-      yield put({
-        type: 'switchLoading',
-        payload: false,
-      });
-    },
-    * update({ payload: { id, values } }, { call, put }) {
-      console.log('comments=>model=>update', id, values);
-      const result = yield call(commentsService.update, id, values);
-      if (result.status === 201) {
-        yield put({ type: 'index', payload: {} });
-        message.success('更新成功');
-      }
-    },
-    * distory({ payload: id }, { call, put }) {
-      console.log('comments=>model=>distory', id);
-      const result = yield call(commentsService.distory, id);
-      if (result.status === 204) {
-        yield put({ type: 'index', payload: {} });
-        message.success('删除成功');
-      }
-    },
-    * checkExist({ payload: values }, { call, select }) {
-      console.log('comments=>model=>checkExist', values);
-      let exist = false;
-      const result = yield call(commentsService.index, values);
-      const currentId = yield select(state => state.comments.currentItem._id);
-      if (result.data.total > 0 && result.data.list[0]._id !== currentId) {
-        exist = true;
-      }
-      return exist;
-    },
-  },
-  subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen(({ pathname }) => {
-        if (pathname === '/comment') {
-          dispatch({
-            type: 'index',
-            payload: history.location.query,
-          });
-        }
-      });
-    },
-  },
-  reducers: {
-    saveListData(state, { payload: { list, total } }) {
-      return { ...state, list, total };
-    },
-    switchLoading(state, { payload }) {
-      return { ...state, loading: payload };
-    },
-  },
-};
+function UseComment() {
+  const [list, setList] = useState([])
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(false)
+
+  const index = async (values) => {
+    console.log('comments=>model=>index', values)
+    setLoading(true)
+    const result = await commentsService.index(values)
+    if (result.status === 200) {
+      setList(result.data.list)
+      setTotal(result.data.total)
+    }
+    setLoading(false)
+  }
+
+  const update = async (id, values) => {
+    console.log('comments=>model=>update', id, values)
+    const result = await commentsService.update(id, values)
+    if (result.status === 201) {
+      index()
+      message.success('更新成功')
+    }
+  }
+
+  const distory = async (id) => {
+    console.log('comments=>model=>distory', id)
+    const result = await commentsService.distory(id)
+    if (result.status === 204) {
+      index()
+      message.success('删除成功')
+    }
+  }
+
+  return {
+    list,
+    total,
+    loading,
+    index,
+    update,
+    distory,
+  }
+}
+
+export default createModel(UseComment)

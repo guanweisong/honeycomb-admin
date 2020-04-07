@@ -4,45 +4,71 @@
     "start": "umi dev",
     "build": "umi build",
     "test": "umi test",
-    "lint": "eslint --ext .js src mock tests",
     "analyze": "cross-env ANALYZE=1 umi build",
-    "precommit": "lint-staged"
+    "lint": "npm run lint:js && npm run lint:style && npm run lint:prettier",
+    "lint-staged": "lint-staged",
+    "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx ",
+    "lint:fix": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src && npm run lint:style",
+    "lint:js": "eslint --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
+    "lint:prettier": "check-prettier lint",
+    "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
+    "prettier": "prettier -c --write \"**/*\""
   },
   "devDependencies": {
-    "babel-eslint": "^9.0.0",
+    "@umijs/fabric": "^2.0.6",
+    "@umijs/preset-react": "^1.2.2",
+    "babel-eslint": "^10.1.0",
     "babel-plugin-jsx-control-statements": "^4.0.0",
-    "cross-env": "^5.2.0",
-    "eslint": "^5.4.0",
-    "eslint-config-umi": "^0.1.5",
-    "eslint-plugin-flowtype": "^2.50.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "check-prettier": "^1.0.3",
+    "cross-env": "^7.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-jsx-control-statements": "^2.2.1",
-    "eslint-plugin-react": "^7.11.1",
-    "husky": "^0.14.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.2.3",
     "jsx-control-statements": "^3.2.8",
-    "lint-staged": "^7.2.2",
-    "umi": "2.4.2",
-    "umi-plugin-react": "1.4.0"
+    "lint-staged": "^10.0.9",
+    "prettier": "^2.0.2",
+    "stylelint": "^13.2.1",
+    "typescript": "^3.8.3",
+    "umi": "3.0.13"
+
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-staged"
+    }
   },
   "lint-staged": {
-    "*.{js,jsx}": [
-      "eslint --fix",
+    "**/*.less": "stylelint --syntax less",
+    "**/*.{js,jsx,ts,tsx}": "npm run lint-staged:js",
+    "**/*.{js,jsx,tsx,ts,less,md,json}": [
+      "prettier --write",
       "git add"
     ]
   },
+  "checkFiles": [
+    "src/**/*.js*",
+    "src/**/*.ts*",
+    "src/**/*.less"
+  ],
   "engines": {
     "node": ">=8.0.0"
   },
   "dependencies": {
-    "@antv/data-set": "^0.10.1",
-    "axios": "^0.18.0",
+    "@ant-design/compatible": "^1.0.1",
+    "@antv/data-set": "^0.11.1",
+    "axios": "^0.19.2",
     "bizcharts": "^3.4.2",
+    "hox": "^1.0.2",
     "md5": "^2.2.1",
     "moment": "^2.22.2",
+    "react": "^16.13.1",
     "react-copy-to-clipboard": "^5.0.1",
-    "react-router-breadcrumbs-hoc": "^2.3.1",
-    "react-simplemde-editor": "^3.6.21",
-    "showdown": "^1.9.0"
+    "react-router": "^5.1.2",
+    "react-router-breadcrumbs-hoc": "^3.2.7",
+    "react-simplemde-editor": "^4.1.0",
+    "showdown": "^1.9.0",
+    "classnames": "latest"
   }
 }
