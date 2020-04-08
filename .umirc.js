@@ -7,5 +7,6 @@ export default {
   title: '管理系统',
   ignoreMomentLocale: true,
   hash: true,
+  favicon: '/images/favicon.ico',
   extraBabelPlugins: ['jsx-control-statements'],
 }
