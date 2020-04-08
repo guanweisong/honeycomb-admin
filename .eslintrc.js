@@ -7,6 +7,7 @@ module.exports = {
   rules: {
     'prettier/prettier': 'warn',
     'no-underscore-dangle': 'off',
+    'react/jsx-no-undef': 'warn',
   },
   ecmaFeatures: {
     jsx: true,

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Layout, Menu, Button } from 'antd'
 import moment from 'moment'
 import { LogoutOutlined } from '@ant-design/icons'
-import { Link, Redirect, useLocation, history } from 'umi'
-import menuData from '@/utils/menu.js'
+import { Link, useLocation, history } from 'umi'
+import menuData from '@/utils/menu'
 import Breakcrumbs from '@/components/Breakcrumbs'
-import { userLevelMap } from '@/utils/mapping.js'
+import { userLevelMap } from '@/utils/mapping'
 import useAppModel from '../models/app'
 import styles from './index.less'
 
@@ -31,8 +31,27 @@ const BasicLayout = (props) => {
     }
   }, [user._id])
 
+  useEffect(() => {
+    if (location.pathname !== '/login') {
+      appModel.verify()
+    }
+  }, [location.pathname])
+
   if (location.pathname === '/login') {
     return <Layout>{props.children}</Layout>
+  }
+
+  const renderMenuItem = (item) => {
+    return (
+      <If condition={!item.roleAuthority || item.roleAuthority.includes(user.user_level)}>
+        <Menu.Item key={item.key}>
+          <Link to={item.link}>
+            <If condition={item.icon}>{item.icon}</If>
+            {item.label}
+          </Link>
+        </Menu.Item>
+      </If>
+    )
   }
 
   const renderMenu = () => {
@@ -66,19 +85,6 @@ const BasicLayout = (props) => {
           return renderMenuItem(item)
         })}
       </Menu>
-    )
-  }
-
-  const renderMenuItem = (item) => {
-    return (
-      <If condition={!item.roleAuthority || item.roleAuthority.includes(user.user_level)}>
-        <Menu.Item key={item.key}>
-          <Link to={item.link}>
-            <If condition={item.icon}>{item.icon}</If>
-            {item.label}
-          </Link>
-        </Menu.Item>
-      </If>
     )
   }
 
