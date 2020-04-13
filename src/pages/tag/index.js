@@ -9,6 +9,17 @@ const Tag = () => {
   const tagModel = useTagModel()
   const [form] = Form.useForm()
 
+  const handleDeleteItem = (id) => {
+    tagModel.distory(id)
+  }
+
+  const handleEditItem = (record) => {
+    form.setFieldsValue(record)
+    tagModel.setCurrentItem(record)
+    tagModel.setModalType(1)
+    tagModel.setShowModal(true)
+  }
+
   const columns = [
     {
       title: '标签名称',
@@ -91,21 +102,11 @@ const Tag = () => {
     form.resetFields()
   }
 
-  const handleDeleteItem = (id) => {
-    tagModel.distory(id)
-  }
-
-  const handleEditItem = (record) => {
-    form.setFieldsValue(record)
-    tagModel.setCurrentItem(record)
-    tagModel.setModalType(1)
-    tagModel.setShowModal(true)
-  }
-
   const validateTagName = async (rule, value) => {
     if (value && value.length > 0) {
       const result = await tagModel.checkExist({ tag_name: value })
       if (result) {
+        // eslint-disable-next-line prefer-promise-reject-errors
         return Promise.reject('抱歉，标签已存在，请换一个标签')
       }
       return Promise.resolve()
@@ -125,7 +126,7 @@ const Tag = () => {
   }
 
   return (
-    <div>
+    <>
       <Card>
         <Form layout="inline" style={{ marginBottom: '20px' }}>
           <Row style={{ width: '100%' }}>
@@ -176,7 +177,7 @@ const Tag = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </>
   )
 }
 

@@ -141,7 +141,7 @@ const Link = () => {
   }
 
   return (
-    <div>
+    <>
       <Card>
         <Form layout="inline" style={{ marginBottom: '20px' }}>
           <Row style={{ width: '100%' }}>
@@ -221,7 +221,7 @@ const Link = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </>
   )
 }
 

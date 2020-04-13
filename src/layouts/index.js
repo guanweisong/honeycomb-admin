@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Layout, Menu, Button } from 'antd'
+import { Layout, Menu, Button, BackTop } from 'antd'
 import moment from 'moment'
 import { LogoutOutlined } from '@ant-design/icons'
 import { Link, useLocation, history } from 'umi'
@@ -113,7 +113,7 @@ const BasicLayout = (props) => {
           <div className={styles.breadcrumb}>
             <Breakcrumbs />
           </div>
-          <Content className={styles.content} style={{ position: 'relative', zIndex: 600 }}>
+          <Content className={styles.content} style={{ position: 'relative', zIndex: 10 }}>
             {props.children}
           </Content>
           <Footer className={styles.footer}>
@@ -122,6 +122,7 @@ const BasicLayout = (props) => {
               ©{moment().format('YYYY')}&nbsp;{setting.site_copyright}
             </div>
           </Footer>
+          <BackTop />
         </Layout>
       </Content>
     </Layout>

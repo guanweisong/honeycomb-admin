@@ -9,6 +9,10 @@ const Page = () => {
   const location = useLocation()
   const pageModel = usePageModel()
 
+  const handleDeleteItem = (id) => {
+    pageModel.distory(id)
+  }
+
   const columns = [
     {
       title: '文章名称',
@@ -19,7 +23,7 @@ const Page = () => {
       title: '作者',
       dataIndex: 'page_author',
       key: 'page_author',
-      render: (text, record) => text.user_name,
+      render: (text) => text.user_name,
     },
     {
       title: '状态',
@@ -27,7 +31,7 @@ const Page = () => {
       key: 'page_status',
       filters: postStatusMap,
       filteredValue: location.query.page_status,
-      render: (text, record) => postStatusMap.find((item) => item.value === text).text,
+      render: (text) => postStatusMap.find((item) => item.value === text).text,
     },
     {
       title: '发表时间',
@@ -83,10 +87,6 @@ const Page = () => {
     })
   }
 
-  const handleDeleteItem = (id) => {
-    pageModel.distory(id)
-  }
-
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -99,7 +99,7 @@ const Page = () => {
   }
 
   return (
-    <div>
+    <>
       <Card>
         <Form layout="inline" style={{ marginBottom: '20px' }}>
           <Row style={{ width: '100%' }}>
@@ -133,7 +133,7 @@ const Page = () => {
           loading={pageModel.loading}
         />
       </Card>
-    </div>
+    </>
   )
 }
 

@@ -10,6 +10,16 @@ const Category = () => {
   const categoryModel = useCategoryModel()
   const [form] = Form.useForm()
 
+  const handleEditItem = (record) => {
+    categoryModel.setCurrentItem(record)
+    categoryModel.setModalType(1)
+    categoryModel.setShowModal(true)
+  }
+
+  const handleDeleteItem = (id) => {
+    categoryModel.distory(id)
+  }
+
   const columns = [
     {
       title: '分类名称',
@@ -31,7 +41,7 @@ const Category = () => {
       title: '状态',
       dataIndex: 'category_status',
       key: 'category_status',
-      render: (text, record) => enableStatusMap.find((item) => item.value === text).text,
+      render: (text) => enableStatusMap.find((item) => item.value === text).text,
     },
     {
       title: '添加时间',
@@ -70,18 +80,8 @@ const Category = () => {
     categoryModel.setCurrentItem({})
   }
 
-  const handleEditItem = (record) => {
-    categoryModel.setCurrentItem(record)
-    categoryModel.setModalType(1)
-    categoryModel.setShowModal(true)
-  }
-
-  const handleDeleteItem = (id) => {
-    categoryModel.distory(id)
-  }
-
   return (
-    <div>
+    <>
       <Card>
         <Form layout="inline" style={{ marginBottom: '20px', textAlign: 'right' }}>
           <Row style={{ width: '100%' }}>
@@ -102,7 +102,7 @@ const Category = () => {
         />
       </Card>
       <AddCategoryModal form={form} />
-    </div>
+    </>
   )
 }
 

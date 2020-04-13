@@ -27,7 +27,7 @@ const Setting = () => {
   }
 
   return (
-    <div>
+    <>
       <Card>
         <Form
           style={{ maxWidth: '600px' }}
@@ -90,7 +90,7 @@ const Setting = () => {
           </Form.Item>
         </Form>
       </Card>
-    </div>
+    </>
   )
 }
 

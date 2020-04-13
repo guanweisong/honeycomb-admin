@@ -32,7 +32,6 @@
     "stylelint": "^13.2.1",
     "typescript": "^3.8.3",
     "umi": "3.0.13"
-
   },
   "husky": {
     "hooks": {
@@ -60,6 +59,7 @@
     "@antv/data-set": "^0.11.1",
     "axios": "^0.19.2",
     "bizcharts": "^3.4.2",
+    "classnames": "latest",
     "hox": "^1.0.2",
     "md5": "^2.2.1",
     "moment": "^2.22.2",
@@ -68,7 +68,7 @@
     "react-router": "^5.1.2",
     "react-router-breadcrumbs-hoc": "^3.2.7",
     "react-simplemde-editor": "^4.1.0",
-    "showdown": "^1.9.0",
-    "classnames": "latest"
+    "react-sortable-tree": "^2.7.1",
+    "showdown": "^1.9.0"
   }
 }

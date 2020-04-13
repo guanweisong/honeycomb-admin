@@ -9,6 +9,78 @@ const Comment = () => {
   const location = useLocation()
   const commentModel = useCommentModel()
 
+  useEffect(() => {
+    commentModel.index(location.query)
+  }, [location])
+
+  const handleSetStatus = (id, type) => {
+    commentModel.update(id, { comment_status: type })
+  }
+
+  const renderOpt = (record) => {
+    let dom
+    switch (record.comment_status) {
+      case 0:
+        dom = (
+          <p>
+            <Popconfirm title="确定要通过吗？" onConfirm={() => handleSetStatus(record._id, 1)}>
+              <a>通过</a>
+            </Popconfirm>
+            &nbsp;
+            <Popconfirm title="确定要驳回吗？" onConfirm={() => handleSetStatus(record._id, 2)}>
+              <a>驳回</a>
+            </Popconfirm>
+          </p>
+        )
+        break
+      case 1:
+        dom = (
+          <Popconfirm title="确定要屏蔽吗？" onConfirm={() => handleSetStatus(record._id, 3)}>
+            <a>屏蔽</a>
+          </Popconfirm>
+        )
+        break
+      case 2:
+        dom = (
+          <Popconfirm title="确定要通过吗？" onConfirm={() => handleSetStatus(record._id, 1)}>
+            <a>通过</a>
+          </Popconfirm>
+        )
+        break
+      case 3:
+        dom = (
+          <Popconfirm title="确定要解除屏蔽吗？" onConfirm={() => handleSetStatus(record._id, 1)}>
+            <a>解除屏蔽</a>
+          </Popconfirm>
+        )
+        break
+      default:
+    }
+    return dom
+  }
+
+  const handleDelete = (id) => {
+    commentModel.distory(id)
+  }
+
+  const handelSearchChange = (value) => {
+    history.push({
+      query: { ...location.query, page: 1, keyword: value },
+    })
+  }
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    console.log(pagination, filters, sorter)
+    history.push({
+      query: {
+        ...location.query,
+        page: pagination.current,
+        limit: pagination.pageSize,
+        ...filters,
+      },
+    })
+  }
+
   const columns = [
     {
       title: '评论内容',
@@ -19,7 +91,7 @@ const Comment = () => {
       title: '评论文章',
       dataIndex: 'comment_post',
       key: 'comment_post',
-      render: (text, record) => {
+      render: (text) => {
         return text.post_title
       },
     },
@@ -75,78 +147,6 @@ const Comment = () => {
     },
   ]
 
-  useEffect(() => {
-    commentModel.index(location.query)
-  }, [location])
-
-  const renderOpt = (record) => {
-    let dom
-    switch (record.comment_status) {
-      case 0:
-        dom = (
-          <p>
-            <Popconfirm title="确定要通过吗？" onConfirm={() => handleSetStatus(record._id, 1)}>
-              <a>通过</a>
-            </Popconfirm>
-            &nbsp;
-            <Popconfirm title="确定要驳回吗？" onConfirm={() => handleSetStatus(record._id, 2)}>
-              <a>驳回</a>
-            </Popconfirm>
-          </p>
-        )
-        break
-      case 1:
-        dom = (
-          <Popconfirm title="确定要屏蔽吗？" onConfirm={() => handleSetStatus(record._id, 3)}>
-            <a>屏蔽</a>
-          </Popconfirm>
-        )
-        break
-      case 2:
-        dom = (
-          <Popconfirm title="确定要通过吗？" onConfirm={() => handleSetStatus(record._id, 1)}>
-            <a>通过</a>
-          </Popconfirm>
-        )
-        break
-      case 3:
-        dom = (
-          <Popconfirm title="确定要解除屏蔽吗？" onConfirm={() => handleSetStatus(record._id, 1)}>
-            <a>解除屏蔽</a>
-          </Popconfirm>
-        )
-        break
-      default:
-    }
-    return dom
-  }
-
-  const handleSetStatus = (id, type) => {
-    commentModel.update(id, { comment_status: type })
-  }
-
-  const handleDelete = (id) => {
-    commentModel.distory(id)
-  }
-
-  const handelSearchChange = (value) => {
-    history.push({
-      query: { ...location.query, page: 1, keyword: value },
-    })
-  }
-
-  const handleTableChange = (pagination, filters, sorter) => {
-    console.log(pagination, filters, sorter)
-    history.push({
-      query: {
-        ...location.query,
-        page: pagination.current,
-        limit: pagination.pageSize,
-        ...filters,
-      },
-    })
-  }
-
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -159,7 +159,7 @@ const Comment = () => {
   }
 
   return (
-    <div>
+    <>
       <Card>
         <Form layout="inline" style={{ marginBottom: '20px' }}>
           <Row style={{ width: '100%' }}>
@@ -188,7 +188,7 @@ const Comment = () => {
           loading={commentModel.loading}
         />
       </Card>
-    </div>
+    </>
   )
 }
 

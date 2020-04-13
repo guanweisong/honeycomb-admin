@@ -11,6 +11,17 @@ const User = () => {
   const userModel = useuserModel()
   const [form] = Form.useForm()
 
+  const handleDeleteItem = (id) => {
+    userModel.distory(id)
+  }
+
+  const handleEditItem = (record) => {
+    form.setFieldsValue(record)
+    userModel.setCurrentItem(record)
+    userModel.setModalType(1)
+    userModel.setShowModal(true)
+  }
+
   const columns = [
     {
       title: '用户名',
@@ -23,7 +34,7 @@ const User = () => {
       key: 'user_level',
       filters: userLevelMap,
       filteredValue: location.query.userLevelMap,
-      render: (text, record) => {
+      render: (text) => {
         return userLevelMap.find((item) => item.value === text).text
       },
     },
@@ -33,7 +44,7 @@ const User = () => {
       key: 'user_status',
       filters: enableStatusMap,
       filteredValue: location.query.link_status,
-      render: (text, record) => enableStatusMap.find((item) => item.value === text).tag,
+      render: (text) => enableStatusMap.find((item) => item.value === text).tag,
     },
     {
       title: '用户邮箱',
@@ -100,6 +111,7 @@ const User = () => {
     form
       .validateFields()
       .then((values) => {
+        // eslint-disable-next-line no-unused-expressions,no-param-reassign
         values.user_password && (values = { ...values, user_password: md5(values.user_password) })
         if (userModel.modalType === 0) {
           userModel.create(values)
@@ -125,21 +137,11 @@ const User = () => {
     userModel.setShowModal(true)
   }
 
-  const handleDeleteItem = (id) => {
-    userModel.distory(id)
-  }
-
-  const handleEditItem = (record) => {
-    form.setFieldsValue(record)
-    userModel.setCurrentItem(record)
-    userModel.setModalType(1)
-    userModel.setShowModal(true)
-  }
-
   const validateUserName = async (rule, value) => {
     if (value && value.length > 0) {
       const result = await userModel.checkExist({ user_name: value })
       if (result) {
+        // eslint-disable-next-line prefer-promise-reject-errors
         return Promise.reject('抱歉，用户名已存在，请换一个用户名')
       }
       return Promise.resolve()
@@ -151,6 +153,7 @@ const User = () => {
     if (value && value.length > 0) {
       const result = await userModel.checkExist({ user_email: value })
       if (result) {
+        // eslint-disable-next-line prefer-promise-reject-errors
         return Promise.reject('抱歉，用户邮箱已存在，请换一个用户邮箱')
       }
       return Promise.resolve()
@@ -170,7 +173,7 @@ const User = () => {
   }
 
   return (
-    <div>
+    <>
       <Card>
         <Form layout="inline" style={{ marginBottom: '20px' }}>
           <Row style={{ width: '100%' }}>
@@ -194,11 +197,7 @@ const User = () => {
           columns={columns}
           rowKey={(record) => record._id}
           dataSource={userModel.list}
-          rowClassName={(record, index) => {
-            if (record.user_status === -1) {
-              return 'gray'
-            }
-          }}
+          rowClassName={(record) => (record.user_status === -1 ? 'gray' : '')}
           pagination={{
             showSizeChanger: true,
             total: userModel.total,
@@ -270,7 +269,7 @@ const User = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </>
   )
 }
 

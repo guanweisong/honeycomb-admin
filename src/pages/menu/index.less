@@ -1,0 +1,53 @@
+.items {
+  height: calc(100vh - 400px);
+  min-height: 300px;
+  overflow-y: auto;
+  background: #fafafa;
+  .item {
+    padding: 0 10px;
+    line-height: 32px;
+    border-bottom: 1px dashed #e5e5e5;
+    transition: all 0.3s;
+    &:hover {
+      background: #f5f5f5;
+    }
+  }
+}
+
+.menus {
+  height: calc(100vh - 410px);
+  min-height: 300px;
+  margin: 20px 0;
+  padding: 20px 0;
+  background: #fafafa;
+  .menu {
+    padding: 0 10px;
+    line-height: 32px;
+    border: 1px solid #e5e5e5;
+    border-radius: 2px;
+    [role='img'] {
+      margin-right: 10px;
+    }
+  }
+}
+
+:global {
+  .rst__moveHandle,
+  .rst__loadingHandle,
+  .rst__rowContents {
+    box-shadow: none;
+  }
+  .rst__lineBlock,
+  .rst__absoluteLineBlock,
+  .rst__collapseButton,
+  .rst__expandButton,
+  .rst__lineChildren::after {
+    display: none;
+  }
+  .rst__rowWrapper {
+    padding: 5px 10px 5px 0;
+  }
+  .rst__node {
+    left: -20px !important;
+  }
+}

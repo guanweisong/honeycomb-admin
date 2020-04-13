@@ -13,7 +13,7 @@ function UseCategory() {
     console.log('category=>model=>index', values)
     const result = await categoryService.index(values)
     if (result.status === 200) {
-      setList(result.data.son)
+      setList(result.data.list)
     }
   }
 

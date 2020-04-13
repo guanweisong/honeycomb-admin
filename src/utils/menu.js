@@ -8,6 +8,7 @@ import {
   UserOutlined,
   LinkOutlined,
   SettingOutlined,
+  MenuOutlined,
 } from '@ant-design/icons'
 import React from 'react'
 
@@ -59,6 +60,12 @@ export default [
         link: '/page/list',
       },
     ],
+  },
+  {
+    key: 'menu',
+    label: '菜单',
+    icon: <MenuOutlined />,
+    link: '/menu',
   },
   {
     key: 'media',

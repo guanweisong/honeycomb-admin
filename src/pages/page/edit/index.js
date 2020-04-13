@@ -7,10 +7,6 @@ import useAppModel from '@/models/app'
 import styles from './index.less'
 import usePageModel from '../model'
 
-const showdown = require('showdown')
-
-const converter = new showdown.Converter()
-
 const FormItem = Form.Item
 
 const Page = () => {
@@ -36,8 +32,9 @@ const Page = () => {
     form
       .validateFields()
       .then((values) => {
-        values.page_status = status
-        pageModel.update(pageModel.currentItem._id, values)
+        const data = values
+        data.page_status = status
+        pageModel.update(pageModel.currentItem._id, data)
       })
       .catch((e) => {
         console.error(e)
@@ -48,9 +45,10 @@ const Page = () => {
     form
       .validateFields()
       .then((values) => {
-        values.page_status = status
-        values.page_author = appModel.user._id
-        pageModel.create(values)
+        const data = values
+        data.page_status = status
+        data.page_author = appModel.user._id
+        pageModel.create(data)
       })
       .catch((e) => {
         console.error(e)
@@ -78,7 +76,7 @@ const Page = () => {
                 <Choose>
                   <When condition={!!currentItem._id}>
                     <If condition={currentItem.page_status === 0}>
-                      <Button type="primary" onClick={handleUpdate.bind(null, 0)}>
+                      <Button type="primary" onClick={() => handleUpdate.bind(0)}>
                         更新
                       </Button>
                     </If>
@@ -86,22 +84,22 @@ const Page = () => {
                       <Button
                         type="primary"
                         className={styles.rightButton}
-                        onClick={handleUpdate.bind(null, 0)}
+                        onClick={() => handleUpdate.bind(0)}
                       >
                         发布
                       </Button>
-                      <Button onClick={handleUpdate.bind(null, 1)}>保存</Button>
+                      <Button onClick={() => handleUpdate.bind(1)}>保存</Button>
                     </If>
                   </When>
                   <Otherwise>
                     <Button
                       type="primary"
                       className={styles.rightButton}
-                      onClick={handleSubmit.bind(null, 0)}
+                      onClick={() => handleSubmit.bind(0)}
                     >
                       发布
                     </Button>
-                    <Button onClick={handleSubmit.bind(null, 1)}>保存草稿</Button>
+                    <Button onClick={() => handleSubmit(1)}>保存草稿</Button>
                   </Otherwise>
                 </Choose>
               </dd>

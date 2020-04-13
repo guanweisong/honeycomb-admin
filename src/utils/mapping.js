@@ -1,3 +1,4 @@
+import React from 'react'
 import { Tag } from 'antd'
 
 export const userLevelMap = [
@@ -85,3 +86,8 @@ export const commentStatusMap = [
     value: 3,
   },
 ]
+
+export const menuTypeMap = {
+  category: '分类',
+  page: '页面',
+}

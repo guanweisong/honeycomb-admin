@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Table, Popconfirm, Card, Input, Radio, Row, Col, Button } from 'antd'
+import { Table, Popconfirm, Card, Input, Row, Col, Button } from 'antd'
 import { Form } from '@ant-design/compatible'
 import moment from 'moment'
 import { Link, history, useLocation } from 'umi'
@@ -7,11 +7,15 @@ import { postStatusMap, postTypeMap } from '@/utils/mapping'
 import usePostModel from '../model'
 
 const FormItem = Form.Item
-const Search = Input.Search
+const { Search } = Input
 
 const PostList = () => {
   const postModel = usePostModel()
   const location = useLocation()
+
+  const handleDeleteItem = (id) => {
+    postModel.distory(id)
+  }
 
   const columns = [
     {
@@ -28,7 +32,7 @@ const PostList = () => {
       title: '分类',
       dataIndex: 'post_category',
       key: 'post_category',
-      render: (text, record) => (text ? text.category_title : '无'),
+      render: (text) => (text ? text.category_title : '无'),
     },
     {
       title: '类型',
@@ -36,13 +40,13 @@ const PostList = () => {
       key: 'post_type',
       filters: postTypeMap,
       filteredValue: location.query.post_type,
-      render: (text, record) => postTypeMap.find((item) => item.value === text).text,
+      render: (text) => postTypeMap.find((item) => item.value === text).text,
     },
     {
       title: '作者',
       dataIndex: 'post_author',
       key: 'post_author',
-      render: (text, record) => (text ? text.user_name : '无'),
+      render: (text) => (text ? text.user_name : '无'),
     },
     {
       title: '状态',
@@ -50,7 +54,7 @@ const PostList = () => {
       key: 'post_status',
       filters: postStatusMap,
       filteredValue: location.query.post_status,
-      render: (text, record) => postStatusMap.find((item) => item.value === text).text,
+      render: (text) => postStatusMap.find((item) => item.value === text).text,
     },
     {
       title: '发表时间',
@@ -112,10 +116,6 @@ const PostList = () => {
     })
   }
 
-  const handleDeleteItem = (id) => {
-    postModel.distory(id)
-  }
-
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -127,7 +127,7 @@ const PostList = () => {
     },
   }
   return (
-    <div>
+    <>
       <Card>
         <Form layout="inline" style={{ marginBottom: '20px' }}>
           <Row style={{ width: '100%' }}>
@@ -161,7 +161,7 @@ const PostList = () => {
           loading={postModel.loading}
         />
       </Card>
-    </div>
+    </>
   )
 }
 
