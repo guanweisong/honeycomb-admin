@@ -4,6 +4,10 @@ import { createModel } from 'hox'
 import { useState } from 'react'
 import * as pagesService from './service'
 
+const showdown = require('showdown')
+
+const converter = new showdown.Converter()
+
 function UsePage() {
   const [list, setList] = useState([])
   const [total, setTotal] = useState(0)
@@ -15,7 +19,7 @@ function UsePage() {
   const index = async (values) => {
     console.log('pages=>model=>index', values)
     setLoading(true)
-    const result = await pagesService.index(values)
+    const result = await pagesService.indexPageList(values)
     if (result.status === 200) {
       setList(result.data.list)
       setTotal(result.data.total)
@@ -27,9 +31,12 @@ function UsePage() {
     console.log('pages=>model=>detial', values)
     let result
     if (typeof values._id !== 'undefined') {
-      result = await pagesService.index(values)
+      result = await pagesService.indexPageDetail(values)
       // eslint-disable-next-line prefer-destructuring
-      result = result.data.list[0]
+      result = result.data
+      if (result.page_content) {
+        result.page_content = converter.makeMd(result.page_content)
+      }
     } else {
       result = {}
     }

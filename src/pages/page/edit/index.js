@@ -76,7 +76,7 @@ const Page = () => {
                 <Choose>
                   <When condition={!!currentItem._id}>
                     <If condition={currentItem.page_status === 0}>
-                      <Button type="primary" onClick={() => handleUpdate.bind(0)}>
+                      <Button type="primary" onClick={() => handleUpdate(0)}>
                         更新
                       </Button>
                     </If>
@@ -84,11 +84,11 @@ const Page = () => {
                       <Button
                         type="primary"
                         className={styles.rightButton}
-                        onClick={() => handleUpdate.bind(0)}
+                        onClick={() => handleUpdate(0)}
                       >
                         发布
                       </Button>
-                      <Button onClick={() => handleUpdate.bind(1)}>保存</Button>
+                      <Button onClick={() => handleUpdate(1)}>保存</Button>
                     </If>
                   </When>
                   <Otherwise>
