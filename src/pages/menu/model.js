@@ -25,9 +25,9 @@ function UseMenu() {
 
   const updateMenu = async (data) => {
     const result = await menusService.update(data)
-    if (result.status === 201) {
-      indexMenu()
+    if (result.status === 200) {
       message.success('更新成功')
+      indexMenu()
     }
   }
 

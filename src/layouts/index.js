@@ -18,7 +18,6 @@ const BasicLayout = (props) => {
   const { user, setting, logout, querySetting, verify } = appModel
 
   useEffect(() => {
-    querySetting()
     verify()
   }, [])
 
@@ -33,6 +32,7 @@ const BasicLayout = (props) => {
 
   useEffect(() => {
     if (location.pathname !== '/login') {
+      querySetting()
       appModel.verify()
     }
   }, [location.pathname])
