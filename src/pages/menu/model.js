@@ -10,7 +10,7 @@ function UseMenu() {
 
   const indexPage = async () => {
     console.log('pages=>model=>index')
-    const result = await pagesService.index({})
+    const result = await pagesService.indexPageList({})
     if (result.status === 200) {
       setPageList(result.data.list)
     }
