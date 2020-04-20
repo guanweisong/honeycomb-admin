@@ -8764,10 +8764,6 @@ js-tokens@^3.0.2:
   resolved "https://registry.npm.taobao.org/js-tokens/download/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
   integrity sha1-mGbfOVECEw449/mWvOtlRDIJwls=
 
-"js-tree-list@git+https://github.com/guanweisong/js-tree-list.git":
-  version "1.2.4"
-  resolved "git+https://github.com/guanweisong/js-tree-list.git#16bcdfa06bd9b2ca926a09562053d0702af34102"
-
 js-yaml@^3.13.1:
   version "3.13.1"
   resolved "https://registry.npm.taobao.org/js-yaml/download/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
@@ -11473,6 +11469,18 @@ pretty-time@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/pretty-time/download/pretty-time-1.1.0.tgz#ffb7429afabb8535c346a34e41873adf3d74dd0e"
   integrity sha1-/7dCmvq7hTXDRqNOQYc63z103Q4=
+
+primer-markdown@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npm.taobao.org/primer-markdown/download/primer-markdown-4.0.0.tgz#ce4b9004ef0e7295bb3dcacb68fa36af304a51ce"
+  integrity sha1-zkuQBO8OcpW7PcrLaPo2rzBKUc4=
+  dependencies:
+    primer-support "5.0.0"
+
+primer-support@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npm.taobao.org/primer-support/download/primer-support-5.0.0.tgz#d19c7cea59e8783400b9391943c8a2bb2ebddc5e"
+  integrity sha1-0Zx86lnoeDQAuTkZQ8iiuy693F4=
 
 private@^0.1.8:
   version "0.1.8"

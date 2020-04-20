@@ -66,7 +66,7 @@ const Page = () => {
               <Input type="text" size="large" placeholder="在此输入文章标题" />
             </FormItem>
             <FormItem name="page_content">
-              <SimpleMDE />
+              <SimpleMDE className="markdown-body" />
             </FormItem>
           </div>
           <div className={styles.sider}>

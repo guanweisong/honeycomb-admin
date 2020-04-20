@@ -167,7 +167,7 @@ const PostDetail = () => {
                   { required: true, message: '请输入内容' },
                 ]}
               >
-                <SimpleMDE />
+                <SimpleMDE className="markdown-body" />
               </FormItem>
               <FormItem name="post_excerpt">
                 <TextArea rows={4} placeholder="内容简介" maxLength={200} />
