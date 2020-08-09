@@ -71,7 +71,7 @@ const PostDetail = () => {
       if (data.movie_style) {
         data.movie_style = getTagsValue(data.movie_style)
       }
-      if (!data.post_cover._id && [0, 1, 2].includes(data.post_type)) {
+      if ([0, 1, 2].includes(data.post_type) && !data.post_cover._id) {
         message.error('请上传封面')
         return
       }
