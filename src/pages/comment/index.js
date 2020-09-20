@@ -92,7 +92,7 @@ const Comment = () => {
       dataIndex: 'comment_post',
       key: 'comment_post',
       render: (text) => {
-        return text.post_title
+        return text?.post_title
       },
     },
     {
