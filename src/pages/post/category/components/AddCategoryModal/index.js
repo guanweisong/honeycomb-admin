@@ -57,8 +57,6 @@ const AddCategoryModal = () => {
     },
   }
 
-  console.log(1111, categoryModel)
-
   return (
     <Modal
       title={categoryModel.modalType ? '修改分类' : '添加新分类'}

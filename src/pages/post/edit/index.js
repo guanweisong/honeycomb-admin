@@ -36,7 +36,7 @@ const PostDetail = () => {
     return () => {
       postModel.resetDetail()
     }
-  }, [])
+  }, [location.query._id])
 
   useEffect(() => {
     form.setFieldsValue(postModel.detail)
