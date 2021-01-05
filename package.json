@@ -57,7 +57,7 @@
   "dependencies": {
     "@ant-design/compatible": "^1.0.1",
     "@antv/data-set": "^0.11.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bizcharts": "^3.4.2",
     "classnames": "latest",
     "hox": "^1.0.2",
