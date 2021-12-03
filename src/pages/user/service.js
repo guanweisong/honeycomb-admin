@@ -18,11 +18,12 @@ export const create = (params) => {
   })
 }
 
-export const distory = (id) => {
-  console.log('users=>service=>distory', id)
+export const distory = (ids) => {
+  console.log('users=>service=>distory', ids)
   return request({
-    url: `/users/${id}`,
+    url: `/users`,
     method: 'delete',
+    params: {ids}
   })
 }
 

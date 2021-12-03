@@ -88,6 +88,6 @@ export const commentStatusMap = [
 ]
 
 export const menuTypeMap = {
-  category: '分类',
-  page: '页面',
+  0: '分类',
+  1: '页面',
 }

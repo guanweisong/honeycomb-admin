@@ -6,6 +6,12 @@ export const index = (params) => {
     url: '/menus',
     method: 'get',
     params,
+  }).then(result => {
+    if (result.data?.list) {
+      // eslint-disable-next-line no-param-reassign
+      result.data.list = result.data.list.map(item => ({...item, parent: item.parent || '0'}))
+    }
+    return result
   })
 }
 export const update = (params) => {

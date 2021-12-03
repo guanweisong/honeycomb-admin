@@ -2,7 +2,7 @@ import axios from 'axios'
 import { message } from 'antd'
 
 const instance = axios.create({
-  baseURL: process.env.NODE_ENV === 'development' ? '//127.0.0.1:7001' : '//api.guanweisong.com',
+  baseURL: process.env.NODE_ENV === 'development' ? '//127.0.0.1:3000' : '//api.guanweisong.com',
   withCredentials: true,
   timeout: 10000,
   headers: {},
@@ -18,7 +18,7 @@ instance.interceptors.response.use(
         case 401:
         case 403:
         case 500:
-          message.error(err.response.data.error)
+          message.error(err.response.data.message)
           break
         default:
           message.error('系统错误，请稍后再试')

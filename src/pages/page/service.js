@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export const indexPageList = (params) => {
   console.log('pages=>service=>indexPageList', params)
   return request({
-    url: '/pages/list',
+    url: '/pages',
     method: 'get',
     params,
   })
@@ -12,7 +12,7 @@ export const indexPageList = (params) => {
 export const indexPageDetail = (params) => {
   console.log('pages=>service=>indexPageDetail')
   return request({
-    url: `/pages/detail/${params._id}`,
+    url: `/pages/${params._id}`,
     method: 'get',
   })
 }
@@ -20,16 +20,17 @@ export const indexPageDetail = (params) => {
 export const create = (params) => {
   console.log('pages=>service=>create', params)
   return request({
-    url: '/pages/detail',
+    url: '/pages',
     method: 'post',
     data: params,
   })
 }
 
-export const distory = (id) => {
-  console.log('pages=>service=>distory', id)
+export const distory = (ids) => {
+  console.log('pages=>service=>distory', ids)
   return request({
-    url: `/pages/detail/${id}`,
+    url: `/pages`,
+    params: {ids},
     method: 'delete',
   })
 }
@@ -37,7 +38,7 @@ export const distory = (id) => {
 export const update = (id, params) => {
   console.log('pages=>service=>update', id, params)
   return request({
-    url: `/pages/detail/${id}`,
+    url: `/pages/${id}`,
     method: 'patch',
     data: params,
   })

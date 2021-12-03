@@ -22,9 +22,9 @@ function useLink() {
     setLoading(false)
   }
 
-  const distory = async (id) => {
-    console.log('links=>model=>distory', id)
-    const result = await linksService.distory(id)
+  const distory = async (ids) => {
+    console.log('links=>model=>distory', ids)
+    const result = await linksService.distory(ids)
     if (result.status === 204) {
       index()
       message.success('删除成功')

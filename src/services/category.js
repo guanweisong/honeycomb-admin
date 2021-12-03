@@ -5,7 +5,10 @@ export const index = (params) => {
   return request({
     url: '/categories',
     method: 'get',
-    params,
+    params: {
+      limit: 999,
+      ...params,
+    },
   })
 }
 export const create = (params) => {
@@ -16,10 +19,11 @@ export const create = (params) => {
     data: params,
   })
 }
-export const distory = (id) => {
-  console.log('categories=>service=>distory', id)
+export const distory = (ids) => {
+  console.log('categories=>service=>distory', ids)
   return request({
-    url: `/categories/${id}`,
+    url: `/categories`,
+    params: {ids},
     method: 'delete',
   })
 }

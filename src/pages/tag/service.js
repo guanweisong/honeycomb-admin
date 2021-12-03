@@ -16,10 +16,11 @@ export const create = (params) => {
     data: params,
   })
 }
-export const distory = (id) => {
-  console.log('tags=>service=>distory', id)
+export const distory = (ids) => {
+  console.log('tags=>service=>distory', ids)
   return request({
-    url: `/tags/${id}`,
+    url: `/tags`,
+    params: {ids},
     method: 'delete',
   })
 }

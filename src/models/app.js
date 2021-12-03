@@ -5,24 +5,25 @@ import { createModel } from 'hox'
 import { useState } from 'react'
 
 function UseApp() {
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState()
   const [setting, setSetting] = useState({})
 
   const verify = async () => {
     console.log('app=>model=>verify')
-    if (user._id) {
+    if (user?._id) {
       return
     }
-    const result = await appService.verify()
-    if (result && result.status === 200) {
-      setUser(result.data.list[0])
-    }
+    appService.verify().then(result => {
+      setUser(result.data)
+    }).catch(() => {
+      setUser(false)
+    })
   }
 
   const logout = async () => {
     console.log('app=>model=>logout')
     const result = await appService.logout()
-    if (result.status === 204) {
+    if (result.status === 200 && result.data.OK) {
       message.success('登出成功')
       setUser({})
       history.push('/login')
@@ -35,7 +36,7 @@ function UseApp() {
       return
     }
     const result = await appService.setSettingInfo()
-    setSetting(result.data)
+    setSetting(result.data[0])
   }
 
   return {

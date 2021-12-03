@@ -29,6 +29,10 @@ const AddCategoryModal = () => {
     form
       .validateFields()
       .then((values) => {
+        if (values.category_parent === '0') {
+          // eslint-disable-next-line no-param-reassign
+          delete values.category_parent
+        }
         if (categoryModel.modalType === 0) {
           categoryModel.create(values)
         } else {
