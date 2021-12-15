@@ -52,7 +52,7 @@ const Login = () => {
           name="user_name"
           rules={[
             {
-              required: true,
+              required: true, message: "请输入用户名"
             },
           ]}
         >
@@ -63,7 +63,7 @@ const Login = () => {
           type="password"
           rules={[
             {
-              required: true,
+              required: true, message: '请输入密码'
             },
           ]}
         >

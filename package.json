@@ -30,7 +30,8 @@
     "lint-staged": "^10.0.9",
     "prettier": "^2.0.2",
     "stylelint": "^13.2.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "umi": "^3.5.20"
   },
   "lint-staged": {
     "**/*.less": "stylelint --syntax less",
@@ -65,7 +66,6 @@
     "react-router-breadcrumbs-hoc": "^3.2.7",
     "react-simplemde-editor": "^4.1.0",
     "react-sortable-tree": "^2.7.1",
-    "showdown": "^1.9.0",
-    "umi": "^3.5.20"
+    "showdown": "^1.9.0"
   }
 }
