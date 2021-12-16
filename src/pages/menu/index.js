@@ -104,10 +104,10 @@ const Menu = () => {
   const getTreeNodeTitle = (item) => {
     let title = ''
     switch (item.type) {
-      case 'page':
+      case 1:
         title = item.page_title
         break
-      case 'category':
+      case 0:
         title = item.category_title
         break
       default:
@@ -143,17 +143,18 @@ const Menu = () => {
   const submit = () => {
     const data = []
     menuModel.checkedList.forEach((item, index) => {
-      data.push({
+      const menu = {
         _id: item._id,
         type: item.type,
-        parent: item.parent,
         power: index,
-      })
+      }
+      if (item.parent !== '0') {
+        menu.parent = item.parent
+      }
+      data.push(menu)
     })
     menuModel.updateMenu(data)
   }
-
-  console.log(111, menuModel.checkedList)
 
   return (
     <>
@@ -169,8 +170,7 @@ const Menu = () => {
                     <li key={item._id} className={styles.item}>
                       <Checkbox
                         value={item}
-                        style={{ display: 'block' }}
-                        onChange={(e) => onCheck(e, 'category')}
+                        onChange={(e) => onCheck(e, 0)}
                         checked={getCheckedStatus(item)}
                         disabled={getDisabledStatus(item)}
                       >
@@ -186,8 +186,7 @@ const Menu = () => {
                     <li key={item._id} className={styles.item}>
                       <Checkbox
                         value={item}
-                        style={{ display: 'block' }}
-                        onChange={(e) => onCheck(e, 'page')}
+                        onChange={(e) => onCheck(e, 1)}
                         defaultChecked={getCheckedStatus(item)}
                         disabled={getDisabledStatus(item)}
                       >

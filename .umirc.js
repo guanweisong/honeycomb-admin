@@ -1,5 +1,6 @@
 // ref: https://umijs.org/config/
 export default {
+  mfsu: {},
   antd: {},
   dynamicImport: {
     loading: '@/components/Loader',

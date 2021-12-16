@@ -53,7 +53,7 @@ const Link = () => {
       render: (text, record) => (
         <p>
           <a onClick={() => handleEditItem(record)}>编辑</a>&nbsp;
-          <Popconfirm title="确定要删除吗？" onConfirm={() => handleDeleteItem(record._id)}>
+          <Popconfirm title="确定要删除吗？" onConfirm={() => handleDeleteItem([record._id])}>
             <a>删除</a>
           </Popconfirm>
         </p>
@@ -107,8 +107,8 @@ const Link = () => {
     form.setFieldsValue({ link_status: 1 })
   }
 
-  const handleDeleteItem = (id) => {
-    linkModel.distory(id)
+  const handleDeleteItem = (ids) => {
+    linkModel.distory(ids)
   }
 
   const handleEditItem = (record) => {

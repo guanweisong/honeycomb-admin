@@ -31,12 +31,7 @@
     "prettier": "^2.0.2",
     "stylelint": "^13.2.1",
     "typescript": "^3.8.3",
-    "umi": "3.0.13"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint-staged"
-    }
+    "umi": "^3.5.20"
   },
   "lint-staged": {
     "**/*.less": "stylelint --syntax less",
@@ -57,9 +52,10 @@
   "dependencies": {
     "@ant-design/compatible": "^1.0.1",
     "@antv/data-set": "^0.11.1",
+    "antd": "^4.17.1",
     "axios": "^0.19.2",
     "bizcharts": "^3.4.2",
-    "classnames": "latest",
+    "classnames": "^2.3.1",
     "hox": "^1.0.2",
     "md5": "^2.2.1",
     "moment": "^2.22.2",

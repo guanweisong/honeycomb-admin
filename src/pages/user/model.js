@@ -22,9 +22,9 @@ function UseUser() {
     setLoading(false)
   }
 
-  const distory = async (id) => {
-    console.log('users=>model=>distory', id)
-    const result = await usersService.distory(id)
+  const distory = async (ids) => {
+    console.log('users=>model=>distory', ids)
+    const result = await usersService.distory(ids)
     if (result.status === 204) {
       index()
       message.success('删除成功')

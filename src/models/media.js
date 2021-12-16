@@ -4,7 +4,7 @@ import { createModel } from 'hox'
 import { useState } from 'react'
 
 function UseMedia() {
-  const [list, setList] = useState([])
+  const [list, setList] = useState(null)
   const [total, setTotal] = useState(0)
   const [currentItem, setCurrentItem] = useState({})
   const [tab, setTab] = useState('all')

@@ -13,7 +13,6 @@ function UseLogin() {
   const login = async ({ targetUrl, ...rest }) => {
     setLoading(true)
     const result = await loginService.login(rest)
-    console.log(result)
     setLoading(false)
     if (result && result.status === 200) {
       message.success('登陆成功')

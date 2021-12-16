@@ -11,8 +11,8 @@ const User = () => {
   const userModel = useuserModel()
   const [form] = Form.useForm()
 
-  const handleDeleteItem = (id) => {
-    userModel.distory(id)
+  const handleDeleteItem = (ids) => {
+    userModel.distory(ids)
   }
 
   const handleEditItem = (record) => {
@@ -44,7 +44,7 @@ const User = () => {
       key: 'user_status',
       filters: enableStatusMap,
       filteredValue: location.query.link_status,
-      render: (text) => enableStatusMap.find((item) => item.value === text).tag,
+      render: (text) => enableStatusMap.find((item) => item.value === text)?.tag,
     },
     {
       title: '用户邮箱',
@@ -74,7 +74,7 @@ const User = () => {
         <p>
           <a onClick={() => handleEditItem(record)}>编辑</a>&nbsp;
           <If condition={record.user_level !== 1 && record.user_status !== -1}>
-            <Popconfirm title="确定要删除吗？" onConfirm={() => handleDeleteItem(record._id)}>
+            <Popconfirm title="确定要删除吗？" onConfirm={() => handleDeleteItem([record._id])}>
               <a>删除</a>
             </Popconfirm>
           </If>

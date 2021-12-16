@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useLayoutEffect } from 'react'
 import { Layout, Menu, Button, BackTop } from 'antd'
 import moment from 'moment'
 import { LogoutOutlined } from '@ant-design/icons'
@@ -8,6 +8,7 @@ import Breakcrumbs from '@/components/Breakcrumbs'
 import { userLevelMap } from '@/utils/mapping'
 import useAppModel from '../models/app'
 import styles from './index.less'
+import Loader from '../components/Loader'
 
 const { Header, Content, Footer, Sider } = Layout
 const { SubMenu } = Menu
@@ -17,25 +18,29 @@ const BasicLayout = (props) => {
   const appModel = useAppModel()
   const { user, setting, logout, querySetting, verify } = appModel
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     verify()
   }, [])
 
-  useEffect(() => {
-    if (location.pathname !== '/login' && !user._id) {
+  useLayoutEffect(() => {
+    if ((location.pathname !== '/login' && !user?._id)) {
       history.replace(`/login?targetUrl=${encodeURIComponent(location.pathname + location.search)}`)
     }
-    if (location.pathname === '/login' && user._id) {
+    if (location.pathname === '/login' && user?._id) {
       history.replace(location.query.targetUrl)
     }
-  }, [user._id])
+  }, [user])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (location.pathname !== '/login') {
       querySetting()
       appModel.verify()
     }
   }, [location.pathname])
+
+  if (user === undefined) {
+    return <Loader />
+  }
 
   if (location.pathname === '/login') {
     return <Layout>{props.children}</Layout>
@@ -46,7 +51,7 @@ const BasicLayout = (props) => {
       <If condition={!item.roleAuthority || item.roleAuthority.includes(user.user_level)}>
         <Menu.Item key={item.key}>
           <Link to={item.link}>
-            <If condition={item.icon}>{item.icon}</If>
+            <If condition={item.icon}>{item.icon}&nbsp;</If>
             {item.label}
           </Link>
         </Menu.Item>
@@ -71,8 +76,7 @@ const BasicLayout = (props) => {
                 key={item.key}
                 title={
                   <span>
-                    {item.icon}
-                    {item.label}
+                    {item.icon}&nbsp;{item.label}
                   </span>
                 }
               >

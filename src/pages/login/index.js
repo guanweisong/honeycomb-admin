@@ -20,7 +20,7 @@ const Login = () => {
         const { targetUrl } = location.query
         loginModel.login({
           ...values,
-          password: md5(values.password),
+          user_password: md5(values.user_password),
           captcha: {
             ticket: res.ticket,
             randstr: res.randstr,
@@ -49,21 +49,21 @@ const Login = () => {
       </div>
       <Form onFinish={handleOk} form={form}>
         <Form.Item
-          name="username"
+          name="user_name"
           rules={[
             {
-              required: true,
+              required: true, message: "请输入用户名"
             },
           ]}
         >
           <Input prefix={<UserOutlined />} placeholder="Username" />
         </Form.Item>
         <Form.Item
-          name="password"
+          name="user_password"
           type="password"
           rules={[
             {
-              required: true,
+              required: true, message: '请输入密码'
             },
           ]}
         >

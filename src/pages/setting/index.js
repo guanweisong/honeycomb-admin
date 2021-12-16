@@ -11,7 +11,7 @@ const Setting = () => {
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
-      settingsModel.update(values)
+      settingsModel.update(setting._id, values)
     })
   }
 

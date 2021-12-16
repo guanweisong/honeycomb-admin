@@ -5,6 +5,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import moment from 'moment'
 import useMediaModel from '@/models/media'
 import styles from './index.less'
+import Loader from "../../components/Loader";
 
 const { TabPane } = Tabs
 const { Dragger } = Upload
@@ -38,8 +39,12 @@ const Media = () => {
   }
 
   useEffect(() => {
-    mediaModel.index()
+    mediaModel.index({limit: 99999})
   }, [])
+
+  if (mediaModel.list === null) {
+    return <Loader />
+  }
 
   const onEditItem = (item) => {
     mediaModel.setCurrentItem(item)
@@ -73,9 +78,9 @@ const Media = () => {
                         onClick={() => onEditItem(item)}
                       >
                         <Choose>
-                          <When condition={item.media_type.indexOf('image') != -1}>
+                          <When condition={item.media_type.indexOf('image') !== -1}>
                             <img
-                              src={`//${item.media_url_360p || item.media_url}`}
+                              src={`//${item.media_url}?imageMogr2/thumbnail/114x`}
                               className={styles.mediaImage}
                             />
                           </When>

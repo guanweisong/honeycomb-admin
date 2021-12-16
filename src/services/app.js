@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export const verify = () => {
   console.log('app=>service=>verify')
   return request({
-    url: '/access/verify',
+    url: '/auth/verify',
     method: 'post',
   })
 }
@@ -11,7 +11,7 @@ export const verify = () => {
 export const logout = (id) => {
   console.log('app=>service=>logout')
   return request({
-    url: '/access/logout',
+    url: '/auth/logout',
     method: 'post',
     data: {
       id,

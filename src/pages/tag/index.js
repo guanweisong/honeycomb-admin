@@ -9,8 +9,8 @@ const Tag = () => {
   const tagModel = useTagModel()
   const [form] = Form.useForm()
 
-  const handleDeleteItem = (id) => {
-    tagModel.distory(id)
+  const handleDeleteItem = (ids) => {
+    tagModel.distory(ids)
   }
 
   const handleEditItem = (record) => {
@@ -45,7 +45,7 @@ const Tag = () => {
       render: (text, record) => (
         <p>
           <a onClick={() => handleEditItem(record)}>编辑</a>&nbsp;
-          <Popconfirm title="确定要删除吗？" onConfirm={() => handleDeleteItem(record._id)}>
+          <Popconfirm title="确定要删除吗？" onConfirm={() => handleDeleteItem([record._id])}>
             <a>删除</a>
           </Popconfirm>
         </p>

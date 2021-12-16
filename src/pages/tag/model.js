@@ -22,9 +22,9 @@ function UseTag() {
     setLoading(false)
   }
 
-  const distory = async (id) => {
-    console.log('tags=>model=>distory', id)
-    const result = await tagsService.distory(id)
+  const distory = async (ids) => {
+    console.log('tags=>model=>distory', ids)
+    const result = await tagsService.distory(ids)
     if (result.status === 204) {
       index()
       message.success('删除成功')
