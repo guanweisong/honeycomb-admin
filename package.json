@@ -15,21 +15,16 @@
     "prettier": "prettier -c --write \"**/*\""
   },
   "devDependencies": {
+    "@types/md5": "^2.3.1",
+    "@types/react-copy-to-clipboard": "^5.0.2",
+    "@types/react-sortable-tree": "^0.3.14",
     "@umijs/fabric": "^2.0.6",
-    "@umijs/preset-react": "^1.2.2",
-    "babel-eslint": "^10.1.0",
-    "babel-plugin-jsx-control-statements": "^4.0.0",
-    "check-prettier": "^1.0.3",
+    "babel-plugin-import": "^1.13.3",
+    "babel-plugin-jsx-control-statements": "^4.1.2",
     "cross-env": "^7.0.2",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-jsx-control-statements": "^2.2.1",
-    "eslint-plugin-prettier": "^3.1.2",
     "husky": "^4.2.3",
-    "jsx-control-statements": "^3.2.8",
     "lint-staged": "^10.0.9",
-    "prettier": "^2.0.2",
-    "stylelint": "^13.2.1",
+    "tsx-control-statements": "^4.1.1",
     "typescript": "^3.8.3",
     "umi": "^3.5.20"
   },
@@ -57,15 +52,17 @@
     "bizcharts": "^3.4.2",
     "classnames": "^2.3.1",
     "hox": "^1.0.2",
-    "md5": "^2.2.1",
+    "md5": "^2.3.0",
     "moment": "^2.22.2",
     "primer-markdown": "^4.0.0",
+    "query-string": "^7.1.0",
     "react": "^16.13.1",
     "react-copy-to-clipboard": "^5.0.1",
     "react-router": "^5.1.2",
     "react-router-breadcrumbs-hoc": "^3.2.7",
     "react-simplemde-editor": "^4.1.0",
     "react-sortable-tree": "^2.7.1",
-    "showdown": "^1.9.0"
+    "showdown": "^1.9.0",
+    "use-query-params": "^1.2.3"
   }
 }
