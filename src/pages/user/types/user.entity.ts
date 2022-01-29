@@ -1,11 +1,12 @@
 import type { UserLevel } from '@/pages/user/types/UserLevel';
-import type { UserState } from '@/pages/user/types/UserState';
+import type { UserStatus } from '@/pages/user/types/UserState';
+import type { BaseEntity } from '@/types/BaseEntity';
 
-export interface UserEntity {
+export interface UserEntity extends BaseEntity {
   _id: string;
   user_email: string;
   user_level: UserLevel;
   user_name: string;
   user_password: string;
-  user_status: UserState;
+  user_status: UserStatus;
 }

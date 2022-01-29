@@ -1,6 +1,6 @@
-import React from 'react'
-import classNames from 'classnames'
-import styles from './index.less'
+import React from 'react';
+import classNames from 'classnames';
+import styles from './index.less';
 
 const Loader = () => {
   return (
@@ -9,12 +9,12 @@ const Loader = () => {
         [styles.fullScreen]: true,
       })}
     >
-      <div className={styles.warpper}>
+      <div className={styles.wrapper}>
         <div className={styles.inner} />
         <div className={styles.text}>LOADING</div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Loader
+export default Loader;

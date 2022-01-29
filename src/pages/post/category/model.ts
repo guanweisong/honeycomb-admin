@@ -4,12 +4,13 @@ import { createModel } from 'hox';
 import { useState } from 'react';
 import type { CategoryEntity } from '@/pages/post/category/types/category.entity';
 import type { CategoryIndexRequest } from '@/pages/post/category/types/category.index.request';
+import { ModalType } from '@/types/ModalType';
 
 function UseCategory() {
   const [list, setList] = useState<CategoryEntity[]>([]);
   const [currentItem, setCurrentItem] = useState<CategoryEntity>();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [modalType, setModalType] = useState<0 | 1>(0); // 0:增加,1:修改
+  const [modalType, setModalType] = useState<ModalType>(ModalType.ADD);
 
   const index = async (values?: CategoryIndexRequest) => {
     console.log('category=>model=>index', values);
@@ -46,7 +47,7 @@ function UseCategory() {
     }
   };
 
-  const checkExist = async (values) => {
+  const checkExist = async (values: CategoryIndexRequest) => {
     console.log('category=>model=>checkExist', values);
     let exist = false;
     const result = await categoryService.index(values);

@@ -9,6 +9,7 @@ import * as tagsService from '../tag/service';
 import type { CategoryReadOnly, PostEntity } from '@/pages/post/types/post.entity';
 import type { PostIndexRequest } from '@/pages/post/types/post.index.request';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
+import { ModalType } from '@/types/ModalType';
 
 const showdown = require('showdown');
 
@@ -17,10 +18,10 @@ const converter = new showdown.Converter();
 function UsePost() {
   const mediaModel = useMediaModel();
 
-  const [list, setList] = useState<PostEntity[]>([]);
+  const [list, setList] = useState<PostEntity[]>();
   const [total, setTotal] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [modalType, setModalType] = useState(0); // 0:增加,1:修改
+  const [modalType, setModalType] = useState<ModalType>(ModalType.ADD);
   const [loading, setLoading] = useState<boolean>(false);
   const [showPhotoPicker, setShowPhotoPicker] = useState<'post_cover'>();
   const [detail, setDetail] = useState<PostEntity>();

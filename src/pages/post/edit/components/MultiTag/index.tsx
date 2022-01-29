@@ -27,7 +27,7 @@ const MultiTag = (props: MultiTagProps) => {
   const handleClose = (removedTag) => {
     console.log('handleClose', removedTag);
     const tags = getTags().filter((tag) => tag._id !== removedTag);
-    props.onTagsChange(name, tags);
+    onTagsChange(name, tags);
   };
 
   const showInput = () => {
@@ -40,7 +40,7 @@ const MultiTag = (props: MultiTagProps) => {
     if (tags.some((item) => item._id === tag._id)) {
       return;
     }
-    props.onTagsChange(props.name, [...tags, tag]);
+    onTagsChange(props.name, [...tags, tag]);
   };
 
   const handleInputConfirm = (value, option) => {
@@ -49,7 +49,7 @@ const MultiTag = (props: MultiTagProps) => {
     setInputVisible(false);
   };
 
-  const handleBlur = (e) => {
+  const handleBlur = (e: React.MouseEvent<HTMLElement>) => {
     const { value } = e.target;
     console.log('handleBlur', value);
     if (value === '' || value.length === 0) {

@@ -1,10 +1,18 @@
 import React, { useEffect } from 'react';
 import { Card, Col, Form, Input, Popconfirm, Row, Table } from 'antd';
-import { StringParam, NumberParam, useQueryParams, withDefault } from 'use-query-params';
+import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
+import {
+  StringParam,
+  NumberParam,
+  useQueryParams,
+  withDefault,
+  NumericArrayParam,
+} from 'use-query-params';
 import useCommentModel from './model';
 import { commentTableColumns } from './constants/commentTableColumns';
 import { CommentStatus } from '@/pages/comment/types/CommentStatus';
 import type { CommentEntity } from '@/pages/comment/types/comment.entity';
+import { formItemLayout } from '@/constants/formItemLayout';
 
 const Comment = () => {
   const commentModel = useCommentModel();
@@ -13,7 +21,7 @@ const Comment = () => {
     page: withDefault(NumberParam, 1),
     limit: withDefault(NumberParam, 10),
     keyword: StringParam,
-    comment_status: NumberParam,
+    comment_status: NumericArrayParam,
   });
 
   const { comment_status, keyword, limit, page } = query;
@@ -95,7 +103,11 @@ const Comment = () => {
     });
   };
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<any> | SorterResult<any>[],
+  ) => {
     console.log(pagination, filters, sorter);
     setQuery({
       ...query,
@@ -103,17 +115,6 @@ const Comment = () => {
       limit: pagination.pageSize,
       ...filters,
     });
-  };
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
   };
 
   return (
@@ -134,7 +135,7 @@ const Comment = () => {
         </Form>
         <Table
           columns={commentTableColumns({
-            comment_status: comment_status as CommentStatus,
+            comment_status: comment_status as CommentStatus[],
             renderOpt,
             handleDelete,
           })}

@@ -1,13 +1,22 @@
 import React, { useEffect } from 'react';
 import { Table, Card, Row, Col, Input, Radio, Button, Modal, Form } from 'antd';
-import { For } from 'tsx-control-statements/components';
 import md5 from 'md5';
-import { StringParam, NumberParam, useQueryParams, withDefault } from 'use-query-params';
+import {
+  StringParam,
+  NumberParam,
+  useQueryParams,
+  withDefault,
+  NumericArrayParam,
+} from 'use-query-params';
+import type { RuleObject } from 'antd/es/form';
 import useUserModel from './model';
 import type { UserEntity } from '@/pages/user/types/user.entity';
 import { userTableColumns } from '@/pages/user/constants/userTableColumns';
-import { UserState, userStateOptions } from '@/pages/user/types/UserState';
+import { UserStatus, userStatusOptions } from '@/pages/user/types/UserStatus';
 import { UserLevel, userLevelOptions } from '@/pages/user/types/UserLevel';
+import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
+import { ModalType, ModalTypeName } from '@/types/ModalType';
+import { formItemLayout } from '@/constants/formItemLayout';
 
 const User = () => {
   const userModel = useUserModel();
@@ -17,53 +26,87 @@ const User = () => {
     page: withDefault(NumberParam, 1),
     limit: withDefault(NumberParam, 10),
     keyword: StringParam,
-    user_level: NumberParam,
-    user_state: NumberParam,
+    user_level: NumericArrayParam,
+    user_status: NumericArrayParam,
+    sortField: StringParam,
+    sortOrder: StringParam,
   });
 
-  const { keyword, limit, page, user_level, user_state } = query;
+  const { keyword, limit, page, user_level, user_status } = query;
 
+  /**
+   * 删除事件
+   * @param ids
+   */
   const handleDeleteItem = (ids: string[]) => {
     userModel.destroy(ids);
   };
 
+  /**
+   * 编辑事件
+   * @param record
+   */
   const handleEditItem = (record: UserEntity) => {
     form.setFieldsValue(record);
     userModel.setCurrentItem(record);
-    userModel.setModalType(1);
+    userModel.setModalType(ModalType.EDIT);
     userModel.setShowModal(true);
   };
 
+  /**
+   * 初始化查询
+   */
   useEffect(() => {
     userModel.index(query);
   }, [query]);
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  /**
+   * 表格change事件
+   * @param pagination
+   * @param filters
+   * @param sorter
+   */
+  const handleTableChange = (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<any> | SorterResult<any>[],
+  ) => {
+    const { field, order } = sorter as SorterResult<any>;
     console.log(pagination, filters, sorter);
     setQuery({
       ...query,
       page: pagination.current,
       limit: pagination.pageSize,
       ...filters,
-      sortField: sorter.field,
-      sortOrder: sorter.order,
+      sortField: field as string,
+      sortOrder: order,
     });
   };
 
+  /**
+   * 搜索事件
+   * @param value
+   */
   const handleSearchChange = (value: string) => {
     setQuery({ ...query, keyword: value });
   };
 
+  /**
+   * 新增、修改保存事件
+   */
   const handleModalOk = () => {
     form
       .validateFields()
       .then((values) => {
-        // eslint-disable-next-line no-unused-expressions,no-param-reassign
-        values.user_password && (values = { ...values, user_password: md5(values.user_password) });
+        const { user_password, ...rest } = values;
+        const params = rest;
+        if (user_password) {
+          params.user_password = md5(values.user_password);
+        }
         if (userModel.modalType === 0) {
-          userModel.create(values);
+          userModel.create(params);
         } else {
-          userModel.update(userModel.currentItem._id, values);
+          userModel.update(userModel.currentItem?._id as string, params);
         }
         userModel.setShowModal(false);
       })
@@ -72,23 +115,33 @@ const User = () => {
       });
   };
 
+  /**
+   * 新增、修改弹窗关闭事件
+   */
   const handleModalCancel = () => {
     userModel.setShowModal(false);
   };
 
+  /**
+   * 新增事件
+   */
   const handleAddNew = () => {
     form.resetFields();
-    form.setFieldsValue({ user_level: 2, user_status: 1 });
+    form.setFieldsValue({ user_level: UserLevel.EDITOR, user_status: UserStatus.ENABLE });
     userModel.setCurrentItem(undefined);
-    userModel.setModalType(0);
+    userModel.setModalType(ModalType.ADD);
     userModel.setShowModal(true);
   };
 
-  const validateUserName = async (rule, value) => {
+  /**
+   * 校验用户名是否唯一
+   * @param rule
+   * @param value
+   */
+  const validateUserName = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
       const result = await userModel.checkExist({ user_name: value });
       if (result) {
-        // eslint-disable-next-line prefer-promise-reject-errors
         return Promise.reject('抱歉，用户名已存在，请换一个用户名');
       }
       return Promise.resolve();
@@ -96,27 +149,20 @@ const User = () => {
     return Promise.resolve();
   };
 
-  const validateUserEmail = async (rule, value) => {
+  /**
+   * 校验邮箱地址是否唯一
+   * @param rule
+   * @param value
+   */
+  const validateUserEmail = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
       const result = await userModel.checkExist({ user_email: value });
       if (result) {
-        // eslint-disable-next-line prefer-promise-reject-errors
         return Promise.reject('抱歉，用户邮箱已存在，请换一个用户邮箱');
       }
       return Promise.resolve();
     }
     return Promise.resolve();
-  };
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
   };
 
   return (
@@ -142,8 +188,8 @@ const User = () => {
         </Form>
         <Table
           columns={userTableColumns({
-            user_level: user_level as UserLevel,
-            user_state: user_state as UserState,
+            user_level: user_level as UserLevel[],
+            user_status: user_status as UserStatus[],
             handleDeleteItem,
             handleEditItem,
           })}
@@ -161,7 +207,7 @@ const User = () => {
         />
       </Card>
       <Modal
-        title={userModel.modalType ? '修改用户' : '添加新用户'}
+        title={`${ModalTypeName[ModalType[userModel.modalType] as keyof typeof ModalTypeName]}用户`}
         visible={userModel.showModal}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
@@ -179,14 +225,14 @@ const User = () => {
             {...formItemLayout}
             name="user_password"
             label="密码"
-            rules={[{ required: !userModel.modalType, message: '请输入密码' }]}
+            rules={[{ required: userModel.modalType === ModalType.ADD, message: '请输入密码' }]}
           >
             <Input
               autoComplete="off"
               type="password"
               maxLength={20}
               minLength={6}
-              placeholder={userModel.modalType === 1 ? '留空则为不修改' : ''}
+              placeholder={userModel.modalType === ModalType.EDIT ? '留空则为不修改' : ''}
             />
           </Form.Item>
           <Form.Item
@@ -205,31 +251,15 @@ const User = () => {
             <Radio.Group
               buttonStyle="solid"
               disabled={userModel.currentItem?.user_level === UserLevel.ADMIN}
-            >
-              <For
-                of={userLevelOptions}
-                body={(item, index) => (
-                  <Radio.Button value={item.value} key={index}>
-                    {item.label}
-                  </Radio.Button>
-                )}
-              />
-            </Radio.Group>
+              options={userLevelOptions}
+            />
           </Form.Item>
           <Form.Item {...formItemLayout} name="user_status" label="状态">
             <Radio.Group
               buttonStyle="solid"
               disabled={userModel.currentItem?.user_level === UserLevel.ADMIN}
-            >
-              <For
-                of={userStateOptions}
-                body={(item, index) => (
-                  <Radio.Button value={item.value} key={index}>
-                    {item.label}
-                  </Radio.Button>
-                )}
-              />
-            </Radio.Group>
+              options={userStatusOptions}
+            />
           </Form.Item>
         </Form>
       </Modal>

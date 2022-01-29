@@ -1,6 +1,7 @@
 import type { EnableType } from '@/types/EnableType';
 import type { PostStatus } from '@/pages/post/types/PostStatus';
 import type { PostType } from '@/pages/post/types/PostType';
+import type { BaseEntity } from '@/types/BaseEntity';
 
 export interface TagReadOnly {
   _id: string;
@@ -22,7 +23,7 @@ export interface MediaReadOnly {
   media_url: string;
 }
 
-export interface PostEntity {
+export interface PostEntity extends BaseEntity {
   _id: string;
   post_title?: string;
   post_content?: string;

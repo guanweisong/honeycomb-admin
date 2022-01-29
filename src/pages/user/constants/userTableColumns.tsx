@@ -2,16 +2,16 @@ import React from 'react';
 import moment from 'moment';
 import { If } from 'tsx-control-statements/components';
 import { Popconfirm } from 'antd';
-import type { TableProps } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import type { UserEntity } from '@/pages/user/types/user.entity';
-import { UserState, UserStateName, userStateOptions } from '@/pages/user/types/UserState';
+import { UserStatus, UserStatusName, userStatusOptions } from '@/pages/user/types/UserStatus';
 import { UserLevel, UserLevelName, userLevelOptions } from '@/pages/user/types/UserLevel';
 
 export interface userTableColumnsProps {
   handleEditItem: (record: UserEntity) => void;
   handleDeleteItem: (ids: string[]) => void;
-  user_state: UserState;
-  user_level: UserLevel;
+  user_status: UserStatus[];
+  user_level: UserLevel[];
 }
 
 export const userTableColumns = (props: userTableColumnsProps) =>
@@ -27,15 +27,15 @@ export const userTableColumns = (props: userTableColumnsProps) =>
       key: 'user_level',
       filters: userLevelOptions.map((item) => ({ text: item.label, value: item.value })),
       filteredValue: props.user_level,
-      render: (text: UserLevel) => UserLevelName[UserLevel[text] as keyof typeof UserLevelName],
+      render: (text) => UserLevelName[UserLevel[text] as keyof typeof UserLevelName],
     },
     {
       title: '状态',
       dataIndex: 'user_status',
       key: 'user_status',
-      filters: userStateOptions.map((item) => ({ text: item.label, value: item.value })),
-      filteredValue: props.user_state,
-      render: (text: UserState) => UserStateName[UserState[text] as keyof typeof UserStateName],
+      filters: userStatusOptions.map((item) => ({ text: item.label, value: item.value })),
+      filteredValue: props.user_status,
+      render: (text) => UserStatusName[UserStatus[text] as keyof typeof UserStatusName],
     },
     {
       title: '用户邮箱',
@@ -48,20 +48,20 @@ export const userTableColumns = (props: userTableColumnsProps) =>
       key: 'created_at',
       sorter: true,
       defaultSortOrder: 'descend',
-      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '最后更新日期',
       dataIndex: 'updated_at',
       key: 'updated_at',
       sorter: true,
-      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '操作',
       key: 'operation',
       width: 100,
-      render: (text: string, record: UserEntity) => (
+      render: (text, record) => (
         <p>
           <a onClick={() => props.handleEditItem(record)}>编辑</a>&nbsp;
           <If condition={record.user_level !== 1 && record.user_status !== -1}>
@@ -75,4 +75,4 @@ export const userTableColumns = (props: userTableColumnsProps) =>
         </p>
       ),
     },
-  ] as Pick<TableProps<UserEntity>, 'columns'>;
+  ] as ColumnsType<UserEntity>;

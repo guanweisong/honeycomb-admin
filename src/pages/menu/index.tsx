@@ -1,13 +1,22 @@
 import React, { useEffect } from 'react';
-import { Card, Row, Col, Button, Tabs, Checkbox, Typography } from 'antd';
+import { Button, Card, Checkbox, Col, Row, Tabs, Typography } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
+import { Choose, Otherwise, When } from 'tsx-control-statements/components';
 import useMenuModel from './model';
 import useCategoryModel from '@/pages/post/category/model';
 import { creatCategoryTitleByDepth } from '@/utils/help';
-import SortableTree, { getFlatDataFromTree, getTreeFromFlatData } from 'react-sortable-tree';
+import SortableTree, {
+  getFlatDataFromTree,
+  getTreeFromFlatData,
+  TreeItem,
+} from 'react-sortable-tree';
 import { menuTypeMap } from '@/utils/mapping';
 import 'react-sortable-tree/style.css';
 import styles from './index.less';
+import type { MenuEntity } from '@/pages/menu/types/menu.entity';
+import { CategoryEntity } from '@/pages/post/category/types/category.entity';
+import { PageEntity } from '@/pages/page/types/page.entity';
+import { MenuType } from '@/pages/menu/types/MenuType';
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -26,7 +35,7 @@ const Menu = () => {
    * 可选菜单的取消选中事件
    * @param id
    */
-  const removeItem = (id) => {
+  const removeItem = (id: string) => {
     const newArr = [...menuModel.checkedList];
     menuModel.checkedList.forEach((item, index) => {
       if (item._id === id) {
@@ -41,7 +50,7 @@ const Menu = () => {
    * @param e
    * @param type
    */
-  const onCheck = (e, type) => {
+  const onCheck = (e: any, type: MenuType) => {
     if (e.target.checked) {
       menuModel.setCheckedList([
         ...menuModel.checkedList,
@@ -57,7 +66,7 @@ const Menu = () => {
    * @param item
    * @returns {boolean}
    */
-  const getCheckedStatus = (item) => {
+  const getCheckedStatus = (item: CategoryEntity | PageEntity) => {
     let checked = false;
     menuModel.checkedList.forEach((m) => {
       if (m._id === item._id) {
@@ -72,7 +81,7 @@ const Menu = () => {
    * @param item
    * @returns {boolean}
    */
-  const getDisabledStatus = (item) => {
+  const getDisabledStatus = (item: CategoryEntity | PageEntity) => {
     let disabled = false;
     menuModel.checkedList.forEach((m) => {
       if (m.parent === item._id) {
@@ -86,9 +95,10 @@ const Menu = () => {
    * 排序的回调
    * @param treeData
    */
-  const onDragEnd = (treeData) => {
+  const onDragEnd = (treeData: TreeItem[]) => {
     const listData = getFlatDataFromTree({
       treeData,
+      // @ts-ignore
       getNodeKey: (node) => node._id,
     });
     const list = listData.map(({ node, parentNode }) => ({
@@ -96,6 +106,7 @@ const Menu = () => {
       parent: parentNode ? parentNode._id : '0',
       expanded: !!node.children,
     }));
+    // @ts-ignore
     menuModel.setCheckedList(list);
   };
 
@@ -104,14 +115,14 @@ const Menu = () => {
    * @param item
    * @returns {string}
    */
-  const getTreeNodeTitle = (item) => {
+  const getTreeNodeTitle = (item: MenuEntity) => {
     let title = '';
     switch (item.type) {
-      case 1:
-        title = item.page_title;
+      case MenuType.PAGE:
+        title = item.page_title!;
         break;
-      case 0:
-        title = item.category_title;
+      case MenuType.POST:
+        title = item.category_title!;
         break;
       default:
     }
@@ -123,7 +134,7 @@ const Menu = () => {
    * @returns {Object[]}
    */
   const getMenuFormat = () => {
-    const format = [];
+    const format: any[] = [];
     menuModel.checkedList.forEach((item) => {
       format.push({
         ...item,
@@ -144,13 +155,13 @@ const Menu = () => {
    * 保存数据
    */
   const submit = () => {
-    const data = [];
+    const data: MenuEntity[] = [];
     menuModel.checkedList.forEach((item, index) => {
       const menu = {
         _id: item._id,
         type: item.type,
         power: index,
-      };
+      } as MenuEntity;
       if (item.parent !== '0') {
         menu.parent = item.parent;
       }
@@ -173,7 +184,7 @@ const Menu = () => {
                     <li key={item._id} className={styles.item}>
                       <Checkbox
                         value={item}
-                        onChange={(e) => onCheck(e, 0)}
+                        onChange={(e) => onCheck(e, MenuType.POST)}
                         checked={getCheckedStatus(item)}
                         disabled={getDisabledStatus(item)}
                       >
@@ -189,7 +200,7 @@ const Menu = () => {
                     <li key={item._id} className={styles.item}>
                       <Checkbox
                         value={item}
-                        onChange={(e) => onCheck(e, 1)}
+                        onChange={(e) => onCheck(e, MenuType.PAGE)}
                         defaultChecked={getCheckedStatus(item)}
                         disabled={getDisabledStatus(item)}
                       >

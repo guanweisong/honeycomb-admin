@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react';
 import { Table, Card, Row, Col, Input, Button, Modal, Form } from 'antd';
+import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
 import { StringParam, NumberParam, useQueryParams, withDefault } from 'use-query-params';
+import type { RuleObject } from 'antd/es/form';
 import useTagModel from './model';
 import { tagTableColumns } from '@/pages/tag/constants/tagTableColumns';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
+import { ModalType, ModalTypeName } from '@/types/ModalType';
+import { formItemLayout } from '@/constants/formItemLayout';
 
 const Tag = () => {
   const tagModel = useTagModel();
@@ -24,7 +28,7 @@ const Tag = () => {
   const handleEditItem = (record: TagEntity) => {
     form.setFieldsValue(record);
     tagModel.setCurrentItem(record);
-    tagModel.setModalType(1);
+    tagModel.setModalType(ModalType.EDIT);
     tagModel.setShowModal(true);
   };
 
@@ -32,7 +36,11 @@ const Tag = () => {
     tagModel.index(query);
   }, [query]);
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<any> | SorterResult<any>[],
+  ) => {
     console.log(pagination, filters, sorter);
     setQuery({ ...query, page: pagination.current, limit: pagination.pageSize, ...filters });
   };
@@ -45,10 +53,10 @@ const Tag = () => {
     form
       .validateFields()
       .then((values) => {
-        if (tagModel.modalType === 0) {
+        if (tagModel.modalType === ModalType.ADD) {
           tagModel.create(values);
         } else {
-          tagModel.update(tagModel.currentItem._id, values);
+          tagModel.update(tagModel.currentItem?._id as string, values);
         }
         tagModel.setShowModal(false);
       })
@@ -62,13 +70,13 @@ const Tag = () => {
   };
 
   const handleAddNew = () => {
-    tagModel.setModalType(0);
+    tagModel.setModalType(ModalType.ADD);
     tagModel.setShowModal(true);
     tagModel.setCurrentItem(undefined);
     form.resetFields();
   };
 
-  const validateTagName = async (rule, value) => {
+  const validateTagName = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
       const result = await tagModel.checkExist({ tag_name: value });
       if (result) {
@@ -78,17 +86,6 @@ const Tag = () => {
       return Promise.resolve();
     }
     return Promise.resolve();
-  };
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
   };
 
   return (
@@ -127,7 +124,7 @@ const Tag = () => {
         />
       </Card>
       <Modal
-        title={tagModel.modalType ? '修改标签' : '添加新标签'}
+        title={`${ModalTypeName[ModalType[tagModel.modalType] as keyof typeof ModalTypeName]}标签`}
         visible={tagModel.showModal}
         onOk={handleModalOk}
         onCancel={handleModalCancel}

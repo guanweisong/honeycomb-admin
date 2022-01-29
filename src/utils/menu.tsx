@@ -12,6 +12,15 @@ import {
 } from '@ant-design/icons';
 import React from 'react';
 
+export interface MenuItem {
+  key: string;
+  label: string;
+  icon?: React.ReactElement;
+  link: string;
+  roleAuthority?: number[];
+  child?: MenuItem[];
+}
+
 export default [
   {
     key: 'dashboard',
@@ -104,4 +113,4 @@ export default [
     link: '/setting',
     roleAuthority: [1, 3],
   },
-];
+] as MenuItem[];

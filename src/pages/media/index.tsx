@@ -8,6 +8,7 @@ import useMediaModel from './model';
 import styles from './index.less';
 import Loader from '../../components/Loader';
 import type { MediaEntity } from '@/pages/media/types/media.entity';
+import { TabType } from '@/pages/media/types/TabType';
 
 const { TabPane } = Tabs;
 const { Dragger } = Upload;
@@ -30,7 +31,7 @@ const Media = () => {
         mediaModel.setLoading(false);
         if (info.file.status === 'done') {
           message.success(`${info.file.name} 上传成功`);
-          mediaModel.setTab('all');
+          mediaModel.setTab(TabType.ALL);
           mediaModel.setCurrentItem(response);
           mediaModel.index();
         } else {
@@ -48,16 +49,28 @@ const Media = () => {
     return <Loader />;
   }
 
+  /**
+   * 编辑图片
+   * @param item
+   */
   const onEditItem = (item: MediaEntity) => {
     mediaModel.setCurrentItem(item);
   };
 
+  /**
+   * 删除图片
+   * @param ids
+   */
   const onDeleteItem = (ids: string) => {
     mediaModel.destroy([ids]);
   };
 
-  const handleSwitchTab = (value) => {
-    mediaModel.setTab(value);
+  /**
+   * 切换Tab事件
+   * @param value
+   */
+  const handleSwitchTab = (value: string) => {
+    mediaModel.setTab(value as TabType);
   };
 
   const { currentItem } = mediaModel;
@@ -65,7 +78,7 @@ const Media = () => {
   return (
     <Card>
       <Tabs activeKey={mediaModel.tab} onChange={handleSwitchTab}>
-        <TabPane tab="媒体库" key="all">
+        <TabPane tab="媒体库" key={TabType.ALL}>
           <div className={styles.mediaContent}>
             <Choose>
               <When condition={mediaModel.list.length !== 0}>
@@ -120,19 +133,18 @@ const Media = () => {
                           {moment(currentItem?.updated_at).format('YYYY-MM-DD HH:mm:ss')}
                         </div>
                         <div className={styles.mediaDetailSize}>
-                          {Math.ceil(currentItem?.media_size / 1024)} kb
+                          {Math.ceil((currentItem?.media_size as number) / 1024)} kb
                         </div>
                         <div>
                           <Popconfirm
                             title="确定要删除吗？"
-                            onConfirm={() => onDeleteItem(currentItem?._id)}
+                            onConfirm={() => onDeleteItem(currentItem?._id as string)}
                           >
                             <a>永久删除</a>
                           </Popconfirm>
                           <CopyToClipboard
                             text={`//${currentItem?.media_url}`}
                             onCopy={() => message.success('已复制至剪切板')}
-                            style={{ marginTop: '10px' }}
                           >
                             <Button type="primary">
                               <CopyOutlined />
@@ -153,7 +165,7 @@ const Media = () => {
             </Choose>
           </div>
         </TabPane>
-        <TabPane tab="上传文件" key="upload">
+        <TabPane tab="上传文件" key={TabType.UPLOAD}>
           <Spin spinning={mediaModel.loading} tip="正在上传中...">
             <div style={{ height: 400 }}>
               <Dragger {...uploadProps}>

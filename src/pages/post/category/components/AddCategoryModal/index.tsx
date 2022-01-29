@@ -3,6 +3,9 @@ import { Form, Input, Radio, Modal, Select } from 'antd';
 import { For } from 'tsx-control-statements/components';
 import { creatCategoryTitleByDepth } from '@/utils/help';
 import useCategoryModel from '@/pages/post/category/model';
+import { formItemLayout } from '@/constants/formItemLayout';
+import { enableOptions, EnableType } from '@/types/EnableType';
+import { ModalType, ModalTypeName } from '@/types/ModalType';
 
 const { Option } = Select;
 
@@ -14,15 +17,18 @@ const AddCategoryModal = () => {
     form.resetFields();
     form.setFieldsValue({
       category_parent: '0',
-      category_status: 1,
+      category_status: EnableType.ENABLE,
     });
   };
 
   useEffect(() => {
-    if (categoryModel.modalType === 0) {
-      initForm();
-    } else {
-      form.setFieldsValue(categoryModel.currentItem);
+    switch (categoryModel.modalType) {
+      case ModalType.ADD:
+        initForm();
+        break;
+      case ModalType.EDIT:
+        form.setFieldsValue(categoryModel.currentItem);
+        break;
     }
   }, [categoryModel.modalType]);
 
@@ -33,10 +39,13 @@ const AddCategoryModal = () => {
         if (values.category_parent === '0') {
           delete values.category_parent;
         }
-        if (categoryModel.modalType === 0) {
-          categoryModel.create(values);
-        } else {
-          categoryModel.update(categoryModel.currentItem._id, values);
+        switch (categoryModel.modalType) {
+          case ModalType.ADD:
+            categoryModel.create(values);
+            break;
+          case ModalType.EDIT:
+            categoryModel.update(categoryModel.currentItem?._id as string, values);
+            break;
         }
         categoryModel.setShowModal(false);
         initForm();
@@ -50,20 +59,11 @@ const AddCategoryModal = () => {
     categoryModel.setShowModal(false);
   };
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 6 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 18 },
-    },
-  };
-
   return (
     <Modal
-      title={categoryModel.modalType ? '修改分类' : '添加新分类'}
+      title={`${
+        ModalTypeName[ModalType[categoryModel.modalType] as keyof typeof ModalTypeName]
+      }分类`}
       visible={categoryModel.showModal}
       onOk={handleModalOk}
       onCancel={handleModalCancel}
@@ -117,10 +117,7 @@ const AddCategoryModal = () => {
           <Input.TextArea rows={3} autoComplete="off" maxLength={200} />
         </Form.Item>
         <Form.Item {...formItemLayout} name="category_status" label="状态">
-          <Radio.Group buttonStyle="solid">
-            <Radio.Button value={1}>启用</Radio.Button>
-            <Radio.Button value={0}>禁用</Radio.Button>
-          </Radio.Group>
+          <Radio.Group buttonStyle="solid" options={enableOptions} />
         </Form.Item>
       </Form>
     </Modal>

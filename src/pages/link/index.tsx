@@ -1,13 +1,22 @@
 import React, { useEffect } from 'react';
 import { Table, Card, Row, Col, Input, Radio, Button, Modal, Form } from 'antd';
+import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
 import { For } from 'tsx-control-statements/components';
-import { StringParam, NumberParam, useQueryParams, withDefault } from 'use-query-params';
+import type { RuleObject } from 'antd/es/form';
+import {
+  StringParam,
+  NumberParam,
+  useQueryParams,
+  withDefault,
+  NumericArrayParam,
+} from 'use-query-params';
 import useLinkModel from './model';
 import { linkTableColumns } from '@/pages/link/constants/linkTableColumns';
 import type { LinkEntity } from '@/pages/link/types/link.entity';
-import { ModalType } from '@/pages/link/types/ModalType';
+import { ModalType } from '@/types/ModalType';
 import { EnableType } from '@/types/EnableType';
 import { enableOptions } from '@/types/EnableType';
+import { formItemLayout } from '@/constants/formItemLayout';
 
 const Link = () => {
   const linkModel = useLinkModel();
@@ -17,7 +26,7 @@ const Link = () => {
     page: withDefault(NumberParam, 1),
     limit: withDefault(NumberParam, 10),
     keyword: StringParam,
-    link_status: NumberParam,
+    link_status: NumericArrayParam,
   });
 
   const { page, limit, keyword, link_status } = query;
@@ -32,7 +41,11 @@ const Link = () => {
    * @param filters
    * @param sorter
    */
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<any> | SorterResult<any>[],
+  ) => {
     console.log(pagination, filters, sorter);
     setQuery({
       ...query,
@@ -64,7 +77,7 @@ const Link = () => {
         if (linkModel.modalType === ModalType.ADD) {
           linkModel.create(values);
         } else {
-          linkModel.update(linkModel.currentItem?._id, values);
+          linkModel.update(linkModel.currentItem?._id as string, values);
         }
         linkModel.setShowModal(false);
       })
@@ -108,7 +121,7 @@ const Link = () => {
    * @param rule
    * @param value
    */
-  const validateLinkUrl = async (rule, value: string) => {
+  const validateLinkUrl = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
       const result = await linkModel.checkExist({ link_url: value });
       if (result) {
@@ -117,17 +130,6 @@ const Link = () => {
       return Promise.resolve();
     }
     return Promise.resolve();
-  };
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
   };
 
   return (
@@ -152,7 +154,11 @@ const Link = () => {
           </Row>
         </Form>
         <Table
-          columns={linkTableColumns({ handleEditItem, handleDeleteItem, link_status })}
+          columns={linkTableColumns({
+            handleEditItem,
+            handleDeleteItem,
+            link_status: link_status as EnableType[],
+          })}
           rowKey={(record) => record._id}
           dataSource={linkModel.list}
           pagination={{

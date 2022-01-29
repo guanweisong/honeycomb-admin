@@ -1,14 +1,14 @@
 import React from 'react';
 import moment from 'moment';
 import { Popconfirm } from 'antd';
-import type { TableProps } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import type { LinkEntity } from '@/pages/link/types/link.entity';
 import { enableOptions, EnableTypeName, EnableType } from '@/types/EnableType';
 
 export interface LinkTableColumnsProps {
   handleEditItem: (record: LinkEntity) => void;
   handleDeleteItem: (ids: string[]) => void;
-  link_status: string;
+  link_status: EnableType[];
 }
 
 export const linkTableColumns = (props: LinkTableColumnsProps) =>
@@ -61,4 +61,4 @@ export const linkTableColumns = (props: LinkTableColumnsProps) =>
         </p>
       ),
     },
-  ] as Pick<TableProps<LinkEntity & { _id: string }>, 'columns'>;
+  ] as ColumnsType<LinkEntity>;

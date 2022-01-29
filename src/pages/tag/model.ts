@@ -4,13 +4,14 @@ import { useState } from 'react';
 import * as tagsService from './service';
 import type { TagIndexRequest } from '@/pages/tag/types/tag.index.request';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
+import { ModalType } from '@/types/ModalType';
 
 function UseTag() {
   const [list, setList] = useState<TagEntity[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [currentItem, setCurrentItem] = useState<TagEntity>();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [modalType, setModalType] = useState(0); // 0:增加,1:修改
+  const [modalType, setModalType] = useState<ModalType>(ModalType.ADD);
   const [loading, setLoading] = useState<boolean>(false);
 
   const index = async (values?: TagIndexRequest) => {

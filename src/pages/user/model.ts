@@ -4,13 +4,14 @@ import { useState } from 'react';
 import * as usersService from './service';
 import type { UserEntity } from '@/pages/user/types/user.entity';
 import type { UserIndexRequest } from '@/pages/user/types/user.index.request';
+import { ModalType } from '@/types/ModalType';
 
 function UseUser() {
   const [list, setList] = useState<UserEntity[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [currentItem, setCurrentItem] = useState<UserEntity>();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [modalType, setModalType] = useState<0 | 1>(0); // 0:增加,1:修改
+  const [modalType, setModalType] = useState<ModalType>(ModalType.ADD);
   const [loading, setLoading] = useState<boolean>(false);
 
   const index = async (values?: UserIndexRequest) => {

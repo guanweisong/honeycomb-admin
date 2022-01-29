@@ -1,6 +1,6 @@
 import React from 'react';
 import { Popconfirm } from 'antd';
-import type { TableProps } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
 
@@ -20,19 +20,19 @@ export const tagTableColumns = (props: TagTableColumnsProps) =>
       title: '添加时间',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '最后更新日期',
       dataIndex: 'updated_at',
       key: 'updated_at',
-      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '操作',
       key: 'operation',
       width: 100,
-      render: (text: string, record: TagEntity) => (
+      render: (text, record) => (
         <p>
           <a onClick={() => props.handleEditItem(record)}>编辑</a>&nbsp;
           <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDeleteItem([record._id])}>
@@ -41,4 +41,4 @@ export const tagTableColumns = (props: TagTableColumnsProps) =>
         </p>
       ),
     },
-  ] as Pick<TableProps<TagEntity>, 'columns'>;
+  ] as ColumnsType<TagEntity>;

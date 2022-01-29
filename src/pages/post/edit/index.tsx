@@ -19,6 +19,7 @@ import { PostStatus } from '@/pages/post/types/PostStatus';
 import { creatCategoryTitleByDepth } from '@/utils/help';
 import type { PostEntity } from '@/pages/post/types/post.entity';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
+import { ModalType } from '@/types/ModalType';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -156,7 +157,7 @@ const PostDetail = () => {
    * 新增分类弹窗事件
    */
   const handleAddNewCategory = () => {
-    categoryModel.setModalType(0);
+    categoryModel.setModalType(ModalType.ADD);
     categoryModel.setShowModal(true);
   };
 

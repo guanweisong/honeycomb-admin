@@ -4,7 +4,7 @@ import { useState } from 'react';
 import * as linksService from './service';
 import type { LinkEntity } from '@/pages/link/types/link.entity';
 import type { LinkIndexRequest } from '@/pages/link/types/link.index.request';
-import { ModalType } from '@/pages/link/types/ModalType';
+import { ModalType } from '@/types/ModalType';
 
 function useLink() {
   const [list, setList] = useState<LinkEntity[]>([]);

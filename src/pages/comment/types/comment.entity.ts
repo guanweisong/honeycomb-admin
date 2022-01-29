@@ -1,6 +1,7 @@
 import type { CommentStatus } from '@/pages/comment/types/CommentStatus';
+import type { BaseEntity } from '@/types/BaseEntity';
 
-export interface CommentEntity {
+export interface CommentEntity extends BaseEntity {
   _id: string;
   comment_post: string;
   comment_author: string;

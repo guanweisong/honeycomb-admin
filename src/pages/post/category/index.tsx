@@ -4,17 +4,25 @@ import useCategoryModel from '@/pages/post/category/model';
 import AddCategoryModal from './components/AddCategoryModal';
 import type { CategoryEntity } from '@/pages/post/category/types/category.entity';
 import { categoryListTableColumns } from '@/pages/post/category/constans/categoryListTableColumns';
+import { ModalType } from '@/types/ModalType';
 
 const Category = () => {
   const categoryModel = useCategoryModel();
-  const [form] = Form.useForm();
 
+  /**
+   * 编辑事件
+   * @param record
+   */
   const handleEditItem = (record: CategoryEntity) => {
     categoryModel.setCurrentItem(record);
-    categoryModel.setModalType(1);
+    categoryModel.setModalType(ModalType.EDIT);
     categoryModel.setShowModal(true);
   };
 
+  /**
+   * 删除事件
+   * @param ids
+   */
   const handleDeleteItem = (ids: string[]) => {
     categoryModel.destroy(ids);
   };
@@ -23,9 +31,12 @@ const Category = () => {
     categoryModel.index();
   }, []);
 
+  /**
+   * 新增事件
+   */
   const handleAddNew = () => {
     categoryModel.setShowModal(true);
-    categoryModel.setModalType(0);
+    categoryModel.setModalType(ModalType.ADD);
     categoryModel.setCurrentItem(undefined);
   };
 
@@ -50,7 +61,7 @@ const Category = () => {
           pagination={false}
         />
       </Card>
-      <AddCategoryModal form={form} />
+      <AddCategoryModal />
     </>
   );
 };

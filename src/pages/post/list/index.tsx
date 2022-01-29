@@ -1,12 +1,20 @@
 import React, { useEffect } from 'react';
 import { Table, Card, Input, Row, Col, Button } from 'antd';
+import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
 import { Form } from '@ant-design/compatible';
 import { Link } from 'umi';
-import { StringParam, NumberParam, useQueryParams, withDefault } from 'use-query-params';
+import {
+  StringParam,
+  NumberParam,
+  useQueryParams,
+  withDefault,
+  NumericArrayParam,
+} from 'use-query-params';
 import { PostListTableColumns } from './constants/postListTableColumns';
 import usePostModel from '../model';
 import type { PostStatus } from '@/pages/post/types/PostStatus';
 import type { PostType } from '@/pages/post/types/PostType';
+import { formItemLayout } from '@/constants/formItemLayout';
 
 const FormItem = Form.Item;
 const { Search } = Input;
@@ -18,12 +26,18 @@ const PostList = () => {
     page: withDefault(NumberParam, 1),
     limit: withDefault(NumberParam, 10),
     keyword: StringParam,
-    post_type: NumberParam,
-    post_status: NumberParam,
+    post_type: NumericArrayParam,
+    post_status: NumericArrayParam,
+    sortField: StringParam,
+    sortOrder: StringParam,
   });
 
   const { limit, page, post_type, post_status, keyword } = query;
 
+  /**
+   * 删除事件
+   * @param id
+   */
   const handleDeleteItem = (id: string) => {
     postModel.destroy([id]);
   };
@@ -32,18 +46,33 @@ const PostList = () => {
     postModel.index(query);
   }, [query]);
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  /**
+   * 表格change事件
+   * @param pagination
+   * @param filters
+   * @param sorter
+   */
+  const handleTableChange = (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<any> | SorterResult<any>[],
+  ) => {
     console.log(pagination, filters, sorter);
+    const { field, order } = sorter as SorterResult<any>;
     setQuery({
       ...query,
       page: pagination.current,
       limit: pagination.pageSize,
       ...filters,
-      sortField: sorter.field,
-      sortOrder: sorter.order,
+      sortField: field as string,
+      sortOrder: order,
     });
   };
 
+  /**
+   * 搜索事件
+   * @param value
+   */
   const handleSearchChange = (value: string) => {
     setQuery({
       ...query,
@@ -52,16 +81,6 @@ const PostList = () => {
     });
   };
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
-  };
   return (
     <>
       <Card>
@@ -86,8 +105,8 @@ const PostList = () => {
         <Table
           columns={PostListTableColumns({
             handleDeleteItem,
-            post_status: post_status as PostStatus,
-            post_type: post_type as PostType,
+            post_status: post_status as PostStatus[],
+            post_type: post_type as PostType[],
           })}
           rowKey={(record) => record._id}
           dataSource={postModel.list}

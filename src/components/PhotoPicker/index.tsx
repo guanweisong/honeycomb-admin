@@ -4,6 +4,8 @@ import PhotoPickerPanel from '@/pages/media';
 
 export interface PhotoPickerModalProps {
   showPhotoPicker: boolean;
+  handlePhotoPickerOk: (e: React.MouseEvent<HTMLElement>) => void;
+  handlePhotoPickerCancel: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
 const PhotoPickerModal = (props: PhotoPickerModalProps) => {

@@ -1,70 +1,62 @@
-import React, { useEffect } from 'react'
-import { Row, Col, Card } from 'antd'
-import ChartItem from './components/chartItem'
-import { postTypeMap, commentStatusMap, userLevelMap } from '@/utils/mapping'
-import useStatisticsModel from './model'
+import React, { useEffect } from 'react';
+import { Row, Col, Card } from 'antd';
+import ChartItem from './components/chartItem';
+import useStatisticsModel from './model';
+import { PostType, PostTypeName } from '@/pages/post/types/PostType';
+import { CommentStatus, CommentStatusName } from '@/pages/comment/types/CommentStatus';
+import { UserLevel, UserLevelName } from '@/pages/user/types/UserLevel';
 
 const Dashboard = () => {
-  const statisticsModel = useStatisticsModel()
+  const statisticsModel = useStatisticsModel();
 
   useEffect(() => {
-    statisticsModel.index()
-  }, [])
-
-  const getItem = (data = [], mapping) => {
-    return data.map((n) => {
-      return { ...n, item: mapping.find((m) => m.value === n.item).text }
-    })
-  }
-
-  const getTotal = (data = []) => {
-    let num = 0
-    data.forEach((item) => {
-      num += item.count
-    })
-    return num
-  }
+    statisticsModel.index();
+  }, []);
 
   return (
     <Row gutter={24}>
       <Col span={6}>
         <Card>
           <ChartItem
-            data={getItem(statisticsModel.statistics.postType, postTypeMap)}
+            data={statisticsModel.statistics?.postType?.map((n) => ({
+              ...n,
+              item: PostTypeName[PostType[n.item] as keyof typeof PostTypeName] as string,
+            }))}
             title="文章"
-            total={getTotal(statisticsModel.statistics.postType)}
           />
         </Card>
       </Col>
       <Col span={6}>
         <Card>
           <ChartItem
-            data={getItem(statisticsModel.statistics.commentStutas, commentStatusMap)}
+            data={statisticsModel.statistics?.commentStatus?.map((n) => ({
+              ...n,
+              item: CommentStatusName[
+                CommentStatus[n.item] as keyof typeof CommentStatusName
+              ] as string,
+            }))}
             title="评论"
-            total={getTotal(statisticsModel.statistics.commentStutas)}
           />
         </Card>
       </Col>
       <Col span={6}>
         <Card>
           <ChartItem
-            data={getItem(statisticsModel.statistics.userType, userLevelMap)}
+            data={statisticsModel.statistics?.userType?.map((n) => ({
+              ...n,
+              item: UserLevelName[UserLevel[n.item] as keyof typeof UserLevelName] as string,
+            }))}
             title="用户"
-            total={getTotal(statisticsModel.statistics.userType)}
           />
         </Card>
       </Col>
       <Col span={6}>
         <Card>
-          <ChartItem
-            data={statisticsModel.statistics.userPost}
-            title="贡献"
-            total={getTotal(statisticsModel.statistics.userPost)}
-          />
+          <ChartItem data={statisticsModel.statistics?.userPost} title="贡献" />
         </Card>
       </Col>
     </Row>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

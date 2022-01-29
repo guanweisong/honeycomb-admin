@@ -1,61 +1,68 @@
-import React, { useEffect } from 'react'
-import { Card, Input, Button, Form } from 'antd'
-import SimpleMDE from 'react-simplemde-editor'
-import 'easymde/dist/easymde.min.css'
-import { useLocation } from 'umi'
-import useAppModel from '@/models/app'
-import styles from './index.less'
-import usePageModel from '../model'
+import React, { useEffect } from 'react';
+import { Card, Input, Button, Form } from 'antd';
+import { If, When, Otherwise, Choose } from 'tsx-control-statements/components';
+import SimpleMDE from 'react-simplemde-editor';
+import { StringParam, useQueryParams } from 'use-query-params';
+import 'easymde/dist/easymde.min.css';
+import useAppModel from '@/models/app';
+import styles from './index.less';
+import usePageModel from '../model';
+import { PageStatus } from '@/pages/page/types/PageStatus';
 
-const FormItem = Form.Item
+const FormItem = Form.Item;
 
 const Page = () => {
-  const pageModel = usePageModel()
-  const appModel = useAppModel()
-  const [form] = Form.useForm()
-  const location = useLocation()
+  const pageModel = usePageModel();
+  const appModel = useAppModel();
+  const [form] = Form.useForm();
+
+  const [query] = useQueryParams({
+    _id: StringParam,
+  });
+
+  const { _id } = query;
 
   useEffect(() => {
-    if (location.query._id) {
-      pageModel.detail({ _id: location.query._id })
+    if (_id) {
+      pageModel.detail({ _id });
     } else {
-      pageModel.setCurrentItem({})
+      pageModel.setCurrentItem(undefined);
     }
-  }, [location])
+  }, [_id]);
 
   useEffect(() => {
-    form.resetFields()
-    form.setFieldsValue(pageModel.currentItem)
-  }, [pageModel.currentItem])
+    form.resetFields();
+    form.setFieldsValue(pageModel.currentItem);
+  }, [pageModel.currentItem]);
 
-  const handleUpdate = (status) => {
+  const handleUpdate = (status: PageStatus) => {
     form
       .validateFields()
       .then((values) => {
-        const data = values
-        data.page_status = status
-        pageModel.update(pageModel.currentItem._id, data)
+        const data = values;
+        data.page_status = status;
+        pageModel.update(pageModel.currentItem?._id as string, data);
       })
       .catch((e) => {
-        console.error(e)
-      })
-  }
+        console.error(e);
+      });
+  };
 
-  const handleSubmit = (status) => {
+  const handleSubmit = (status: PageStatus) => {
     form
       .validateFields()
       .then((values) => {
-        const data = values
-        data.page_status = status
-        data.page_author = appModel.user._id
-        pageModel.create(data)
+        const data = values;
+        data.page_status = status;
+        data.page_author = appModel.user?._id;
+        pageModel.create(data);
       })
       .catch((e) => {
-        console.error(e)
-      })
-  }
+        console.error(e);
+      });
+  };
 
-  const { currentItem } = pageModel
+  const { currentItem } = pageModel;
 
   return (
     <Card>
@@ -74,32 +81,32 @@ const Page = () => {
               <dt className={styles.blockTitle}>发布</dt>
               <dd className={styles.blockContent}>
                 <Choose>
-                  <When condition={!!currentItem._id}>
-                    <If condition={currentItem.page_status === 0}>
+                  <When condition={currentItem?._id}>
+                    <If condition={currentItem!.page_status === PageStatus.PUBLISHED}>
                       <Button type="primary" onClick={() => handleUpdate(0)}>
                         更新
                       </Button>
                     </If>
-                    <If condition={currentItem.page_status === 1}>
+                    <If condition={currentItem!.page_status === PageStatus.DRAFT}>
                       <Button
                         type="primary"
                         className={styles.rightButton}
-                        onClick={() => handleUpdate(0)}
+                        onClick={() => handleUpdate(PageStatus.PUBLISHED)}
                       >
                         发布
                       </Button>
-                      <Button onClick={() => handleUpdate(1)}>保存</Button>
+                      <Button onClick={() => handleUpdate(PageStatus.DRAFT)}>保存</Button>
                     </If>
                   </When>
                   <Otherwise>
                     <Button
                       type="primary"
                       className={styles.rightButton}
-                      onClick={() => handleSubmit.bind(0)}
+                      onClick={() => handleSubmit.bind(PageStatus.PUBLISHED)}
                     >
                       发布
                     </Button>
-                    <Button onClick={() => handleSubmit(1)}>保存草稿</Button>
+                    <Button onClick={() => handleSubmit(PageStatus.DRAFT)}>保存草稿</Button>
                   </Otherwise>
                 </Choose>
               </dd>
@@ -108,7 +115,7 @@ const Page = () => {
         </div>
       </Form>
     </Card>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

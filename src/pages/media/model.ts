@@ -4,12 +4,13 @@ import { createModel } from 'hox';
 import { useState } from 'react';
 import type { MediaIndexRequest } from '@/pages/media/types/media.index.request';
 import type { MediaEntity } from '@/pages/media/types/media.entity';
+import { TabType } from '@/pages/media/types/TabType';
 
 function UseMedia() {
   const [list, setList] = useState<MediaEntity[]>([]);
   const [total, setTotal] = useState(0);
   const [currentItem, setCurrentItem] = useState<MediaEntity>();
-  const [tab, setTab] = useState('all');
+  const [tab, setTab] = useState<TabType>(TabType.ALL);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
