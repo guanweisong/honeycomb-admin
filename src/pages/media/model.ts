@@ -7,7 +7,7 @@ import type { MediaEntity } from '@/pages/media/types/media.entity';
 import { TabType } from '@/pages/media/types/TabType';
 
 function UseMedia() {
-  const [list, setList] = useState<MediaEntity[]>([]);
+  const [list, setList] = useState<MediaEntity[]>();
   const [total, setTotal] = useState(0);
   const [currentItem, setCurrentItem] = useState<MediaEntity>();
   const [tab, setTab] = useState<TabType>(TabType.ALL);

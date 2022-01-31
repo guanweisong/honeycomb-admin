@@ -10,9 +10,9 @@ import useAppModel from '@/models/app';
 import useCategoryModel from '@/pages/post/category/model';
 import usePostModel from '../model';
 import styles from './index.less';
-import MultiTag from './components/MultiTag';
+import MultiTag, { MultiTagProps } from './components/MultiTag';
 import AddCategoryModal from '../category/components/AddCategoryModal';
-import PhotoPickerItem from './components/PhotoPickerItem';
+import PhotoPickerItem, { PhotoPickerItemProps } from './components/PhotoPickerItem';
 import Block from '@/pages/post/edit/components/Block';
 import { PostType, postTypeOptions } from '@/pages/post/types/PostType';
 import { PostStatus } from '@/pages/post/types/PostStatus';
@@ -53,8 +53,12 @@ const PostDetail = () => {
     categoryModel.index();
   }, []);
 
-  const getTagsValue = (values) => {
-    const result = [];
+  /**
+   * 从tag对象数组中收集id数组
+   * @param values
+   */
+  const getTagsValue = (values: Omit<TagEntity, 'created_at' | 'updated_at'>[]) => {
+    const result: string[] = [];
     values.forEach((item) => {
       result.push(item._id);
     });
@@ -108,6 +112,11 @@ const PostDetail = () => {
     });
   };
 
+  /**
+   * 创建tag
+   * @param name
+   * @param value
+   */
   const onAddTag = (
     name: 'movie_actor' | 'movie_director' | 'movie_style' | 'gallery_style',
     value: string,
@@ -115,6 +124,11 @@ const PostDetail = () => {
     postModel.createTag(name, value);
   };
 
+  /**
+   * 更新tag
+   * @param name
+   * @param tags
+   */
   const onUpdateTags = (
     name: 'movie_actor' | 'movie_director' | 'movie_style' | 'gallery_style',
     tags: TagEntity[],
@@ -126,15 +140,15 @@ const PostDetail = () => {
    * 打开图片选择器事件
    * @param type
    */
-  const openPhotoPicker = (type: 'post_cover') => {
-    postModel.setShowPhotoPicker(type);
+  const openPhotoPicker = () => {
+    postModel.setShowPhotoPicker(true);
   };
 
   /**
    * 关闭图片选择器
    */
   const handlePhotoPickerCancel = () => {
-    postModel.setShowPhotoPicker(undefined);
+    postModel.setShowPhotoPicker(false);
   };
 
   /**
@@ -149,8 +163,9 @@ const PostDetail = () => {
    * 清空图片选择器的图片
    * @param type
    */
-  const handlePhotoClear = (type: 'post_cover') => {
-    postModel.setDetail({ ...postModel.detail, [type]: {} });
+  const handlePhotoClear = () => {
+    const { post_cover, ...rest } = postModel.detail as PostEntity;
+    postModel.setDetail(rest);
   };
 
   /**
@@ -172,13 +187,15 @@ const PostDetail = () => {
     detail,
     onTagsChange: onUpdateTags,
     onAddTag,
-    form,
-    styles,
+  } as MultiTagProps;
+  const galleryStyleProps: MultiTagProps = {
+    ...tagProps,
+    name: 'gallery_style',
+    title: '照片风格',
   };
-  const galleryStyleProps = { ...tagProps, name: 'gallery_style', title: '照片风格' };
-  const movieDirectorProps = { ...tagProps, name: 'movie_director', title: '导演' };
-  const movieActorProps = { ...tagProps, name: 'movie_actor', title: '演员' };
-  const movieStyleProps = { ...tagProps, name: 'movie_style', title: '电影风格' };
+  const movieDirectorProps: MultiTagProps = { ...tagProps, name: 'movie_director', title: '导演' };
+  const movieActorProps: MultiTagProps = { ...tagProps, name: 'movie_actor', title: '演员' };
+  const movieStyleProps: MultiTagProps = { ...tagProps, name: 'movie_style', title: '电影风格' };
 
   /**
    * 定义图片选择的参数
@@ -189,7 +206,11 @@ const PostDetail = () => {
     handlePhotoClear,
     openPhotoPicker,
   };
-  const postCoverProps = { ...photoProps, name: 'post_cover', title: '封面', size: '1920*1080' };
+  const postCoverProps: PhotoPickerItemProps = {
+    ...photoProps,
+    title: '封面',
+    size: '1920*1080',
+  };
 
   return (
     <Card>
@@ -284,16 +305,16 @@ const PostDetail = () => {
                   optionFilterProp="children"
                   placeholder="请选择"
                   filterOption={(input, option) =>
-                    option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    option?.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
                   }
                 >
                   <For
                     each="option"
                     of={categoryModel.list}
                     body={(option) => (
-                      <Option value={option._id} key={option._id}>
+                      <Select.Option value={option._id} key={option._id}>
                         {creatCategoryTitleByDepth(option.category_title, option)}
-                      </Option>
+                      </Select.Option>
                     )}
                   />
                 </Select>
@@ -342,7 +363,7 @@ const PostDetail = () => {
         </div>
       </Form>
       <PhotoPickerModal
-        showPhotoPicker={!!postModel.showPhotoPicker}
+        showPhotoPicker={postModel.showPhotoPicker}
         handlePhotoPickerOk={handlePhotoPickerOk}
         handlePhotoPickerCancel={handlePhotoPickerCancel}
       />

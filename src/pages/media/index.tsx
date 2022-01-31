@@ -21,7 +21,7 @@ const Media = () => {
     multiple: true,
     showUploadList: false,
     action: `${
-      process.env.NODE_ENV === 'development' ? '//127.0.0.1:7001' : '//api.guanweisong.com'
+      process.env.NODE_ENV === 'development' ? '//127.0.0.1:7002' : '//api.guanweisong.com'
     }/media`,
     withCredentials: true,
     onChange(info: any) {
@@ -45,7 +45,7 @@ const Media = () => {
     mediaModel.index({ limit: 99999 });
   }, []);
 
-  if (mediaModel.list === null) {
+  if (!mediaModel.list) {
     return <Loader />;
   }
 
@@ -114,7 +114,7 @@ const Media = () => {
                   </ul>
                 </div>
                 <div className={styles.mediaDetail}>
-                  <If condition={Object.getOwnPropertyNames(currentItem).length !== 0}>
+                  <If condition={currentItem}>
                     <div className={styles.mediaDetailTip}>附件详情</div>
                     <div className={styles.mediaDetailIntro}>
                       <div className={styles.mediaDetailImage}>

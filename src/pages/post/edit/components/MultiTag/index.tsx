@@ -1,40 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Tag, Button, Input, AutoComplete, Form } from 'antd';
+import type { DataSourceItemObject } from 'antd/es/auto-complete';
 import { index } from '@/pages/tag/service';
 import Block from '@/pages/post/edit/components/Block';
+import type { PostEntity } from '@/pages/post/types/post.entity';
+import type { TagEntity } from '@/pages/tag/types/tag.entity';
 
 const FormItem = Form.Item;
 
 export interface MultiTagProps {
-  name: string;
-  detail: any;
+  name: 'gallery_style' | 'movie_director' | 'movie_actor' | 'movie_style';
+  detail: PostEntity;
   title: string;
-  styles: any;
-  onTagsChange: (name: string, tags: any) => void;
+  onAddTag: (
+    name: 'gallery_style' | 'movie_director' | 'movie_actor' | 'movie_style',
+    value: string,
+  ) => void;
+  onTagsChange: (name: string, tags: Omit<TagEntity, 'updated_at' | 'created_at'>[]) => void;
 }
 
 const MultiTag = (props: MultiTagProps) => {
-  const { name, detail, title, onTagsChange } = props;
-  const [inputVisible, setInputVisible] = useState(false);
-  const [data, setData] = useState([]);
+  const { name, detail, title, onTagsChange, onAddTag } = props;
 
-  let timeout = null;
+  const [inputVisible, setInputVisible] = useState<boolean>(false);
+  const [data, setData] = useState<DataSourceItemObject[]>([]);
+  const timeout = useRef<any>();
 
+  /**
+   * 获取tag列表
+   */
   const getTags = () => {
-    return detail[name] || [];
+    return (detail[name] as Omit<TagEntity, 'updated_at' | 'created_at'>[]) || [];
   };
 
-  const handleClose = (removedTag) => {
+  /**
+   * 删除已选Tag
+   * @param removedTag
+   */
+  const handleClose = (removedTag: string) => {
     console.log('handleClose', removedTag);
     const tags = getTags().filter((tag) => tag._id !== removedTag);
     onTagsChange(name, tags);
   };
 
+  /**
+   * 显示tag输入框函数
+   */
   const showInput = () => {
     setInputVisible(true);
   };
 
-  const handleUpdateTags = (tag) => {
+  const handleUpdateTags = (tag: Omit<TagEntity, 'updated_at' | 'created_at'>) => {
     console.log('handleUpdateTags', tag);
     const tags = getTags();
     if (tags.some((item) => item._id === tag._id)) {
@@ -43,13 +59,22 @@ const MultiTag = (props: MultiTagProps) => {
     onTagsChange(props.name, [...tags, tag]);
   };
 
-  const handleInputConfirm = (value, option) => {
+  /**
+   * tag选中事件
+   * @param value
+   * @param option
+   */
+  const handleInputConfirm = (value: string, option: any) => {
     console.log('handleInputConfirm', value, option.props.children);
     handleUpdateTags({ _id: value, tag_name: option.props.children });
     setInputVisible(false);
   };
 
-  const handleBlur = (e: React.MouseEvent<HTMLElement>) => {
+  /**
+   * tag输入框失焦事件
+   * @param e
+   */
+  const handleBlur = (e: any) => {
     const { value } = e.target;
     console.log('handleBlur', value);
     if (value === '' || value.length === 0) {
@@ -63,24 +88,28 @@ const MultiTag = (props: MultiTagProps) => {
         has = true;
       }
     });
-
     if (!has) {
-      props.onAddTag(props.name, value);
+      onAddTag(name, value);
     } else {
-      handleUpdateTags(data.find((item) => item.text === value));
+      const obj = data.find((item) => item.text === value) as DataSourceItemObject;
+      handleUpdateTags({ _id: obj.value, tag_name: obj.text });
     }
-
     setInputVisible(false);
   };
 
-  const fetchTagsList = (value, callback) => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
+  /**
+   * 联想搜索tag列表
+   * @param value
+   * @param callback
+   */
+  const fetchTagsList = (value: string, callback: (items: DataSourceItemObject[]) => void) => {
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+      timeout.current = undefined;
     }
     const fake = async () => {
       const result = await index({ keyword: value });
-      const items = [];
+      const items: DataSourceItemObject[] = [];
       console.log(result.data.list);
       result.data.list.forEach((r) => {
         items.push({
@@ -90,11 +119,15 @@ const MultiTag = (props: MultiTagProps) => {
       });
       callback(items);
     };
-    timeout = setTimeout(fake, 300);
+    timeout.current = setTimeout(fake, 300);
   };
 
-  const handleChange = (value) => {
-    fetchTagsList(value, (items) => setData(items));
+  /**
+   * tag输入框输入事件
+   * @param value
+   */
+  const handleChange = (value: string) => {
+    fetchTagsList(value, (items: DataSourceItemObject[]) => setData(items));
   };
 
   return (

@@ -10,16 +10,15 @@ const FormItem = Form.Item;
 
 export interface PhotoPickerItemProps {
   detail: PostEntity;
-  name: 'post_cover';
   title: string;
   size: string;
-  handlePhotoClear: (name: 'post_cover') => void;
-  openPhotoPicker: (name: 'post_cover') => void;
+  handlePhotoClear: () => void;
+  openPhotoPicker: () => void;
 }
 
 const PhotoPickerItem = (props: PhotoPickerItemProps) => {
-  const { detail, name, title, size, handlePhotoClear, openPhotoPicker } = props;
-  const mediaObj = detail[name] as MediaReadOnly;
+  const { detail, title, size, handlePhotoClear, openPhotoPicker } = props;
+  const mediaObj = detail['post_cover'] as MediaReadOnly;
 
   return (
     <Block title={title} tip={`（尺寸：${size}）`}>
@@ -31,17 +30,17 @@ const PhotoPickerItem = (props: PhotoPickerItemProps) => {
           <div className={styles.coverWrap}>
             <img src={`//${mediaObj.media_url}`} />
           </div>
-          <Button onClick={() => handlePhotoClear(name)} className={styles.rightButton}>
+          <Button onClick={() => handlePhotoClear()} className={styles.rightButton}>
             <DeleteOutlined />
             清除图片
           </Button>
-          <Button onClick={() => openPhotoPicker(name)}>
+          <Button onClick={() => openPhotoPicker()}>
             <UploadOutlined />
             重新上传
           </Button>
         </When>
         <Otherwise>
-          <Button onClick={() => openPhotoPicker(name)}>
+          <Button onClick={() => openPhotoPicker()}>
             <UploadOutlined />
             点击上传
           </Button>

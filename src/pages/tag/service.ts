@@ -14,7 +14,9 @@ export const index = (params?: TagIndexRequest): Promise<TagIndexResponse> => {
   });
 };
 
-export const create = (params: Omit<TagEntity, '_id'>): Promise<TagCreateResponse> => {
+export const create = (
+  params: Omit<TagEntity, '_id' | 'created_at' | 'updated_at'>,
+): Promise<TagCreateResponse> => {
   console.log('tags=>service=>create', params);
   return request({
     url: '/tags',

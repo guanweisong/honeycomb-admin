@@ -23,7 +23,7 @@ function UsePost() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalType, setModalType] = useState<ModalType>(ModalType.ADD);
   const [loading, setLoading] = useState<boolean>(false);
-  const [showPhotoPicker, setShowPhotoPicker] = useState<'post_cover'>();
+  const [showPhotoPicker, setShowPhotoPicker] = useState<boolean>(false);
   const [detail, setDetail] = useState<PostEntity>();
 
   const index = async (values?: PostIndexRequest) => {
@@ -44,9 +44,11 @@ function UsePost() {
       result = await postsService.indexPostDetail(values);
       result = result.data;
       if (result.movie_time) {
+        // @ts-ignore
         result.movie_time = moment(result.movie_time);
       }
       if (result.gallery_time) {
+        // @ts-ignore
         result.gallery_time = moment(result.movie_time);
       }
       if (result.post_content) {
@@ -101,8 +103,9 @@ function UsePost() {
     if (result && result.status === 201) {
       setDetail({
         ...detail,
+        // @ts-ignore
         [name]: [...detail[name], { _id: result.data._id, tag_name: result.data.tag_name }],
-      });
+      } as PostEntity);
     }
   };
 
@@ -113,11 +116,11 @@ function UsePost() {
     setDetail({
       ...detail,
       [name]: tags,
-    });
+    } as PostEntity);
   };
 
   const addPhoto = () => {
-    setDetail({ ...detail, [showPhotoPicker]: mediaModel.currentItem });
+    setDetail({ ...detail, post_cover: mediaModel.currentItem } as PostEntity);
   };
 
   return {
