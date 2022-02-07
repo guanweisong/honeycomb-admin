@@ -2,10 +2,13 @@ import { message } from 'antd';
 import { history } from 'umi';
 import { createModel } from 'hox';
 import { useState } from 'react';
+import useAppModel from '@/models/app';
 import * as loginService from './service';
 import type { LoginRequest } from '@/pages/login/types/LoginRequest';
 
 function UseLogin() {
+  const appModel = useAppModel();
+  const { queryUser } = appModel;
   const [loading, setLoading] = useState<boolean>(false);
 
   /**
@@ -19,7 +22,11 @@ function UseLogin() {
       .then((response) => {
         if (response.data.OK) {
           message.success('登陆成功');
-          history.replace(targetUrl || '/');
+          queryUser().then(() => {
+            setTimeout(() => {
+              history.replace(targetUrl || '/');
+            }, 200);
+          });
         }
       })
       .finally(() => {

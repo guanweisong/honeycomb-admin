@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Layout, Menu, Button, BackTop } from 'antd';
 import { QueryParamProvider } from 'use-query-params';
 import { Route } from 'react-router-dom';
@@ -22,7 +22,7 @@ const ContentLayout: React.FC = (props) => {
   const location = useLocation();
   const appModel = useAppModel();
   const settingsModal = useSettingsModel();
-  const { user, logout, verify } = appModel;
+  const { user, logout, queryUser } = appModel;
   const { setting, querySetting } = settingsModal;
 
   const [query] = useQueryParams({
@@ -31,33 +31,27 @@ const ContentLayout: React.FC = (props) => {
 
   const { targetUrl } = query;
 
-  useLayoutEffect(() => {
-    verify();
+  useEffect(() => {
+    queryUser();
+    querySetting();
   }, []);
 
-  useLayoutEffect(() => {
-    if (location.pathname !== '/login' && !user?._id) {
+  useEffect(() => {
+    if (location.pathname !== '/login' && !user) {
       history.replace(
         `/login?targetUrl=${encodeURIComponent(location.pathname + location.search)}`,
       );
     }
-    if (location.pathname === '/login' && user?._id && targetUrl) {
+    if (location.pathname === '/login' && user && targetUrl) {
       history.replace(targetUrl);
     }
   }, [user]);
-
-  useLayoutEffect(() => {
-    if (location.pathname !== '/login') {
-      querySetting();
-      appModel.verify();
-    }
-  }, [location.pathname]);
 
   if (user === undefined) {
     return <Loader />;
   }
 
-  if (location.pathname === '/login') {
+  if (user === false) {
     return <Layout>{props.children}</Layout>;
   }
 

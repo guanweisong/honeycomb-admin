@@ -1,10 +1,10 @@
 import request from '@/utils/request';
 
-export const verify = () => {
-  console.log('app=>service=>verify');
+export const queryUser = () => {
+  console.log('app=>service=>queryUser');
   return request({
-    url: '/auth/verify',
-    method: 'post',
+    url: '/auth/queryUser',
+    method: 'get',
   });
 };
 

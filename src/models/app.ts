@@ -6,20 +6,17 @@ import { useState } from 'react';
 import type { UserEntity } from '@/pages/user/types/user.entity';
 
 function UseApp() {
-  const [user, setUser] = useState<UserEntity>();
+  const [user, setUser] = useState<UserEntity | false>();
 
-  const verify = async () => {
+  const queryUser = async () => {
     console.log('app=>model=>verify');
-    if (user?._id) {
-      return;
-    }
     appService
-      .verify()
+      .queryUser()
       .then((result) => {
-        setUser(result.data);
+        setUser(result.data ?? false);
       })
       .catch(() => {
-        setUser(undefined);
+        setUser(false);
       });
   };
 
@@ -28,14 +25,14 @@ function UseApp() {
     const result = await appService.logout();
     if (result.status === 200 && result.data.OK) {
       message.success('登出成功');
-      setUser(undefined);
+      setUser(false);
       history.push('/login');
     }
   };
 
   return {
     user,
-    verify,
+    queryUser,
     logout,
   };
 }
