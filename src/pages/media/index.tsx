@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import { Popconfirm, Card, Tabs, Upload, Spin, message, Button } from 'antd';
-import { FileOutlined, CopyOutlined, InboxOutlined } from '@ant-design/icons';
+import { Popconfirm, Card, Tabs, Upload, Spin, message, Space } from 'antd';
+import { FileOutlined, CopyOutlined, InboxOutlined, DeleteOutlined } from '@ant-design/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { If, Choose, When, Otherwise, For } from 'tsx-control-statements/components';
-import moment from 'moment';
+import { Choose, When, Otherwise, For } from 'tsx-control-statements/components';
 import useMediaModel from './model';
 import styles from './index.less';
 import Loader from '../../components/Loader';
@@ -42,7 +41,7 @@ const Media = () => {
   };
 
   useEffect(() => {
-    mediaModel.index({ limit: 99999 });
+    mediaModel.index();
   }, []);
 
   if (!mediaModel.list) {
@@ -95,6 +94,7 @@ const Media = () => {
                           }
                           key={item._id}
                           onClick={() => onEditItem(item)}
+                          title={item.media_name}
                         >
                           <Choose>
                             <When condition={item.media_type.indexOf('image') !== -1}>
@@ -107,54 +107,26 @@ const Media = () => {
                               <FileOutlined className={styles.mediaFile} />
                             </Otherwise>
                           </Choose>
-                          <span className={styles.mediaTitle}>{item.media_name}</span>
+                          <div className={styles.mediaLayer}>
+                            <Space>
+                              <CopyToClipboard
+                                text={`//${currentItem?.media_url}`}
+                                onCopy={() => message.success('已复制至剪切板')}
+                              >
+                                <CopyOutlined title={'复制链接'} />
+                              </CopyToClipboard>
+                              <Popconfirm
+                                title="确定要删除吗？"
+                                onConfirm={() => onDeleteItem(currentItem?._id as string)}
+                              >
+                                <DeleteOutlined title="删除资源" />
+                              </Popconfirm>
+                            </Space>
+                          </div>
                         </li>
                       )}
                     />
                   </ul>
-                </div>
-                <div className={styles.mediaDetail}>
-                  <If condition={currentItem}>
-                    <div className={styles.mediaDetailTip}>附件详情</div>
-                    <div className={styles.mediaDetailIntro}>
-                      <div className={styles.mediaDetailImage}>
-                        <Choose>
-                          <When condition={currentItem?.media_type?.indexOf('image') !== -1}>
-                            <img src={`//${currentItem?.media_url}`} alt="" />
-                          </When>
-                          <Otherwise>
-                            <FileOutlined />
-                          </Otherwise>
-                        </Choose>
-                      </div>
-                      <div className={styles.mediaDetailInfo}>
-                        <div className={styles.mediaDetailName}>{currentItem?.media_name}</div>
-                        <div className={styles.mediaDetailDate}>
-                          {moment(currentItem?.updated_at).format('YYYY-MM-DD HH:mm:ss')}
-                        </div>
-                        <div className={styles.mediaDetailSize}>
-                          {Math.ceil((currentItem?.media_size as number) / 1024)} kb
-                        </div>
-                        <div>
-                          <Popconfirm
-                            title="确定要删除吗？"
-                            onConfirm={() => onDeleteItem(currentItem?._id as string)}
-                          >
-                            <a>永久删除</a>
-                          </Popconfirm>
-                          <CopyToClipboard
-                            text={`//${currentItem?.media_url}`}
-                            onCopy={() => message.success('已复制至剪切板')}
-                          >
-                            <Button type="primary">
-                              <CopyOutlined />
-                              复制链接
-                            </Button>
-                          </CopyToClipboard>
-                        </div>
-                      </div>
-                    </div>
-                  </If>
                 </div>
               </When>
               <Otherwise>

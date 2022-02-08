@@ -16,7 +16,7 @@ function UseMedia() {
 
   const index = async (values?: MediaIndexRequest) => {
     console.log('media=>model=>index', values);
-    const result = await mediaService.index(values);
+    const result = await mediaService.index({ ...values, limit: 99999 });
     if (result.status === 200) {
       setList(result.data.list);
       setTotal(result.data.total);
@@ -24,7 +24,7 @@ function UseMedia() {
   };
 
   const destroy = async (ids: string[]) => {
-    console.log('media=>model=>distory', ids);
+    console.log('media=>model=>destroy', ids);
     const result = await mediaService.destroy(ids);
     if (result.status === 204) {
       index();
