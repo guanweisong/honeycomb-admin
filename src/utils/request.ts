@@ -2,10 +2,16 @@ import axios from 'axios';
 import { message } from 'antd';
 
 const instance = axios.create({
-  baseURL: process.env.NODE_ENV === 'development' ? '//127.0.0.1:7002' : '//api.guanweisong.com',
+  baseURL:
+    process.env.NODE_ENV === 'development' ? '//127.0.0.1:7002/api' : '//api.guanweisong.com/api',
   withCredentials: true,
   timeout: 10000,
   headers: {},
+});
+
+instance.interceptors.request.use((config) => {
+  config.headers['x-auth-token'] = localStorage.getItem('token');
+  return config;
 });
 
 instance.interceptors.response.use(

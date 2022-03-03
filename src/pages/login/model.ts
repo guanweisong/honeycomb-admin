@@ -22,6 +22,7 @@ function UseLogin() {
       .then((response) => {
         if (response.data.OK) {
           message.success('登陆成功');
+          localStorage.setItem('token', response.data.token);
           queryUser().then(() => {
             setTimeout(() => {
               history.replace(targetUrl || '/');

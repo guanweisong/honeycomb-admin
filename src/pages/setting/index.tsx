@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, Input, Button, Space, Form } from 'antd';
 import useSettingsModel from './model';
 import { formItemLayout } from '@/constants/formItemLayout';
@@ -6,6 +6,10 @@ import { formItemLayout } from '@/constants/formItemLayout';
 const Setting = () => {
   const [form] = Form.useForm();
   const settingsModel = useSettingsModel();
+
+  useEffect(() => {
+    form.setFieldsValue(settingsModel.setting);
+  }, [settingsModel.setting]);
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
@@ -15,7 +19,7 @@ const Setting = () => {
 
   return (
     <>
-      <Form initialValues={settingsModel.setting} onFinish={handleSubmit} form={form}>
+      <Form onFinish={handleSubmit} form={form}>
         <Space direction={'vertical'} style={{ width: '100%', display: 'flex' }}>
           <Card title="基础信息">
             <Form.Item

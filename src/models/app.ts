@@ -10,6 +10,10 @@ function UseApp() {
 
   const queryUser = async () => {
     console.log('app=>model=>verify');
+    if (!localStorage.getItem('token')) {
+      setUser(false);
+      return;
+    }
     appService
       .queryUser()
       .then((result) => {
@@ -25,6 +29,7 @@ function UseApp() {
     const result = await appService.logout();
     if (result.status === 200 && result.data.OK) {
       message.success('登出成功');
+      localStorage.removeItem('token');
       setUser(false);
       history.push('/login');
     }
