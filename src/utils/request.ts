@@ -20,6 +20,9 @@ instance.interceptors.response.use(
   (err) => {
     if (err.response) {
       switch (err.response.status) {
+        case 400:
+          message.error(err.response.data.message[0]);
+          break;
         case 401:
         case 403:
         case 500:
