@@ -1,17 +1,29 @@
-import React, { useEffect } from 'react';
-import { Table, Card, Row, Col, Input, Button, Modal, Form } from 'antd';
-import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
+import { useRef, useState } from 'react';
+import { Input, Button, Modal, Form, message, Popconfirm } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import ProTable, { ActionType } from '@ant-design/pro-table';
 import { StringParam, NumberParam, useQueryParams, withDefault } from 'use-query-params';
 import type { RuleObject } from 'antd/es/form';
-import useTagModel from './model';
 import { tagTableColumns } from '@/pages/tag/constants/tagTableColumns';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
 import { ModalType, ModalTypeName } from '@/types/ModalType';
 import { formItemLayout } from '@/constants/formItemLayout';
+import { PaginationRequest } from '@/types/PaginationRequest';
+import * as TagService from './service';
 
 const Tag = () => {
-  const tagModel = useTagModel();
   const [form] = Form.useForm();
+  const actionRef = useRef<ActionType>();
+  const [selectedRows, setSelectedRows] = useState<TagEntity[]>([]);
+  const [modalProps, setModalProps] = useState<{
+    type?: ModalType;
+    visible: boolean;
+    record?: TagEntity;
+  }>({
+    type: ModalType.ADD,
+    visible: false,
+  });
 
   const [query, setQuery] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -21,66 +33,125 @@ const Tag = () => {
 
   const { keyword, page, limit } = query;
 
-  const handleDeleteItem = (ids: string[]) => {
-    tagModel.destroy(ids);
+  /**
+   * 列表查询方法
+   * @param params
+   * @param sort
+   * @param filter
+   */
+  const request = async (
+    params: {
+      pageSize: number;
+      current: number;
+    },
+    sort,
+    filter,
+  ) => {
+    const { pageSize, current, ...rest } = params;
+    console.log(sort, filter);
+    const result = await TagService.index({
+      ...rest,
+      ...filter,
+      page: current,
+      limit: pageSize,
+    });
+    return {
+      data: result.data.list,
+      success: true,
+      total: result.data.total,
+    };
   };
 
+  /**
+   * 新增按钮事件
+   */
+  const handleAddNew = () => {
+    setModalProps({
+      type: ModalType.ADD,
+      visible: true,
+      record: undefined,
+    });
+    form.resetFields();
+  };
+
+  /**
+   * 删除按钮事件
+   * @param ids
+   */
+  const handleDeleteItem = async (ids: string[]) => {
+    const result = await TagService.destroy(ids);
+    if (result.status === 204) {
+      actionRef.current?.reload();
+      message.success('删除成功');
+    }
+  };
+
+  /**
+   * 批量删除
+   */
+  const handleDeleteBatch = async () => {
+    const ids = selectedRows.map((item) => item._id);
+    await handleDeleteItem(ids);
+    setSelectedRows([]);
+  };
+
+  /**
+   * 编辑按钮事件
+   * @param record
+   */
   const handleEditItem = (record: TagEntity) => {
     form.setFieldsValue(record);
-    tagModel.setCurrentItem(record);
-    tagModel.setModalType(ModalType.EDIT);
-    tagModel.setShowModal(true);
+    setModalProps({
+      type: ModalType.EDIT,
+      visible: true,
+      record: record,
+    });
   };
 
-  useEffect(() => {
-    tagModel.index(query);
-  }, [query]);
-
-  const handleTableChange = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue | null>,
-    sorter: SorterResult<any> | SorterResult<any>[],
-  ) => {
-    console.log(pagination, filters, sorter);
-    setQuery({ ...query, page: pagination.current, limit: pagination.pageSize, ...filters });
-  };
-
-  const handelSearchChange = (value: string) => {
-    setQuery({ ...query, page: 1, keyword: value });
-  };
-
+  /**
+   * 新增、编辑弹窗表单保存事件
+   */
   const handleModalOk = () => {
     form
       .validateFields()
-      .then((values) => {
-        if (tagModel.modalType === ModalType.ADD) {
-          tagModel.create(values);
-        } else {
-          tagModel.update(tagModel.currentItem?._id as string, values);
+      .then(async (values) => {
+        switch (modalProps.type!) {
+          case ModalType.ADD:
+            const createResult = await TagService.create(values);
+            if (createResult.status === 201) {
+              actionRef.current?.reload();
+              message.success('添加成功');
+            }
+            break;
+          case ModalType.EDIT:
+            const updateResult = await TagService.update(modalProps.record?._id as string, values);
+            if (updateResult.status === 201) {
+              actionRef.current?.reload();
+              message.success('更新成功');
+            }
+            break;
         }
-        tagModel.setShowModal(false);
+        setModalProps({ visible: false });
       })
       .catch((e) => {
         console.error(e);
       });
   };
 
-  const handleModalCancel = () => {
-    tagModel.setShowModal(false);
-  };
-
-  const handleAddNew = () => {
-    tagModel.setModalType(ModalType.ADD);
-    tagModel.setShowModal(true);
-    tagModel.setCurrentItem(undefined);
-    form.resetFields();
-  };
-
+  /**
+   * 校验标签名是否存在
+   * @param rule
+   * @param value
+   */
   const validateTagName = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
-      const result = await tagModel.checkExist({ tag_name: value });
-      if (result) {
-        // eslint-disable-next-line prefer-promise-reject-errors
+      let exist = false;
+      const result = await TagService.index({ tag_name: value });
+      const currentId = modalProps.record?._id;
+      if (result.data.total > 0 && result.data.list[0]._id !== currentId) {
+        exist = true;
+      }
+      if (exist) {
         return Promise.reject('抱歉，标签已存在，请换一个标签');
       }
       return Promise.resolve();
@@ -89,45 +160,43 @@ const Tag = () => {
   };
 
   return (
-    <>
-      <Card>
-        <Form layout="inline" style={{ marginBottom: '20px' }}>
-          <Row style={{ width: '100%' }}>
-            <Col span={12}>
-              <Form.Item {...formItemLayout}>
-                <Input.Search
-                  defaultValue={keyword || ''}
-                  onSearch={handelSearchChange}
-                  placeholder="按标签名"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12} style={{ textAlign: 'right' }}>
-              <Button type="primary" onClick={handleAddNew}>
-                添加新标签
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-        <Table
-          columns={tagTableColumns({ handleEditItem, handleDeleteItem })}
-          rowKey={(record) => record._id}
-          dataSource={tagModel.list}
-          pagination={{
-            showSizeChanger: true,
-            total: tagModel.total,
-            pageSize: limit,
-            current: page,
-          }}
-          onChange={handleTableChange}
-          loading={tagModel.loading}
-        />
-      </Card>
+    <PageContainer>
+      <ProTable<TagEntity, PaginationRequest>
+        rowKey="_id"
+        request={request}
+        actionRef={actionRef}
+        columns={tagTableColumns({ handleEditItem, handleDeleteItem })}
+        rowSelection={{
+          selectedRowKeys: selectedRows.map((item) => item._id),
+          onChange: (_, rows) => {
+            setSelectedRows(rows);
+          },
+        }}
+        toolBarRender={() => [
+          <Button type="primary" key="primary" onClick={handleAddNew}>
+            <PlusOutlined /> 添加新标签
+          </Button>,
+        ]}
+      />
+      {selectedRows?.length > 0 && (
+        <FooterToolbar
+          extra={
+            <div>
+              选择了
+              <a style={{ fontWeight: 600 }}>{selectedRows.length}</a>项 &nbsp;&nbsp;
+            </div>
+          }
+        >
+          <Popconfirm title="确定要删除吗？" onConfirm={handleDeleteBatch}>
+            <Button type="primary">批量删除</Button>
+          </Popconfirm>
+        </FooterToolbar>
+      )}
       <Modal
-        title={`${ModalTypeName[ModalType[tagModel.modalType] as keyof typeof ModalTypeName]}标签`}
-        visible={tagModel.showModal}
+        title={`${ModalTypeName[ModalType[modalProps.type!] as keyof typeof ModalTypeName]}标签`}
+        visible={modalProps.visible}
         onOk={handleModalOk}
-        onCancel={handleModalCancel}
+        onCancel={() => setModalProps({ visible: false })}
       >
         <Form form={form}>
           <Form.Item
@@ -140,7 +209,7 @@ const Tag = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </PageContainer>
   );
 };
 

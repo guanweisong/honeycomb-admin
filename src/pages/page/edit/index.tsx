@@ -1,19 +1,25 @@
-import React, { useEffect } from 'react';
-import { Card, Input, Button, Form } from 'antd';
+import { useEffect, useState } from 'react';
+import { Card, Input, Button, Form, message } from 'antd';
 import { If, When, Otherwise, Choose } from 'tsx-control-statements/components';
 import SimpleMDE from 'react-simplemde-editor';
+import { history } from 'umi';
 import { StringParam, useQueryParams } from 'use-query-params';
-import 'easymde/dist/easymde.min.css';
-import useAppModel from '@/models/app';
+import '/node_modules/easymde/dist/easymde.min.css';
 import styles from './index.less';
-import usePageModel from '../model';
 import { PageStatus } from '@/pages/page/types/PageStatus';
+import { useModel } from '@@/plugin-model/useModel';
+import { PageEntity } from '@/pages/page/types/page.entity';
+import * as pagesService from '@/pages/page/service';
+const showdown = require('showdown');
 
+const converter = new showdown.Converter();
 const FormItem = Form.Item;
 
 const Page = () => {
-  const pageModel = usePageModel();
-  const appModel = useAppModel();
+  const { initialState } = useModel('@@initialState');
+  const [currentItem, setCurrentItem] = useState<PageEntity>();
+  const userInfo = initialState?.userInfo;
+
   const [form] = Form.useForm();
 
   const [query] = useQueryParams({
@@ -22,47 +28,83 @@ const Page = () => {
 
   const { _id } = query;
 
+  /**
+   * 查询详情
+   * @param values
+   */
+  const detail = async (values: Partial<PageEntity>) => {
+    console.log('pages=>model=>detial', values);
+    let result;
+    if (typeof values._id !== 'undefined') {
+      result = await pagesService.indexPageDetail(values);
+      result = result.data;
+      if (result.page_content) {
+        result.page_content = converter.makeMd(result.page_content);
+      }
+    }
+    setCurrentItem(result);
+  };
+
   useEffect(() => {
     if (_id) {
-      pageModel.detail({ _id });
+      detail({ _id });
     } else {
-      pageModel.setCurrentItem(undefined);
+      setCurrentItem(undefined);
     }
   }, [_id]);
 
   useEffect(() => {
     form.resetFields();
-    form.setFieldsValue(pageModel.currentItem);
-  }, [pageModel.currentItem]);
+    form.setFieldsValue(currentItem);
+  }, [currentItem]);
 
+  /**
+   * 更新
+   * @param status
+   */
   const handleUpdate = (status: PageStatus) => {
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         const data = values;
         data.page_status = status;
-        pageModel.update(pageModel.currentItem?._id as string, data);
+        const result = await pagesService.update(currentItem?._id as string, values);
+        if (result && result.status === 201) {
+          message.success('更新成功');
+          detail({ _id: currentItem?._id as string });
+        }
       })
       .catch((e) => {
         console.error(e);
       });
   };
 
+  /**
+   * 提交
+   * @param status
+   */
   const handleSubmit = (status: PageStatus) => {
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         const data = values;
         data.page_status = status;
-        data.page_author = appModel.user?._id;
-        pageModel.create(data);
+        data.page_author = userInfo?._id;
+        const result = await pagesService.create(data);
+        if (result && result.status === 201) {
+          message.success('添加成功');
+          history.push({
+            pathname: '/page/edit',
+            query: {
+              _id: result.data._id,
+            },
+          });
+        }
       })
       .catch((e) => {
         console.error(e);
       });
   };
-
-  const { currentItem } = pageModel;
 
   return (
     <Card>

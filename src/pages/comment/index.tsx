@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
-import { Card, Col, Form, Input, Popconfirm, Row, Table } from 'antd';
-import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
+import { useRef, useState } from 'react';
+import { Popconfirm, message, Button } from 'antd';
+import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import ProTable, { ActionType } from '@ant-design/pro-table';
 import {
   StringParam,
   NumberParam,
@@ -8,14 +9,16 @@ import {
   withDefault,
   NumericArrayParam,
 } from 'use-query-params';
-import useCommentModel from './model';
 import { commentTableColumns } from './constants/commentTableColumns';
 import { CommentStatus } from '@/pages/comment/types/CommentStatus';
 import type { CommentEntity } from '@/pages/comment/types/comment.entity';
-import { formItemLayout } from '@/constants/formItemLayout';
+import { PaginationRequest } from '@/types/PaginationRequest';
+import * as CommentService from './service';
+import * as commentsService from '@/pages/comment/service';
 
 const Comment = () => {
-  const commentModel = useCommentModel();
+  const actionRef = useRef<ActionType>();
+  const [selectedRows, setSelectedRows] = useState<CommentEntity[]>([]);
 
   const [query, setQuery] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -26,14 +29,52 @@ const Comment = () => {
 
   const { comment_status, keyword, limit, page } = query;
 
-  useEffect(() => {
-    commentModel.index(query);
-  }, [query]);
-
-  const handleSetStatus = (id: string, type: CommentStatus) => {
-    commentModel.update(id, { comment_status: type });
+  /**
+   * 列表查询方法
+   * @param params
+   * @param sort
+   * @param filter
+   */
+  const request = async (
+    params: {
+      pageSize: number;
+      current: number;
+    },
+    sort,
+    filter,
+  ) => {
+    const { pageSize, current, ...rest } = params;
+    console.log(sort, filter);
+    const result = await CommentService.index({
+      ...rest,
+      ...filter,
+      page: current,
+      limit: pageSize,
+    });
+    return {
+      data: result.data.list,
+      success: true,
+      total: result.data.total,
+    };
   };
 
+  /**
+   * 评论状态操作
+   * @param id
+   * @param type
+   */
+  const handleSetStatus = async (id: string, type: CommentStatus) => {
+    const result = await commentsService.update(id, { comment_status: type });
+    if (result.status === 201) {
+      actionRef.current?.reload();
+      message.success('更新成功');
+    }
+  };
+
+  /**
+   * 列操作栏渲染
+   * @param record
+   */
   const renderOpt = (record: CommentEntity) => {
     let dom;
     switch (record.comment_status) {
@@ -91,67 +132,60 @@ const Comment = () => {
     return dom;
   };
 
-  const handleDelete = (ids: string[]) => {
-    commentModel.destroy(ids);
+  /**
+   * 删除事件
+   * @param ids
+   */
+  const handleDelete = async (ids: string[]) => {
+    const result = await commentsService.destroy(ids);
+    if (result.status === 204) {
+      actionRef.current?.reload();
+      message.success('删除成功');
+    }
   };
 
-  const handleSearchChange = (value: string) => {
-    setQuery({
-      ...query,
-      page: 1,
-      keyword: value,
-    });
-  };
-
-  const handleTableChange = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue | null>,
-    sorter: SorterResult<any> | SorterResult<any>[],
-  ) => {
-    console.log(pagination, filters, sorter);
-    setQuery({
-      ...query,
-      page: pagination.current,
-      limit: pagination.pageSize,
-      ...filters,
-    });
+  /**
+   * 批量删除
+   */
+  const handleDeleteBatch = async () => {
+    const ids = selectedRows.map((item) => item._id);
+    await handleDelete(ids);
+    setSelectedRows([]);
   };
 
   return (
-    <>
-      <Card>
-        <Form layout="inline" style={{ marginBottom: '20px' }}>
-          <Row style={{ width: '100%' }}>
-            <Col span={12}>
-              <Form.Item {...formItemLayout}>
-                <Input.Search
-                  defaultValue={keyword as string}
-                  onSearch={handleSearchChange}
-                  placeholder="按内容、评论者、IP"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-        <Table
-          columns={commentTableColumns({
-            comment_status: comment_status as CommentStatus[],
-            renderOpt,
-            handleDelete,
-          })}
-          rowKey={(record) => record._id}
-          dataSource={commentModel.list}
-          pagination={{
-            showSizeChanger: true,
-            total: commentModel.total,
-            pageSize: limit,
-            current: page,
-          }}
-          onChange={handleTableChange}
-          loading={commentModel.loading}
-        />
-      </Card>
-    </>
+    <PageContainer>
+      <ProTable<CommentEntity, PaginationRequest>
+        rowKey="_id"
+        request={request}
+        actionRef={actionRef}
+        columns={commentTableColumns({
+          comment_status: comment_status as CommentStatus[],
+          renderOpt,
+          handleDelete,
+        })}
+        rowSelection={{
+          selectedRowKeys: selectedRows.map((item) => item._id),
+          onChange: (_, rows) => {
+            setSelectedRows(rows);
+          },
+        }}
+      />
+      {selectedRows?.length > 0 && (
+        <FooterToolbar
+          extra={
+            <div>
+              选择了
+              <a style={{ fontWeight: 600 }}>{selectedRows.length}</a>项 &nbsp;&nbsp;
+            </div>
+          }
+        >
+          <Popconfirm title="确定要删除吗？" onConfirm={handleDeleteBatch}>
+            <Button type="primary">批量删除</Button>
+          </Popconfirm>
+        </FooterToolbar>
+      )}
+    </PageContainer>
   );
 };
 

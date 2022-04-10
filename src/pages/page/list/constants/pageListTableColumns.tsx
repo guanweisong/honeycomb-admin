@@ -1,8 +1,7 @@
-import React from 'react';
 import { Popconfirm } from 'antd';
 import { Link } from 'umi';
 import moment from 'moment';
-import type { ColumnsType } from 'antd/es/table';
+import { ProColumns } from '@ant-design/pro-table';
 import type { PageEntity } from '@/pages/page/types/page.entity';
 import { PageStatusName, pageStatusOptions, PageStatus } from '@/pages/page/types/PageStatus';
 
@@ -22,6 +21,7 @@ export const pageListTableColumns = (props: PageListTableColumnsProps) =>
       title: '作者',
       dataIndex: 'page_author',
       key: 'page_author',
+      search: false,
       render: (text) => text.user_name,
     },
     {
@@ -30,29 +30,34 @@ export const pageListTableColumns = (props: PageListTableColumnsProps) =>
       key: 'page_status',
       filters: pageStatusOptions.map((item) => ({ text: item.label, value: item.value })),
       filteredValue: props.page_status,
-      render: (text) => PageStatusName[PageStatus[text] as keyof typeof PageStatusName],
+      search: false,
+      render: (text: PageStatus) => PageStatusName[PageStatus[text] as keyof typeof PageStatusName],
     },
     {
       title: '发表时间',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      search: false,
+      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '最后更新日期',
       dataIndex: 'updated_at',
       key: 'updated_at',
-      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      search: false,
+      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '点击量',
       dataIndex: 'page_views',
       key: 'page_views',
+      search: false,
     },
     {
       title: '操作',
       key: 'operation',
       width: 100,
+      search: false,
       render: (text, record) => (
         <p>
           <Link to={`/page/edit?_id=${record._id}`}>编辑</Link>&nbsp;
@@ -62,4 +67,4 @@ export const pageListTableColumns = (props: PageListTableColumnsProps) =>
         </p>
       ),
     },
-  ] as ColumnsType<PageEntity>;
+  ] as ProColumns<PageEntity>[];

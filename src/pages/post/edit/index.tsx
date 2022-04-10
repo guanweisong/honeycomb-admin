@@ -1,14 +1,12 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Input, Button, Select, DatePicker, message, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import moment from 'moment';
 import { If, Choose, When, Otherwise, For } from 'tsx-control-statements/components';
 import SimpleMDE from 'react-simplemde-editor';
 import { StringParam, useQueryParams } from 'use-query-params';
 import PhotoPickerModal from '@/components/PhotoPicker';
 import 'easymde/dist/easymde.min.css';
-import useAppModel from '@/models/app';
-import useCategoryModel from '@/pages/post/category/model';
-import usePostModel from '../model';
 import styles from './index.less';
 import MultiTag, { MultiTagProps } from './components/MultiTag';
 import AddCategoryModal from '../category/components/AddCategoryModal';
@@ -20,14 +18,36 @@ import { creatCategoryTitleByDepth } from '@/utils/help';
 import type { PostEntity } from '@/pages/post/types/post.entity';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
 import { ModalType } from '@/types/ModalType';
+import { history } from 'umi';
+import { useModel } from '@@/plugin-model/useModel';
+import * as postsService from '@/pages/post/service';
+import { CategoryReadOnly } from '@/pages/post/types/post.entity';
+import { CategoryEntity } from '@/pages/post/category/types/category.entity';
+import * as tagsService from '@/pages/tag/service';
+import * as categoryService from '@/pages/post/category/service';
+const showdown = require('showdown');
+
+const converter = new showdown.Converter();
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
 const PostDetail = () => {
-  const postModel = usePostModel();
-  const appModel = useAppModel();
-  const categoryModel = useCategoryModel();
+  const { initialState } = useModel('@@initialState');
+  const [detail, setDetail] = useState<PostEntity>();
+  const [list, setList] = useState<CategoryEntity[]>([]);
+  const [showPhotoPicker, setShowPhotoPicker] = useState<boolean>(false);
+  const [modalProps, setModalProps] = useState<{
+    type?: ModalType;
+    visible: boolean;
+    record?: CategoryEntity;
+  }>({
+    type: ModalType.ADD,
+    visible: false,
+  });
+
+  const userInfo = initialState?.userInfo;
+
   const [form] = Form.useForm();
 
   const [query] = useQueryParams({
@@ -36,22 +56,61 @@ const PostDetail = () => {
 
   const { _id } = query;
 
+  /**
+   * 分类列表获取
+   */
+  const index = async () => {
+    const result = await categoryService.index({ limit: 9999 });
+    if (result.status === 200) {
+      setList(result.data.list);
+    }
+  };
+
+  /**
+   * 查询文章详情
+   * @param values
+   */
+  const indexDetail = async (values: Partial<PostEntity>) => {
+    console.log('post=>model=>detail', values);
+    let result;
+    if (typeof values._id !== 'undefined') {
+      result = await postsService.indexPostDetail(values);
+      result = result.data;
+      if (result.movie_time) {
+        // @ts-ignore
+        result.movie_time = moment(result.movie_time);
+      }
+      if (result.gallery_time) {
+        // @ts-ignore
+        result.gallery_time = moment(result.movie_time);
+      }
+      if (result.post_content) {
+        result.post_content = converter.makeMd(result.post_content);
+      }
+      const post_category = result.post_category as CategoryReadOnly;
+      if (post_category) {
+        result.post_category = post_category._id as string;
+      }
+      setDetail(result);
+    }
+  };
+
   useEffect(() => {
     if (_id) {
-      postModel.indexDetail({ _id });
+      indexDetail({ _id });
     }
     return () => {
-      postModel.setDetail(undefined);
+      setDetail(undefined);
     };
   }, [_id]);
 
   useEffect(() => {
-    form.setFieldsValue(postModel.detail);
-  }, [postModel.detail]);
+    index();
+  }, []);
 
   useEffect(() => {
-    categoryModel.index();
-  }, []);
+    form.setFieldsValue(detail);
+  }, [detail]);
 
   /**
    * 从tag对象数组中收集id数组
@@ -71,7 +130,7 @@ const PostDetail = () => {
    * @param type
    */
   const handleSubmit = (status: PostStatus, type: 'create' | 'update') => {
-    form.validateFields().then((values) => {
+    form.validateFields().then(async (values) => {
       const data = values;
       console.log('values', data);
       data.post_status = status;
@@ -99,13 +158,26 @@ const PostDetail = () => {
       }
       switch (type) {
         case 'create':
-          data.post_author = appModel.user!._id;
+          data.post_author = userInfo!._id;
           console.log('create', data);
-          postModel.create(data);
+          const createResult = await postsService.create(data);
+          if (createResult.status === 201) {
+            message.success('添加成功');
+            history.push({
+              pathname: '/post/edit',
+              query: {
+                _id: createResult.data._id,
+              },
+            });
+          }
           break;
         case 'update':
-          console.log('update', postModel.detail!._id, data);
-          postModel.update(postModel.detail!._id, data);
+          console.log('update', detail!._id, data);
+          const updateResult = await postsService.update(detail!._id, data);
+          if (updateResult.status === 201) {
+            message.success('更新成功');
+            indexDetail({ _id: detail!._id });
+          }
           break;
         default:
       }
@@ -115,13 +187,20 @@ const PostDetail = () => {
   /**
    * 创建tag
    * @param name
-   * @param value
+   * @param tag_name
    */
-  const onAddTag = (
+  const onAddTag = async (
     name: 'movie_actor' | 'movie_director' | 'movie_style' | 'gallery_style',
-    value: string,
+    tag_name: string,
   ) => {
-    postModel.createTag(name, value);
+    const result = await tagsService.create({ tag_name });
+    if (result && result.status === 201) {
+      setDetail({
+        ...detail,
+        // @ts-ignore
+        [name]: [...detail[name], { _id: result.data._id, tag_name: result.data.tag_name }],
+      } as PostEntity);
+    }
   };
 
   /**
@@ -133,7 +212,10 @@ const PostDetail = () => {
     name: 'movie_actor' | 'movie_director' | 'movie_style' | 'gallery_style',
     tags: TagEntity[],
   ) => {
-    postModel.updateTag(name, tags);
+    setDetail({
+      ...detail,
+      [name]: tags,
+    } as PostEntity);
   };
 
   /**
@@ -141,21 +223,21 @@ const PostDetail = () => {
    * @param type
    */
   const openPhotoPicker = () => {
-    postModel.setShowPhotoPicker(true);
+    setShowPhotoPicker(true);
   };
 
   /**
    * 关闭图片选择器
    */
   const handlePhotoPickerCancel = () => {
-    postModel.setShowPhotoPicker(false);
+    setShowPhotoPicker(false);
   };
 
   /**
    * 图片选择器的确认事件
    */
   const handlePhotoPickerOk = () => {
-    postModel.addPhoto();
+    // setDetail({ ...detail, post_cover: mediaModel.currentItem } as PostEntity);
     handlePhotoPickerCancel();
   };
 
@@ -164,21 +246,25 @@ const PostDetail = () => {
    * @param type
    */
   const handlePhotoClear = () => {
-    const { post_cover, ...rest } = postModel.detail as PostEntity;
-    postModel.setDetail(rest);
+    const { post_cover, ...rest } = detail as PostEntity;
+    setDetail(rest);
   };
 
   /**
    * 新增分类弹窗事件
    */
   const handleAddNewCategory = () => {
-    categoryModel.setModalType(ModalType.ADD);
-    categoryModel.setShowModal(true);
+    setModalProps({
+      visible: true,
+      type: ModalType.ADD,
+    });
   };
 
-  const detail = postModel.detail || ({} as PostEntity);
-
   console.log('detail', detail);
+
+  if (!detail) {
+    return null;
+  }
 
   /**
    * 定义tag选择器的参数
@@ -217,7 +303,7 @@ const PostDetail = () => {
       <Form
         form={form}
         onValuesChange={(changedValues) => {
-          postModel.setDetail({ ...detail, ...changedValues });
+          setDetail({ ...detail, ...changedValues });
         }}
       >
         <div className={styles.main}>
@@ -310,7 +396,7 @@ const PostDetail = () => {
                 >
                   <For
                     each="option"
-                    of={categoryModel.list}
+                    of={list}
                     body={(option) => (
                       <Select.Option value={option._id} key={option._id}>
                         {creatCategoryTitleByDepth(option.category_title, option)}
@@ -363,11 +449,11 @@ const PostDetail = () => {
         </div>
       </Form>
       <PhotoPickerModal
-        showPhotoPicker={postModel.showPhotoPicker}
+        showPhotoPicker={showPhotoPicker}
         handlePhotoPickerOk={handlePhotoPickerOk}
         handlePhotoPickerCancel={handlePhotoPickerCancel}
       />
-      <AddCategoryModal />
+      <AddCategoryModal modalProps={modalProps} setModalProps={setModalProps} />
     </Card>
   );
 };

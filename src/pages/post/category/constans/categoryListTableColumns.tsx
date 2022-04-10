@@ -1,7 +1,6 @@
-import React from 'react';
 import { Popconfirm } from 'antd';
 import moment from 'moment';
-import type { ColumnsType } from 'antd/es/table';
+import { ProColumns } from '@ant-design/pro-table';
 import type { CategoryEntity } from '@/pages/post/category/types/category.entity';
 import { EnableType, EnableTypeName } from '@/types/EnableType';
 import { creatCategoryTitleByDepth } from '@/utils/help';
@@ -17,7 +16,7 @@ export const categoryListTableColumns = (props: CategoryListTableColumnsProps) =
       title: '分类名称',
       dataIndex: 'category_title',
       key: 'category_title',
-      render: (text, record) => creatCategoryTitleByDepth(text, record),
+      render: (text: string, record) => creatCategoryTitleByDepth(text, record),
     },
     {
       title: '分类英文名',
@@ -28,29 +27,34 @@ export const categoryListTableColumns = (props: CategoryListTableColumnsProps) =
       title: '分类描述',
       dataIndex: 'category_description',
       key: 'category_description',
+      search: false,
     },
     {
       title: '状态',
       dataIndex: 'category_status',
       key: 'category_status',
-      render: (text) => EnableTypeName[EnableType[text] as keyof typeof EnableTypeName],
+      render: (text: EnableType) => EnableTypeName[EnableType[text] as keyof typeof EnableTypeName],
+      search: false,
     },
     {
       title: '添加时间',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      search: false,
     },
     {
       title: '最后更新日期',
       dataIndex: 'updated_at',
       key: 'updated_at',
-      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      search: false,
     },
     {
       title: '操作',
       key: 'operation',
       width: 100,
+      search: false,
       render: (text, record) => (
         <p>
           <a onClick={() => props.handleEditItem(record)}>编辑</a>&nbsp;
@@ -60,4 +64,4 @@ export const categoryListTableColumns = (props: CategoryListTableColumnsProps) =
         </p>
       ),
     },
-  ] as ColumnsType<CategoryEntity>;
+  ] as ProColumns<CategoryEntity>[];

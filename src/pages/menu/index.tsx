@@ -1,34 +1,67 @@
-import React, { useEffect } from 'react';
-import { Button, Card, Checkbox, Col, Row, Tabs, Typography } from 'antd';
+import { useEffect, useState } from 'react';
+import { Button, Card, Checkbox, Col, Row, Tabs, Typography, message } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-layout';
 import { Choose, Otherwise, When } from 'tsx-control-statements/components';
-import useMenuModel from './model';
-import useCategoryModel from '@/pages/post/category/model';
 import { creatCategoryTitleByDepth } from '@/utils/help';
 import SortableTree, {
   getFlatDataFromTree,
   getTreeFromFlatData,
   TreeItem,
 } from 'react-sortable-tree';
-import { menuTypeMap } from '@/utils/mapping';
 import 'react-sortable-tree/style.css';
 import styles from './index.less';
 import type { MenuEntity } from '@/pages/menu/types/menu.entity';
 import { CategoryEntity } from '@/pages/post/category/types/category.entity';
 import { PageEntity } from '@/pages/page/types/page.entity';
-import { MenuType } from '@/pages/menu/types/MenuType';
+import { MenuType, MenuTypeName } from '@/pages/menu/types/MenuType';
+import * as pagesService from '@/pages/page/service';
+import * as menusService from '@/pages/menu/service';
+import * as categoryService from '@/pages/post/category/service';
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
 const Menu = () => {
-  const menuModel = useMenuModel();
-  const categoryModel = useCategoryModel();
+  const [pageList, setPageList] = useState<PageEntity[]>([]);
+  const [categoryList, setCategoryList] = useState<CategoryEntity[]>([]);
+  const [checkedList, setCheckedList] = useState<MenuEntity[]>([]);
+
+  /**
+   * 查询页面集合
+   */
+  const indexPage = async () => {
+    console.log('pages=>model=>index');
+    const result = await pagesService.indexPageList();
+    if (result.status === 200) {
+      setPageList(result.data.list);
+    }
+  };
+
+  /**
+   * 查询分类列表
+   */
+  const indexCategory = async () => {
+    const result = await categoryService.index({ limit: 9999 });
+    if (result.status === 200) {
+      setCategoryList(result.data.list);
+    }
+  };
+
+  /**
+   * 查询菜单集合
+   */
+  const indexMenu = async () => {
+    const result = await menusService.index();
+    if (result.status === 200) {
+      setCheckedList(result.data.list);
+    }
+  };
 
   useEffect(() => {
-    categoryModel.index();
-    menuModel.indexPage();
-    menuModel.indexMenu();
+    indexCategory();
+    indexPage();
+    indexMenu();
   }, []);
 
   /**
@@ -36,13 +69,13 @@ const Menu = () => {
    * @param id
    */
   const removeItem = (id: string) => {
-    const newArr = [...menuModel.checkedList];
-    menuModel.checkedList.forEach((item, index) => {
+    const newArr = [...checkedList];
+    checkedList.forEach((item, index) => {
       if (item._id === id) {
         newArr.splice(index, 1);
       }
     });
-    menuModel.setCheckedList(newArr);
+    setCheckedList(newArr);
   };
 
   /**
@@ -52,10 +85,7 @@ const Menu = () => {
    */
   const onCheck = (e: any, type: MenuType) => {
     if (e.target.checked) {
-      menuModel.setCheckedList([
-        ...menuModel.checkedList,
-        { ...e.target.value, parent: '0', type },
-      ]);
+      setCheckedList([...checkedList, { ...e.target.value, parent: '0', type }]);
     } else {
       removeItem(e.target.value._id);
     }
@@ -68,7 +98,7 @@ const Menu = () => {
    */
   const getCheckedStatus = (item: CategoryEntity | PageEntity) => {
     let checked = false;
-    menuModel.checkedList.forEach((m) => {
+    checkedList.forEach((m) => {
       if (m._id === item._id) {
         checked = true;
       }
@@ -83,7 +113,7 @@ const Menu = () => {
    */
   const getDisabledStatus = (item: CategoryEntity | PageEntity) => {
     let disabled = false;
-    menuModel.checkedList.forEach((m) => {
+    checkedList.forEach((m) => {
       if (m.parent === item._id) {
         disabled = true;
       }
@@ -107,7 +137,7 @@ const Menu = () => {
       expanded: !!node.children,
     }));
     // @ts-ignore
-    menuModel.setCheckedList(list);
+    setCheckedList(list);
   };
 
   /**
@@ -135,11 +165,11 @@ const Menu = () => {
    */
   const getMenuFormat = () => {
     const format: any[] = [];
-    menuModel.checkedList.forEach((item) => {
+    checkedList.forEach((item) => {
       format.push({
         ...item,
         title: getTreeNodeTitle(item),
-        subtitle: menuTypeMap[item.type],
+        subtitle: MenuTypeName[MenuType[item.type]],
         expanded: true,
       });
     });
@@ -154,9 +184,9 @@ const Menu = () => {
   /**
    * 保存数据
    */
-  const submit = () => {
+  const submit = async () => {
     const data: MenuEntity[] = [];
-    menuModel.checkedList.forEach((item, index) => {
+    checkedList.forEach((item, index) => {
       const menu = {
         _id: item._id,
         type: item.type,
@@ -167,11 +197,15 @@ const Menu = () => {
       }
       data.push(menu);
     });
-    menuModel.updateMenu(data);
+    const result = await menusService.update(data);
+    if (result.status === 201) {
+      message.success('更新成功');
+      indexMenu();
+    }
   };
 
   return (
-    <>
+    <PageContainer>
       <Card>
         <Row>
           <Col span={6}>
@@ -180,7 +214,7 @@ const Menu = () => {
             <Tabs defaultActiveKey="1">
               <TabPane tab="分类" key="1">
                 <div className={styles.items}>
-                  {categoryModel.list.map((item) => (
+                  {categoryList.map((item) => (
                     <li key={item._id} className={styles.item}>
                       <Checkbox
                         value={item}
@@ -196,7 +230,7 @@ const Menu = () => {
               </TabPane>
               <TabPane tab="页面" key="2">
                 <div className={styles.items}>
-                  {menuModel.pageList.map((item) => (
+                  {pageList.map((item) => (
                     <li key={item._id} className={styles.item}>
                       <Checkbox
                         value={item}
@@ -216,7 +250,7 @@ const Menu = () => {
             <Title level={4}>菜单结构</Title>
             <Text>
               <Choose>
-                <When condition={menuModel.checkedList.length > 0}>拖拽下方菜单进行排序</When>
+                <When condition={checkedList.length > 0}>拖拽下方菜单进行排序</When>
                 <Otherwise>请先从左侧选择菜单</Otherwise>
               </Choose>
             </Text>
@@ -233,7 +267,7 @@ const Menu = () => {
           </Col>
         </Row>
       </Card>
-    </>
+    </PageContainer>
   );
 };
 

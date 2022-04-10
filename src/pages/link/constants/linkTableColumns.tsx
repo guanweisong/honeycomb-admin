@@ -1,7 +1,6 @@
-import React from 'react';
 import moment from 'moment';
 import { Popconfirm } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { ProColumns } from '@ant-design/pro-table';
 import type { LinkEntity } from '@/pages/link/types/link.entity';
 import { enableOptions, EnableTypeName, EnableType } from '@/types/EnableType';
 
@@ -30,28 +29,33 @@ export const linkTableColumns = (props: LinkTableColumnsProps) =>
       filters: enableOptions.map((item) => ({ text: item.label, value: item.value })),
       filteredValue: props.link_status,
       render: (text: EnableType) => EnableTypeName[EnableType[text] as keyof typeof EnableTypeName],
+      search: false,
     },
     {
       title: '链接描述',
       dataIndex: 'link_description',
       key: 'link_description',
+      search: false,
     },
     {
       title: '添加时间',
       dataIndex: 'created_at',
       key: 'created_at',
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      search: false,
     },
     {
       title: '最后更新日期',
       dataIndex: 'updated_at',
       key: 'updated_at',
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      search: false,
     },
     {
       title: '操作',
       key: 'operation',
       width: 100,
+      search: false,
       render: (text: string, record: LinkEntity) => (
         <p>
           <a onClick={() => props.handleEditItem(record)}>编辑</a>&nbsp;
@@ -61,4 +65,4 @@ export const linkTableColumns = (props: LinkTableColumnsProps) =>
         </p>
       ),
     },
-  ] as ColumnsType<LinkEntity>;
+  ] as ProColumns<LinkEntity>[];

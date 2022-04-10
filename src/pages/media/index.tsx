@@ -1,38 +1,57 @@
-import React, { useEffect } from 'react';
-import { Popconfirm, Card, Tabs, Upload, Spin, message, Space } from 'antd';
+import { useEffect, useState } from 'react';
+import { Popconfirm, Card, Upload, Spin, message, Space } from 'antd';
 import { FileOutlined, CopyOutlined, InboxOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-layout';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Choose, When, Otherwise, For } from 'tsx-control-statements/components';
-import useMediaModel from './model';
 import styles from './index.less';
-import Loader from '../../components/Loader';
 import type { MediaEntity } from '@/pages/media/types/media.entity';
 import { TabType } from '@/pages/media/types/TabType';
+import { MediaIndexRequest } from '@/pages/media/types/media.index.request';
+import * as mediaService from '@/pages/media/service';
 
-const { TabPane } = Tabs;
 const { Dragger } = Upload;
 
 const Media = () => {
-  const mediaModel = useMediaModel();
+  const [list, setList] = useState<MediaEntity[]>();
+  const [total, setTotal] = useState(0);
+  const [currentItem, setCurrentItem] = useState<MediaEntity>();
+  const [tab, setTab] = useState<TabType>(TabType.ALL);
+  const [loading, setLoading] = useState(false);
 
+  /**
+   * 查询已上传列表
+   * @param values
+   */
+  const index = async (values?: MediaIndexRequest) => {
+    const result = await mediaService.index({ ...values, limit: 99999 });
+    if (result.status === 200) {
+      setList(result.data.list);
+      setTotal(result.data.total);
+    }
+  };
+
+  /**
+   * 上传的参数
+   */
   const uploadProps = {
     name: 'file',
     multiple: true,
     showUploadList: false,
     action: `${
-      process.env.NODE_ENV === 'development' ? '//127.0.0.1:7002' : '//api.guanweisong.com'
+      process.env.NODE_ENV === 'development' ? '//127.0.0.1:7002' : 'https://api.guanweisong.com'
     }/media`,
     withCredentials: true,
     onChange(info: any) {
-      mediaModel.setLoading(true);
+      setLoading(true);
       const { response } = info.file;
       if (response) {
-        mediaModel.setLoading(false);
+        setLoading(false);
         if (info.file.status === 'done') {
           message.success(`${info.file.name} 上传成功`);
-          mediaModel.setTab(TabType.ALL);
-          mediaModel.setCurrentItem(response);
-          mediaModel.index();
+          setTab(TabType.ALL);
+          setCurrentItem(response);
+          index();
         } else {
           message.error(response.error);
         }
@@ -41,27 +60,28 @@ const Media = () => {
   };
 
   useEffect(() => {
-    mediaModel.index();
+    index();
   }, []);
-
-  if (!mediaModel.list) {
-    return <Loader />;
-  }
 
   /**
    * 编辑图片
    * @param item
    */
   const onEditItem = (item: MediaEntity) => {
-    mediaModel.setCurrentItem(item);
+    setCurrentItem(item);
   };
 
   /**
    * 删除图片
    * @param ids
    */
-  const onDeleteItem = (ids: string) => {
-    mediaModel.destroy([ids]);
+  const onDeleteItem = async (ids: string) => {
+    const result = await mediaService.destroy([ids]);
+    if (result.status === 204) {
+      index();
+      setCurrentItem(undefined);
+      message.success('删除成功');
+    }
   };
 
   /**
@@ -69,22 +89,34 @@ const Media = () => {
    * @param value
    */
   const handleSwitchTab = (value: string) => {
-    mediaModel.setTab(value as TabType);
+    setTab(value as TabType);
   };
 
-  const { currentItem } = mediaModel;
-
   return (
-    <Card>
-      <Tabs activeKey={mediaModel.tab} onChange={handleSwitchTab}>
-        <TabPane tab="媒体库" key={TabType.ALL}>
+    <PageContainer
+      tabList={[
+        {
+          tab: '媒体库',
+          key: TabType.ALL,
+        },
+        {
+          tab: '上传文件',
+          key: TabType.UPLOAD,
+        },
+      ]}
+      onTabChange={handleSwitchTab}
+      tabActiveKey={tab}
+      loading={typeof list === 'undefined'}
+    >
+      <Card>
+        {tab === TabType.ALL && list && (
           <div className={styles.mediaContent}>
             <Choose>
-              <When condition={mediaModel.list.length !== 0}>
+              <When condition={list?.length !== 0}>
                 <div className={styles.mediaList}>
                   <ul className={styles.mediaItems}>
                     <For
-                      of={mediaModel.list}
+                      of={list!}
                       body={(item) => (
                         <li
                           className={
@@ -136,9 +168,9 @@ const Media = () => {
               </Otherwise>
             </Choose>
           </div>
-        </TabPane>
-        <TabPane tab="上传文件" key={TabType.UPLOAD}>
-          <Spin spinning={mediaModel.loading} tip="正在上传中...">
+        )}
+        {tab === TabType.UPLOAD && (
+          <Spin spinning={loading} tip="正在上传中...">
             <div style={{ height: 400 }}>
               <Dragger {...uploadProps}>
                 <p className="ant-upload-drag-icon">
@@ -151,9 +183,9 @@ const Media = () => {
               </Dragger>
             </div>
           </Spin>
-        </TabPane>
-      </Tabs>
-    </Card>
+        )}
+      </Card>
+    </PageContainer>
   );
 };
 

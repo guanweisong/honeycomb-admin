@@ -1,5 +1,8 @@
-import React, { useEffect } from 'react';
-import { Table, Card, Row, Col, Input, Radio, Button, Modal, Form } from 'antd';
+import { useState, useRef } from 'react';
+import { Input, Radio, Button, Modal, Form, message, Popconfirm } from 'antd';
+import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import ProTable, { ActionType } from '@ant-design/pro-table';
+import { PlusOutlined } from '@ant-design/icons';
 import md5 from 'md5';
 import {
   StringParam,
@@ -9,18 +12,28 @@ import {
   NumericArrayParam,
 } from 'use-query-params';
 import type { RuleObject } from 'antd/es/form';
-import useUserModel from './model';
 import type { UserEntity } from '@/pages/user/types/user.entity';
-import { userTableColumns } from '@/pages/user/constants/userTableColumns';
 import { UserStatus, userStatusOptions } from '@/pages/user/types/UserStatus';
 import { UserLevel, userLevelOptions } from '@/pages/user/types/UserLevel';
-import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
 import { ModalType, ModalTypeName } from '@/types/ModalType';
 import { formItemLayout } from '@/constants/formItemLayout';
+import { PaginationRequest } from '@/types/PaginationRequest';
+import { userTableColumns } from './constants/userTableColumns';
+import * as UserService from './service';
+import * as usersService from '@/pages/user/service';
 
 const User = () => {
-  const userModel = useUserModel();
   const [form] = Form.useForm();
+  const actionRef = useRef<ActionType>();
+  const [selectedRows, setSelectedRows] = useState<UserEntity[]>([]);
+  const [modalProps, setModalProps] = useState<{
+    type?: ModalType;
+    visible: boolean;
+    record?: UserEntity;
+  }>({
+    type: ModalType.ADD,
+    visible: false,
+  });
 
   const [query, setQuery] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -35,11 +48,53 @@ const User = () => {
   const { keyword, limit, page, user_level, user_status } = query;
 
   /**
+   * 列表查询方法
+   * @param params
+   * @param sort
+   * @param filter
+   */
+  const request = async (
+    params: {
+      pageSize: number;
+      current: number;
+    },
+    sort,
+    filter,
+  ) => {
+    const { pageSize, current, ...rest } = params;
+    console.log(sort, filter);
+    const result = await UserService.index({
+      ...rest,
+      ...filter,
+      page: current,
+      limit: pageSize,
+    });
+    return {
+      data: result.data.list,
+      success: true,
+      total: result.data.total,
+    };
+  };
+
+  /**
    * 删除事件
    * @param ids
    */
-  const handleDeleteItem = (ids: string[]) => {
-    userModel.destroy(ids);
+  const handleDeleteItem = async (ids: string[]) => {
+    const result = await UserService.destroy(ids);
+    if (result.status === 204) {
+      actionRef.current?.reload();
+      message.success('删除成功');
+    }
+  };
+
+  /**
+   * 批量删除
+   */
+  const handleDeleteBatch = async () => {
+    const ids = selectedRows.map((item) => item._id);
+    await handleDeleteItem(ids);
+    setSelectedRows([]);
   };
 
   /**
@@ -48,47 +103,11 @@ const User = () => {
    */
   const handleEditItem = (record: UserEntity) => {
     form.setFieldsValue(record);
-    userModel.setCurrentItem(record);
-    userModel.setModalType(ModalType.EDIT);
-    userModel.setShowModal(true);
-  };
-
-  /**
-   * 初始化查询
-   */
-  useEffect(() => {
-    userModel.index(query);
-  }, [query]);
-
-  /**
-   * 表格change事件
-   * @param pagination
-   * @param filters
-   * @param sorter
-   */
-  const handleTableChange = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue | null>,
-    sorter: SorterResult<any> | SorterResult<any>[],
-  ) => {
-    const { field, order } = sorter as SorterResult<any>;
-    console.log(pagination, filters, sorter);
-    setQuery({
-      ...query,
-      page: pagination.current,
-      limit: pagination.pageSize,
-      ...filters,
-      sortField: field as string,
-      sortOrder: order,
+    setModalProps({
+      type: ModalType.EDIT,
+      visible: true,
+      record: record,
     });
-  };
-
-  /**
-   * 搜索事件
-   * @param value
-   */
-  const handleSearchChange = (value: string) => {
-    setQuery({ ...query, keyword: value });
   };
 
   /**
@@ -97,29 +116,33 @@ const User = () => {
   const handleModalOk = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         const { user_password, ...rest } = values;
         const params = rest;
         if (user_password) {
           params.user_password = md5(values.user_password);
         }
-        if (userModel.modalType === 0) {
-          userModel.create(params);
-        } else {
-          userModel.update(userModel.currentItem?._id as string, params);
+        switch (modalProps.type!) {
+          case ModalType.ADD:
+            const createResult = await UserService.create(params);
+            if (createResult.status === 201) {
+              actionRef.current?.reload();
+              message.success('添加成功');
+            }
+            break;
+          case ModalType.EDIT:
+            const updateResult = await UserService.update(modalProps.record?._id as string, params);
+            if (updateResult.status === 201) {
+              actionRef.current?.reload();
+              message.success('更新成功');
+            }
+            break;
         }
-        userModel.setShowModal(false);
+        setModalProps({ visible: false });
       })
       .catch((e) => {
         console.error(e);
       });
-  };
-
-  /**
-   * 新增、修改弹窗关闭事件
-   */
-  const handleModalCancel = () => {
-    userModel.setShowModal(false);
   };
 
   /**
@@ -128,9 +151,33 @@ const User = () => {
   const handleAddNew = () => {
     form.resetFields();
     form.setFieldsValue({ user_level: UserLevel.EDITOR, user_status: UserStatus.ENABLE });
-    userModel.setCurrentItem(undefined);
-    userModel.setModalType(ModalType.ADD);
-    userModel.setShowModal(true);
+    setModalProps({
+      type: ModalType.ADD,
+      visible: true,
+      record: undefined,
+    });
+  };
+
+  /**
+   * 查询唯一性
+   * @param user_name
+   * @param user_email
+   */
+  const checkExist = async ({
+    user_name,
+    user_email,
+  }: {
+    user_name?: string;
+    user_email?: string;
+  }) => {
+    console.log('users=>model=>checkExist', { user_name });
+    let exist = false;
+    const result = await usersService.index({ user_name, user_email });
+    const currentId = modalProps.record?._id;
+    if (result.data.total > 0 && result.data.list[0]._id !== currentId) {
+      exist = true;
+    }
+    return exist;
   };
 
   /**
@@ -140,7 +187,7 @@ const User = () => {
    */
   const validateUserName = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
-      const result = await userModel.checkExist({ user_name: value });
+      const result = await checkExist({ user_name: value });
       if (result) {
         return Promise.reject('抱歉，用户名已存在，请换一个用户名');
       }
@@ -156,7 +203,7 @@ const User = () => {
    */
   const validateUserEmail = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
-      const result = await userModel.checkExist({ user_email: value });
+      const result = await checkExist({ user_email: value });
       if (result) {
         return Promise.reject('抱歉，用户邮箱已存在，请换一个用户邮箱');
       }
@@ -166,51 +213,43 @@ const User = () => {
   };
 
   return (
-    <>
-      <Card>
-        <Form layout="inline" style={{ marginBottom: '20px' }}>
-          <Row style={{ width: '100%' }}>
-            <Col span={12}>
-              <Form.Item {...formItemLayout}>
-                <Input.Search
-                  defaultValue={keyword || ''}
-                  onSearch={handleSearchChange}
-                  placeholder="按用户名或者邮箱"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12} style={{ textAlign: 'right' }}>
-              <Button type="primary" onClick={handleAddNew}>
-                添加新用户
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-        <Table
-          columns={userTableColumns({
-            user_level: user_level as UserLevel[],
-            user_status: user_status as UserStatus[],
-            handleDeleteItem,
-            handleEditItem,
-          })}
-          rowKey={(record) => record._id}
-          dataSource={userModel.list}
-          rowClassName={(record) => (record.user_status === -1 ? 'gray' : '')}
-          pagination={{
-            showSizeChanger: true,
-            total: userModel.total,
-            pageSize: limit,
-            current: page,
-          }}
-          onChange={handleTableChange}
-          loading={userModel.loading}
-        />
-      </Card>
+    <PageContainer>
+      <ProTable<UserEntity, PaginationRequest>
+        rowKey="_id"
+        request={request}
+        actionRef={actionRef}
+        columns={userTableColumns({ handleEditItem, handleDeleteItem })}
+        rowSelection={{
+          selectedRowKeys: selectedRows.map((item) => item._id),
+          onChange: (_, rows) => {
+            setSelectedRows(rows);
+          },
+        }}
+        toolBarRender={() => [
+          <Button type="primary" key="primary" onClick={handleAddNew}>
+            <PlusOutlined /> 添加新用户
+          </Button>,
+        ]}
+      />
+      {selectedRows?.length > 0 && (
+        <FooterToolbar
+          extra={
+            <div>
+              选择了
+              <a style={{ fontWeight: 600 }}>{selectedRows.length}</a>项 &nbsp;&nbsp;
+            </div>
+          }
+        >
+          <Popconfirm title="确定要删除吗？" onConfirm={handleDeleteBatch}>
+            <Button type="primary">批量删除</Button>
+          </Popconfirm>
+        </FooterToolbar>
+      )}
       <Modal
-        title={`${ModalTypeName[ModalType[userModel.modalType] as keyof typeof ModalTypeName]}用户`}
-        visible={userModel.showModal}
+        title={`${ModalTypeName[ModalType[modalProps.type!] as keyof typeof ModalTypeName]}用户`}
+        visible={modalProps.visible}
         onOk={handleModalOk}
-        onCancel={handleModalCancel}
+        onCancel={() => setModalProps({ visible: false })}
       >
         <Form form={form} onFinish={handleModalOk}>
           <Form.Item
@@ -225,14 +264,14 @@ const User = () => {
             {...formItemLayout}
             name="user_password"
             label="密码"
-            rules={[{ required: userModel.modalType === ModalType.ADD, message: '请输入密码' }]}
+            rules={[{ required: modalProps.type === ModalType.ADD, message: '请输入密码' }]}
           >
             <Input
               autoComplete="off"
               type="password"
               maxLength={20}
               minLength={6}
-              placeholder={userModel.modalType === ModalType.EDIT ? '留空则为不修改' : ''}
+              placeholder={modalProps.type === ModalType.EDIT ? '留空则为不修改' : ''}
             />
           </Form.Item>
           <Form.Item
@@ -250,20 +289,20 @@ const User = () => {
           <Form.Item {...formItemLayout} name="user_level" label="级别">
             <Radio.Group
               buttonStyle="solid"
-              disabled={userModel.currentItem?.user_level === UserLevel.ADMIN}
+              disabled={modalProps.record?.user_level === UserLevel.ADMIN}
               options={userLevelOptions}
             />
           </Form.Item>
           <Form.Item {...formItemLayout} name="user_status" label="状态">
             <Radio.Group
               buttonStyle="solid"
-              disabled={userModel.currentItem?.user_level === UserLevel.ADMIN}
+              disabled={modalProps.record?.user_level === UserLevel.ADMIN}
               options={userStatusOptions}
             />
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </PageContainer>
   );
 };
 
