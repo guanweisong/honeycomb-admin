@@ -12,7 +12,13 @@ import * as mediaService from '@/pages/media/service';
 
 const { Dragger } = Upload;
 
-const Media = () => {
+export interface MediaProps {
+  onSelect?: (media: MediaEntity) => void;
+}
+
+const Media = (props: MediaProps) => {
+  const { onSelect } = props;
+
   const [list, setList] = useState<MediaEntity[]>();
   const [total, setTotal] = useState(0);
   const [currentItem, setCurrentItem] = useState<MediaEntity>();
@@ -66,6 +72,12 @@ const Media = () => {
   useEffect(() => {
     index();
   }, []);
+
+  useEffect(() => {
+    if (onSelect && currentItem) {
+      onSelect(currentItem);
+    }
+  }, [currentItem]);
 
   /**
    * 编辑图片

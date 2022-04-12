@@ -2,8 +2,8 @@ import axios from 'axios';
 import { message } from 'antd';
 
 const instance = axios.create({
-  baseURL: 'https://api.guanweisong.com',
-  // baseURL: 'http://127.0.0.1:7002',
+  baseURL:
+    process.env.NODE_ENV === 'development' ? '//127.0.0.1:7002' : 'https://api.guanweisong.com',
   withCredentials: true,
   timeout: 10000,
   headers: {},

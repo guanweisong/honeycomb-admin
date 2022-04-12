@@ -26,6 +26,7 @@ import { CategoryReadOnly } from '@/pages/post/types/post.entity';
 import { CategoryEntity } from '@/pages/post/category/types/category.entity';
 import * as tagsService from '@/pages/tag/service';
 import * as categoryService from '@/pages/post/category/service';
+import { MediaEntity } from '@/pages/media/types/media.entity';
 const showdown = require('showdown');
 
 const converter = new showdown.Converter();
@@ -238,8 +239,8 @@ const PostDetail = () => {
   /**
    * 图片选择器的确认事件
    */
-  const handlePhotoPickerOk = () => {
-    // setDetail({ ...detail, post_cover: mediaModel.currentItem } as PostEntity);
+  const handlePhotoPickerOk = (media: MediaEntity) => {
+    setDetail({ ...detail, post_cover: media } as PostEntity);
     handlePhotoPickerCancel();
   };
 
