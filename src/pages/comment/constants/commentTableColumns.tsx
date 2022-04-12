@@ -1,7 +1,6 @@
-import React from 'react';
 import moment from 'moment';
 import { Popconfirm } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { ProColumns } from '@ant-design/pro-table';
 import type { CommentEntity } from '@/pages/comment/types/comment.entity';
 import {
   CommentStatus,
@@ -26,7 +25,7 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
       title: '评论文章',
       dataIndex: 'comment_post',
       key: 'comment_post',
-      render: (text) => {
+      render: (text: any) => {
         return text?.post_title;
       },
     },
@@ -49,9 +48,10 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
       title: '评论状态',
       dataIndex: 'comment_status',
       key: 'comment_status',
+      search: false,
       filters: commentStatusOptions.map((item) => ({ text: item.label, value: item.value })),
       filteredValue: props.comment_status,
-      render: (text) => {
+      render: (text: CommentStatus) => {
         return CommentStatusName[CommentStatus[text] as keyof typeof CommentStatusName];
       },
     },
@@ -59,18 +59,21 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
       title: '添加时间',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      search: false,
+      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '最后更新日期',
       dataIndex: 'updated_at',
       key: 'updated_at',
-      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      search: false,
+      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '操作',
       key: 'operation',
       width: 100,
+      search: false,
       render: (text, record) => (
         <div>
           {props.renderOpt(record)}&nbsp;
@@ -80,4 +83,4 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
         </div>
       ),
     },
-  ] as ColumnsType<CommentEntity>;
+  ] as ProColumns<CommentEntity>[];

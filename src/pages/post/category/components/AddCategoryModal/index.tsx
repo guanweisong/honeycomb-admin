@@ -1,17 +1,31 @@
-import React, { useEffect } from 'react';
-import { Form, Input, Radio, Modal, Select } from 'antd';
+import { useEffect, useState } from 'react';
+import { Form, Input, Radio, Modal, Select, message } from 'antd';
 import { For } from 'tsx-control-statements/components';
 import { creatCategoryTitleByDepth } from '@/utils/help';
-import useCategoryModel from '@/pages/post/category/model';
 import { formItemLayout } from '@/constants/formItemLayout';
 import { enableOptions, EnableType } from '@/types/EnableType';
 import { ModalType, ModalTypeName } from '@/types/ModalType';
+import * as CategoryService from '../../service';
+import * as categoryService from '@/pages/post/category/service';
+import { CategoryEntity } from '@/pages/post/category/types/category.entity';
 
 const { Option } = Select;
 
-const AddCategoryModal = () => {
-  const categoryModel = useCategoryModel();
+export interface ModalProps {
+  type?: ModalType;
+  visible: boolean;
+  record?: any;
+}
+
+export interface AddCategoryModalProps {
+  modalProps: ModalProps;
+  setModalProps: (state: ModalProps) => void;
+}
+
+const AddCategoryModal = (props: AddCategoryModalProps) => {
   const [form] = Form.useForm();
+  const [list, setList] = useState<CategoryEntity[]>([]);
+  const { modalProps, setModalProps } = props;
 
   const initForm = () => {
     form.resetFields();
@@ -21,33 +35,70 @@ const AddCategoryModal = () => {
     });
   };
 
+  /**
+   * 分类列表获取
+   */
+  const index = async () => {
+    const result = await categoryService.index({ limit: 9999 });
+    if (result.status === 200) {
+      setList(result.data.list);
+    }
+  };
+
   useEffect(() => {
-    switch (categoryModel.modalType) {
+    switch (modalProps.type!) {
       case ModalType.ADD:
         initForm();
         break;
       case ModalType.EDIT:
-        form.setFieldsValue(categoryModel.currentItem);
+        form.setFieldsValue(modalProps.record);
         break;
     }
-  }, [categoryModel.modalType]);
+  }, [modalProps.type]);
 
+  useEffect(() => {
+    index();
+  }, [modalProps.visible]);
+
+  /**
+   * 关闭弹窗
+   */
+  const handleModalCancel = () => {
+    setModalProps({
+      visible: false,
+    });
+  };
+
+  /**
+   * 确认按钮事件
+   */
   const handleModalOk = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         if (values.category_parent === '0') {
           delete values.category_parent;
         }
-        switch (categoryModel.modalType) {
+        switch (modalProps.type!) {
           case ModalType.ADD:
-            categoryModel.create(values);
+            const createResult = await CategoryService.create(values);
+            if (createResult.status === 201) {
+              index();
+              message.success('添加成功');
+            }
             break;
           case ModalType.EDIT:
-            categoryModel.update(categoryModel.currentItem?._id as string, values);
+            const updateResult = await CategoryService.update(
+              modalProps.record?._id as string,
+              values,
+            );
+            if (updateResult.status === 201) {
+              index();
+              message.success('更新成功');
+            }
             break;
         }
-        categoryModel.setShowModal(false);
+        handleModalCancel();
         initForm();
       })
       .catch((e) => {
@@ -55,16 +106,10 @@ const AddCategoryModal = () => {
       });
   };
 
-  const handleModalCancel = () => {
-    categoryModel.setShowModal(false);
-  };
-
   return (
     <Modal
-      title={`${
-        ModalTypeName[ModalType[categoryModel.modalType] as keyof typeof ModalTypeName]
-      }分类`}
-      visible={categoryModel.showModal}
+      title={`${ModalTypeName[ModalType[modalProps.type!] as keyof typeof ModalTypeName]}分类`}
+      visible={modalProps.visible}
       onOk={handleModalOk}
       onCancel={handleModalCancel}
     >
@@ -95,12 +140,12 @@ const AddCategoryModal = () => {
             <Option value="0">无父级分类</Option>
             <For
               each="option"
-              of={categoryModel.list}
+              of={list}
               body={(option) => (
                 <Option
                   value={option._id}
                   key={option._id}
-                  disabled={option._id === categoryModel.currentItem?._id}
+                  disabled={option._id === modalProps.record?._id}
                 >
                   {creatCategoryTitleByDepth(option.category_title, option)}
                 </Option>

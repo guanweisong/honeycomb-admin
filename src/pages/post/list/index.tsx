@@ -1,126 +1,115 @@
-import React, { useEffect } from 'react';
-import { Table, Card, Input, Row, Col, Button } from 'antd';
-import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
-import { Form } from '@ant-design/compatible';
+import { useRef, useState } from 'react';
+import { Button, message, Popconfirm } from 'antd';
+import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import ProTable, { ActionType } from '@ant-design/pro-table';
+import { PlusOutlined } from '@ant-design/icons';
 import { Link } from 'umi';
-import {
-  StringParam,
-  NumberParam,
-  useQueryParams,
-  withDefault,
-  NumericArrayParam,
-} from 'use-query-params';
 import { PostListTableColumns } from './constants/postListTableColumns';
-import usePostModel from '../model';
-import type { PostStatus } from '@/pages/post/types/PostStatus';
-import type { PostType } from '@/pages/post/types/PostType';
-import { formItemLayout } from '@/constants/formItemLayout';
-
-const FormItem = Form.Item;
-const { Search } = Input;
+import * as postsService from '../service';
+import { PostEntity } from '@/pages/post/types/post.entity';
+import { PostIndexRequest } from '@/pages/post/types/post.index.request';
 
 const PostList = () => {
-  const postModel = usePostModel();
+  const actionRef = useRef<ActionType>();
+  const [selectedRows, setSelectedRows] = useState<PostEntity[]>([]);
 
-  const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    limit: withDefault(NumberParam, 10),
-    keyword: StringParam,
-    post_type: NumericArrayParam,
-    post_status: NumericArrayParam,
-    sortField: StringParam,
-    sortOrder: StringParam,
-  });
-
-  const { limit, page, post_type, post_status, keyword } = query;
+  /**
+   * 列表查询方法
+   * @param params
+   * @param sort
+   * @param filter
+   */
+  const request = async (
+    params: {
+      pageSize: number;
+      current: number;
+      post_title?: string;
+    },
+    sort: any,
+    filter: any,
+  ) => {
+    const { pageSize, current, post_title } = params;
+    console.log(sort, filter);
+    const data: PostIndexRequest = {
+      post_title,
+      ...filter,
+      page: current,
+      limit: pageSize,
+    };
+    const sortKeys = Object.keys(sort);
+    if (sortKeys.length > 0) {
+      data.sortField = sortKeys[0];
+      data.sortOrder = sort[sortKeys[0]];
+    }
+    const result = await postsService.indexPostList(data);
+    return {
+      data: result.data.list,
+      success: true,
+      total: result.data.total,
+    };
+  };
 
   /**
    * 删除事件
    * @param id
    */
-  const handleDeleteItem = (id: string) => {
-    postModel.destroy([id]);
-  };
-
-  useEffect(() => {
-    postModel.index(query);
-  }, [query]);
-
-  /**
-   * 表格change事件
-   * @param pagination
-   * @param filters
-   * @param sorter
-   */
-  const handleTableChange = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue | null>,
-    sorter: SorterResult<any> | SorterResult<any>[],
-  ) => {
-    console.log(pagination, filters, sorter);
-    const { field, order } = sorter as SorterResult<any>;
-    setQuery({
-      ...query,
-      page: pagination.current,
-      limit: pagination.pageSize,
-      ...filters,
-      sortField: field as string,
-      sortOrder: order,
-    });
+  const handleDeleteItem = async (ids: string[]) => {
+    const result = await postsService.destroy(ids);
+    if (result.status === 204) {
+      actionRef.current?.reload();
+      message.success('删除成功');
+    }
   };
 
   /**
-   * 搜索事件
-   * @param value
+   * 批量删除
    */
-  const handleSearchChange = (value: string) => {
-    setQuery({
-      ...query,
-      page: 1,
-      keyword: value,
-    });
+  const handleDeleteBatch = async () => {
+    const ids = selectedRows.map((item) => item._id);
+    await handleDeleteItem(ids);
+    setSelectedRows([]);
   };
 
   return (
-    <>
-      <Card>
-        <Form layout="inline" style={{ marginBottom: '20px' }}>
-          <Row style={{ width: '100%' }}>
-            <Col span={12}>
-              <FormItem {...formItemLayout}>
-                <Search
-                  defaultValue={keyword as string}
-                  onSearch={handleSearchChange}
-                  placeholder="按文章名、引用内容、引用作者"
-                />
-              </FormItem>
-            </Col>
-            <Col span={12} style={{ textAlign: 'right' }}>
-              <Button type="primary">
-                <Link to="/post/edit">添加新文章</Link>
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-        <Table
-          columns={PostListTableColumns({
-            handleDeleteItem,
-            post_status: post_status as PostStatus[],
-            post_type: post_type as PostType[],
-          })}
-          rowKey={(record) => record._id}
-          dataSource={postModel.list}
-          pagination={{
-            showSizeChanger: true,
-            total: postModel.total,
-            pageSize: limit,
-            current: page,
-          }}
-          onChange={handleTableChange}
-          loading={postModel.loading}
-        />
-      </Card>
-    </>
+    <PageContainer>
+      <ProTable<PostEntity, any>
+        rowKey="_id"
+        request={request}
+        tableLayout="fixed"
+        scroll={{ x: 'max-content' }}
+        actionRef={actionRef}
+        columns={PostListTableColumns({
+          handleDeleteItem,
+        })}
+        rowSelection={{
+          selectedRowKeys: selectedRows.map((item) => item._id),
+          onChange: (_, rows) => {
+            setSelectedRows(rows);
+          },
+        }}
+        toolBarRender={() => [
+          <Button type="primary" key="primary">
+            <Link to="/post/edit">
+              <PlusOutlined /> 添加新页面
+            </Link>
+          </Button>,
+        ]}
+      />
+      {selectedRows?.length > 0 && (
+        <FooterToolbar
+          extra={
+            <div>
+              选择了
+              <a style={{ fontWeight: 600 }}>{selectedRows.length}</a>项 &nbsp;&nbsp;
+            </div>
+          }
+        >
+          <Popconfirm title="确定要删除吗？" onConfirm={handleDeleteBatch}>
+            <Button type="primary">批量删除</Button>
+          </Popconfirm>
+        </FooterToolbar>
+      )}
+    </PageContainer>
   );
 };
 

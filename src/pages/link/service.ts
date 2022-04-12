@@ -23,8 +23,8 @@ export const create = (params: Omit<LinkEntity, '_id'>): Promise<LinkCreateRespo
   });
 };
 
-export const distory = (ids: string[]): Promise<BaseResponse<null>> => {
-  console.log('links=>service=>distory', ids);
+export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
+  console.log('links=>service=>destroy', ids);
   return request({
     url: `/links`,
     params: { ids },

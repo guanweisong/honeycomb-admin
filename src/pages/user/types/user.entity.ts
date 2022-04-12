@@ -1,5 +1,5 @@
 import type { UserLevel } from '@/pages/user/types/UserLevel';
-import type { UserStatus } from '@/pages/user/types/UserState';
+import type { UserStatus } from '@/pages/user/types/UserStatus';
 import type { BaseEntity } from '@/types/BaseEntity';
 
 export interface UserEntity extends BaseEntity {

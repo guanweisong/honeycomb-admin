@@ -1,70 +1,62 @@
-import React, { useEffect } from 'react';
-import { Table, Card, Row, Col, Input, Radio, Button, Modal, Form } from 'antd';
-import type { TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
+import { useState, useRef } from 'react';
+import { message } from 'antd';
+import { Input, Radio, Button, Modal, Form, Popconfirm } from 'antd';
 import { For } from 'tsx-control-statements/components';
+import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import ProTable, { ActionType } from '@ant-design/pro-table';
 import type { RuleObject } from 'antd/es/form';
-import {
-  StringParam,
-  NumberParam,
-  useQueryParams,
-  withDefault,
-  NumericArrayParam,
-} from 'use-query-params';
-import useLinkModel from './model';
+import { PlusOutlined } from '@ant-design/icons';
 import { linkTableColumns } from '@/pages/link/constants/linkTableColumns';
 import type { LinkEntity } from '@/pages/link/types/link.entity';
-import { ModalType } from '@/types/ModalType';
+import { ModalType, ModalTypeName } from '@/types/ModalType';
 import { EnableType } from '@/types/EnableType';
 import { enableOptions } from '@/types/EnableType';
 import { formItemLayout } from '@/constants/formItemLayout';
+import * as LinkService from './service';
+import * as linksService from '@/pages/link/service';
 
 const Link = () => {
-  const linkModel = useLinkModel();
   const [form] = Form.useForm();
-
-  const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    limit: withDefault(NumberParam, 10),
-    keyword: StringParam,
-    link_status: NumericArrayParam,
+  const actionRef = useRef<ActionType>();
+  const [selectedRows, setSelectedRows] = useState<LinkEntity[]>([]);
+  const [modalProps, setModalProps] = useState<{
+    type?: ModalType;
+    visible: boolean;
+    record?: LinkEntity;
+  }>({
+    type: ModalType.ADD,
+    visible: false,
   });
 
-  const { page, limit, keyword, link_status } = query;
-
-  useEffect(() => {
-    linkModel.index(query);
-  }, [query]);
-
   /**
-   * 表格change事件
-   * @param pagination
-   * @param filters
-   * @param sorter
+   * 列表查询方法
+   * @param params
+   * @param sort
+   * @param filter
    */
-  const handleTableChange = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue | null>,
-    sorter: SorterResult<any> | SorterResult<any>[],
+  const request = async (
+    params: {
+      pageSize: number;
+      current: number;
+      link_name?: string;
+      link_url?: string;
+    },
+    sort: any,
+    filter: any,
   ) => {
-    console.log(pagination, filters, sorter);
-    setQuery({
-      ...query,
-      page: pagination.current,
-      limit: pagination.pageSize,
-      ...filters,
+    const { pageSize, current, link_name, link_url } = params;
+    const result = await LinkService.index({
+      ...filter,
+      link_name,
+      link_url,
+      page: current,
+      limit: pageSize,
     });
-  };
-
-  /**
-   * 搜索事件
-   * @param value
-   */
-  const handleSearchChange = (value: string) => {
-    setQuery({
-      ...query,
-      page: 1,
-      keyword: value,
-    });
+    return {
+      data: result.data.list,
+      success: true,
+      total: result.data.total,
+    };
   };
 
   /**
@@ -73,13 +65,27 @@ const Link = () => {
   const handleModalOk = () => {
     form
       .validateFields()
-      .then((values) => {
-        if (linkModel.modalType === ModalType.ADD) {
-          linkModel.create(values);
-        } else {
-          linkModel.update(linkModel.currentItem?._id as string, values);
+      .then(async (values) => {
+        switch (modalProps.type!) {
+          case ModalType.ADD:
+            const createResult = await linksService.create(values);
+            if (createResult.status === 201) {
+              actionRef.current?.reload();
+              message.success('添加成功');
+            }
+            break;
+          case ModalType.EDIT:
+            const updateResult = await linksService.update(
+              modalProps.record?._id as string,
+              values,
+            );
+            if (updateResult.status === 201) {
+              actionRef.current?.reload();
+              message.success('更新成功');
+            }
+            break;
         }
-        linkModel.setShowModal(false);
+        setModalProps({ visible: false });
       })
       .catch((e) => {
         console.error(e);
@@ -90,9 +96,11 @@ const Link = () => {
    * 新增按钮事件
    */
   const handleAddNew = () => {
-    linkModel.setModalType(ModalType.ADD);
-    linkModel.setShowModal(true);
-    linkModel.setCurrentItem(undefined);
+    setModalProps({
+      type: ModalType.ADD,
+      visible: true,
+      record: undefined,
+    });
     form.resetFields();
     form.setFieldsValue({ link_status: EnableType.ENABLE });
   };
@@ -101,8 +109,21 @@ const Link = () => {
    * 删除按钮事件
    * @param ids
    */
-  const handleDeleteItem = (ids: string[]) => {
-    linkModel.destroy(ids);
+  const handleDeleteItem = async (ids: string[]) => {
+    const result = await LinkService.destroy(ids);
+    if (result.status === 204) {
+      actionRef.current?.reload();
+      message.success('删除成功');
+    }
+  };
+
+  /**
+   * 批量删除
+   */
+  const handleDeleteBatch = async () => {
+    const ids = selectedRows.map((item) => item._id);
+    await handleDeleteItem(ids);
+    setSelectedRows([]);
   };
 
   /**
@@ -111,9 +132,11 @@ const Link = () => {
    */
   const handleEditItem = (record: LinkEntity) => {
     form.setFieldsValue(record);
-    linkModel.setCurrentItem(record);
-    linkModel.setModalType(ModalType.EDIT);
-    linkModel.setShowModal(true);
+    setModalProps({
+      type: ModalType.EDIT,
+      visible: true,
+      record: record,
+    });
   };
 
   /**
@@ -123,8 +146,13 @@ const Link = () => {
    */
   const validateLinkUrl = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
-      const result = await linkModel.checkExist({ link_url: value });
-      if (result) {
+      let exist = false;
+      const result = await linksService.index({ link_url: value });
+      const currentId = modalProps.record?._id;
+      if (result.data.total > 0 && result.data.list[0]._id !== currentId) {
+        exist = true;
+      }
+      if (exist) {
         return Promise.reject('抱歉，URL已存在，请换一个URL');
       }
       return Promise.resolve();
@@ -133,49 +161,46 @@ const Link = () => {
   };
 
   return (
-    <>
-      <Card>
-        <Form layout="inline" style={{ marginBottom: '20px' }}>
-          <Row style={{ width: '100%' }}>
-            <Col span={12}>
-              <Form.Item {...formItemLayout}>
-                <Input.Search
-                  defaultValue={keyword || ''}
-                  onSearch={handleSearchChange}
-                  placeholder="按链接名称或者URL"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12} style={{ textAlign: 'right' }}>
-              <Button type="primary" onClick={handleAddNew}>
-                添加新链接
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-        <Table
-          columns={linkTableColumns({
-            handleEditItem,
-            handleDeleteItem,
-            link_status: link_status as EnableType[],
-          })}
-          rowKey={(record) => record._id}
-          dataSource={linkModel.list}
-          pagination={{
-            showSizeChanger: true,
-            total: linkModel.total,
-            pageSize: limit,
-            current: page,
-          }}
-          loading={linkModel.loading}
-          onChange={handleTableChange}
-        />
-      </Card>
+    <PageContainer>
+      <ProTable<LinkEntity, any>
+        rowKey="_id"
+        request={request}
+        actionRef={actionRef}
+        columns={linkTableColumns({
+          handleEditItem,
+          handleDeleteItem,
+        })}
+        rowSelection={{
+          selectedRowKeys: selectedRows.map((item) => item._id),
+          onChange: (_, rows) => {
+            setSelectedRows(rows);
+          },
+        }}
+        toolBarRender={() => [
+          <Button type="primary" key="primary" onClick={handleAddNew}>
+            <PlusOutlined /> 添加新链接
+          </Button>,
+        ]}
+      />
+      {selectedRows?.length > 0 && (
+        <FooterToolbar
+          extra={
+            <div>
+              选择了
+              <a style={{ fontWeight: 600 }}>{selectedRows.length}</a>项 &nbsp;&nbsp;
+            </div>
+          }
+        >
+          <Popconfirm title="确定要删除吗？" onConfirm={handleDeleteBatch}>
+            <Button type="primary">批量删除</Button>
+          </Popconfirm>
+        </FooterToolbar>
+      )}
       <Modal
-        title={linkModel.modalType ? '修改链接' : '添加新链接'}
-        visible={linkModel.showModal}
+        title={`${ModalTypeName[ModalType[modalProps.type!] as keyof typeof ModalTypeName]}链接`}
+        visible={modalProps?.visible}
         onOk={handleModalOk}
-        onCancel={() => linkModel.setShowModal(false)}
+        onCancel={() => setModalProps({ visible: false })}
       >
         <Form form={form} onFinish={handleModalOk}>
           <Form.Item
@@ -222,7 +247,7 @@ const Link = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </PageContainer>
   );
 };
 

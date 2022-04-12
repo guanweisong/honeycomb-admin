@@ -1,25 +1,36 @@
-import React, { useEffect } from 'react';
-import { Card, Input, Button, Space, Form } from 'antd';
-import useSettingsModel from './model';
+import { useEffect } from 'react';
+import { Card, Input, Button, Space, Form, message } from 'antd';
+import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import { formItemLayout } from '@/constants/formItemLayout';
+import { useModel } from '@@/plugin-model/useModel';
+import * as SettingService from './service';
 
 const Setting = () => {
   const [form] = Form.useForm();
-  const settingsModel = useSettingsModel();
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const setting = initialState?.setting;
 
   useEffect(() => {
-    form.setFieldsValue(settingsModel.setting);
-  }, [settingsModel.setting]);
+    form.setFieldsValue(setting);
+  }, [setting]);
 
+  /**
+   * 保存事件
+   */
   const handleSubmit = () => {
-    form.validateFields().then((values) => {
-      settingsModel.update(settingsModel.setting?._id as string, values);
+    form.validateFields().then(async (values) => {
+      const result = await SettingService.update(setting!._id, values);
+      if (result.status === 201) {
+        const settingInfo = await SettingService.querySetting();
+        setInitialState({ ...initialState, setting: settingInfo.data?.[0] });
+        message.success('更新成功');
+      }
     });
   };
 
   return (
-    <>
-      <Form onFinish={handleSubmit} form={form}>
+    <PageContainer>
+      <Form form={form}>
         <Space direction={'vertical'} style={{ width: '100%', display: 'flex' }}>
           <Card title="基础信息">
             <Form.Item
@@ -63,16 +74,14 @@ const Setting = () => {
               <Input placeholder="用填写工信部网址，有备案号时显示链接" maxLength={100} />
             </Form.Item>
           </Card>
-          <Card>
-            <Form.Item wrapperCol={{ offset: 4 }}>
-              <Button type="primary" htmlType="submit">
-                保存
-              </Button>
-            </Form.Item>
-          </Card>
         </Space>
       </Form>
-    </>
+      <FooterToolbar>
+        <Button type="primary" onClick={handleSubmit}>
+          保存
+        </Button>
+      </FooterToolbar>
+    </PageContainer>
   );
 };
 
