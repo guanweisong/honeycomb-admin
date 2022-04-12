@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Input, Form } from 'antd';
 import { Choose, When, Otherwise } from 'tsx-control-statements/components';
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
@@ -26,7 +25,7 @@ const PhotoPickerItem = (props: PhotoPickerItemProps) => {
         <Input type="text" />
       </FormItem>
       <Choose>
-        <When condition={mediaObj._id}>
+        <When condition={mediaObj?._id}>
           <div className={styles.coverWrap}>
             <img src={`//${mediaObj.media_url}`} />
           </div>

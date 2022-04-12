@@ -3,13 +3,11 @@ import { Input, Button, Modal, Form, message, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ActionType } from '@ant-design/pro-table';
-import { StringParam, NumberParam, useQueryParams, withDefault } from 'use-query-params';
 import type { RuleObject } from 'antd/es/form';
 import { tagTableColumns } from '@/pages/tag/constants/tagTableColumns';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
 import { ModalType, ModalTypeName } from '@/types/ModalType';
 import { formItemLayout } from '@/constants/formItemLayout';
-import { PaginationRequest } from '@/types/PaginationRequest';
 import * as TagService from './service';
 
 const Tag = () => {
@@ -25,35 +23,18 @@ const Tag = () => {
     visible: false,
   });
 
-  const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    limit: withDefault(NumberParam, 10),
-    keyword: StringParam,
-  });
-
-  const { keyword, page, limit } = query;
-
   /**
    * 列表查询方法
    * @param params
    * @param sort
    * @param filter
    */
-  const request = async (
-    params: {
-      pageSize: number;
-      current: number;
-    },
-    sort,
-    filter,
-  ) => {
-    const { pageSize, current, ...rest } = params;
-    console.log(sort, filter);
+  const request = async (params: { pageSize: number; current: number; tag_name?: string }) => {
+    const { pageSize, current } = params;
     const result = await TagService.index({
-      ...rest,
-      ...filter,
       page: current,
       limit: pageSize,
+      tag_name: params.tag_name,
     });
     return {
       data: result.data.list,
@@ -161,7 +142,8 @@ const Tag = () => {
 
   return (
     <PageContainer>
-      <ProTable<TagEntity, PaginationRequest>
+      <ProTable<TagEntity, any>
+        form={{ syncToUrl: true }}
         rowKey="_id"
         request={request}
         actionRef={actionRef}

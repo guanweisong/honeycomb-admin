@@ -2,7 +2,8 @@ import axios from 'axios';
 import { message } from 'antd';
 
 const instance = axios.create({
-  baseURL: 'https://api.guanweisong.com',
+  // baseURL: 'https://api.guanweisong.com',
+  baseURL: 'http://127.0.0.1:7002',
   withCredentials: true,
   timeout: 10000,
   headers: {},

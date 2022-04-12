@@ -4,34 +4,14 @@ import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ActionType } from '@ant-design/pro-table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link } from 'umi';
-import {
-  StringParam,
-  NumberParam,
-  useQueryParams,
-  withDefault,
-  NumericArrayParam,
-} from 'use-query-params';
 import { PostListTableColumns } from './constants/postListTableColumns';
-import type { PostStatus } from '@/pages/post/types/PostStatus';
-import type { PostType } from '@/pages/post/types/PostType';
 import * as postsService from '../service';
 import { PostEntity } from '@/pages/post/types/post.entity';
-import { PaginationRequest } from '@/types/PaginationRequest';
+import { PostIndexRequest } from '@/pages/post/types/post.index.request';
 
 const PostList = () => {
-  const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    limit: withDefault(NumberParam, 10),
-    keyword: StringParam,
-    post_type: NumericArrayParam,
-    post_status: NumericArrayParam,
-    sortField: StringParam,
-    sortOrder: StringParam,
-  });
   const actionRef = useRef<ActionType>();
   const [selectedRows, setSelectedRows] = useState<PostEntity[]>([]);
-
-  const { limit, page, post_type, post_status, keyword } = query;
 
   /**
    * 列表查询方法
@@ -43,18 +23,25 @@ const PostList = () => {
     params: {
       pageSize: number;
       current: number;
+      post_title?: string;
     },
-    sort,
-    filter,
+    sort: any,
+    filter: any,
   ) => {
-    const { pageSize, current, ...rest } = params;
+    const { pageSize, current, post_title } = params;
     console.log(sort, filter);
-    const result = await postsService.indexPostList({
-      ...rest,
+    const data: PostIndexRequest = {
+      post_title,
       ...filter,
       page: current,
       limit: pageSize,
-    });
+    };
+    const sortKeys = Object.keys(sort);
+    if (sortKeys.length > 0) {
+      data.sortField = sortKeys[0];
+      data.sortOrder = sort[sortKeys[0]];
+    }
+    const result = await postsService.indexPostList(data);
     return {
       data: result.data.list,
       success: true,
@@ -85,15 +72,14 @@ const PostList = () => {
 
   return (
     <PageContainer>
-      <ProTable<PostEntity, PaginationRequest>
+      <ProTable<PostEntity, any>
         rowKey="_id"
         request={request}
         tableLayout="fixed"
+        scroll={{ x: 'max-content' }}
         actionRef={actionRef}
         columns={PostListTableColumns({
           handleDeleteItem,
-          post_status: post_status as PostStatus[],
-          post_type: post_type as PostType[],
         })}
         rowSelection={{
           selectedRowKeys: selectedRows.map((item) => item._id),

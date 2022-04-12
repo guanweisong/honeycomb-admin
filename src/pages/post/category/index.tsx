@@ -7,7 +7,6 @@ import AddCategoryModal from './components/AddCategoryModal';
 import type { CategoryEntity } from '@/pages/post/category/types/category.entity';
 import { categoryListTableColumns } from '@/pages/post/category/constans/categoryListTableColumns';
 import { ModalType } from '@/types/ModalType';
-import { PaginationRequest } from '@/types/PaginationRequest';
 import * as CategoryService from './service';
 
 const Category = () => {
@@ -28,19 +27,16 @@ const Category = () => {
    * @param sort
    * @param filter
    */
-  const request = async (
-    params: {
-      pageSize: number;
-      current: number;
-    },
-    sort,
-    filter,
-  ) => {
-    const { pageSize, current, ...rest } = params;
-    console.log(sort, filter);
+  const request = async (params: {
+    pageSize: number;
+    current: number;
+    category_title?: string;
+    category_title_en?: string;
+  }) => {
+    const { pageSize, current, category_title, category_title_en } = params;
     const result = await CategoryService.index({
-      ...rest,
-      ...filter,
+      category_title,
+      category_title_en,
       page: current,
       limit: pageSize,
     });
@@ -97,7 +93,7 @@ const Category = () => {
 
   return (
     <PageContainer>
-      <ProTable<CategoryEntity, PaginationRequest>
+      <ProTable<CategoryEntity, any>
         rowKey="_id"
         request={request}
         tableLayout="fixed"

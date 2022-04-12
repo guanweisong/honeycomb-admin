@@ -4,23 +4,16 @@ import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ActionType } from '@ant-design/pro-table';
 import { PlusOutlined } from '@ant-design/icons';
 import md5 from 'md5';
-import {
-  StringParam,
-  NumberParam,
-  useQueryParams,
-  withDefault,
-  NumericArrayParam,
-} from 'use-query-params';
 import type { RuleObject } from 'antd/es/form';
 import type { UserEntity } from '@/pages/user/types/user.entity';
 import { UserStatus, userStatusOptions } from '@/pages/user/types/UserStatus';
 import { UserLevel, userLevelOptions } from '@/pages/user/types/UserLevel';
 import { ModalType, ModalTypeName } from '@/types/ModalType';
 import { formItemLayout } from '@/constants/formItemLayout';
-import { PaginationRequest } from '@/types/PaginationRequest';
 import { userTableColumns } from './constants/userTableColumns';
 import * as UserService from './service';
 import * as usersService from '@/pages/user/service';
+import { UserIndexRequest } from '@/pages/user/types/user.index.request';
 
 const User = () => {
   const [form] = Form.useForm();
@@ -35,18 +28,6 @@ const User = () => {
     visible: false,
   });
 
-  const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    limit: withDefault(NumberParam, 10),
-    keyword: StringParam,
-    user_level: NumericArrayParam,
-    user_status: NumericArrayParam,
-    sortField: StringParam,
-    sortOrder: StringParam,
-  });
-
-  const { keyword, limit, page, user_level, user_status } = query;
-
   /**
    * 列表查询方法
    * @param params
@@ -57,18 +38,26 @@ const User = () => {
     params: {
       pageSize: number;
       current: number;
+      user_name?: string;
+      user_email?: string;
     },
-    sort,
-    filter,
+    sort: any,
+    filter: any,
   ) => {
-    const { pageSize, current, ...rest } = params;
-    console.log(sort, filter);
-    const result = await UserService.index({
-      ...rest,
+    const { pageSize, current, user_name, user_email } = params;
+    const data: UserIndexRequest = {
       ...filter,
+      user_name,
+      user_email,
       page: current,
       limit: pageSize,
-    });
+    };
+    const sortKeys = Object.keys(sort);
+    if (sortKeys.length > 0) {
+      data.sortField = sortKeys[0];
+      data.sortOrder = sort[sortKeys[0]];
+    }
+    const result = await UserService.index(data);
     return {
       data: result.data.list,
       success: true,
@@ -214,8 +203,9 @@ const User = () => {
 
   return (
     <PageContainer>
-      <ProTable<UserEntity, PaginationRequest>
+      <ProTable<UserEntity, any>
         rowKey="_id"
+        form={{ syncToUrl: true }}
         request={request}
         actionRef={actionRef}
         columns={userTableColumns({ handleEditItem, handleDeleteItem })}

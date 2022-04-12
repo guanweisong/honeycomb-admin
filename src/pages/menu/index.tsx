@@ -133,6 +133,7 @@ const Menu = () => {
     });
     const list = listData.map(({ node, parentNode }) => ({
       ...node,
+      // @ts-ignore
       parent: parentNode ? parentNode._id : '0',
       expanded: !!node.children,
     }));
@@ -175,7 +176,9 @@ const Menu = () => {
     });
     const tree = getTreeFromFlatData({
       flatData: format,
+      // @ts-ignore
       getKey: (node) => node._id,
+      // @ts-ignore
       getParentKey: (node) => node.parent,
     });
     return tree;

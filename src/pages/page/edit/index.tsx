@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, Input, Button, Form, message } from 'antd';
 import { If, When, Otherwise, Choose } from 'tsx-control-statements/components';
 import SimpleMDE from 'react-simplemde-editor';
+import { PageContainer } from '@ant-design/pro-layout';
 import { history } from 'umi';
 import { StringParam, useQueryParams } from 'use-query-params';
 import '/node_modules/easymde/dist/easymde.min.css';
@@ -107,56 +108,54 @@ const Page = () => {
   };
 
   return (
-    <Card>
-      <Form form={form}>
-        <div className={styles.main}>
-          <div className={styles.mainArea}>
-            <FormItem name="page_title">
-              <Input type="text" size="large" placeholder="在此输入文章标题" />
-            </FormItem>
-            <FormItem name="page_content">
-              <SimpleMDE className="markdown-body" />
-            </FormItem>
+    <PageContainer
+      extra={[
+        <Choose>
+          <When condition={currentItem?._id}>
+            <If condition={currentItem!.page_status === PageStatus.PUBLISHED}>
+              <Button type="primary" onClick={() => handleUpdate(0)}>
+                更新
+              </Button>
+            </If>
+            <If condition={currentItem!.page_status === PageStatus.DRAFT}>
+              <Button
+                type="primary"
+                className={styles.rightButton}
+                onClick={() => handleUpdate(PageStatus.PUBLISHED)}
+              >
+                发布
+              </Button>
+              <Button onClick={() => handleUpdate(PageStatus.DRAFT)}>保存</Button>
+            </If>
+          </When>
+          <Otherwise>
+            <Button
+              type="primary"
+              className={styles.rightButton}
+              onClick={() => handleSubmit.bind(PageStatus.PUBLISHED)}
+            >
+              发布
+            </Button>
+            <Button onClick={() => handleSubmit(PageStatus.DRAFT)}>保存草稿</Button>
+          </Otherwise>
+        </Choose>,
+      ]}
+    >
+      <Card>
+        <Form form={form}>
+          <div className={styles.main}>
+            <div className={styles.mainArea}>
+              <FormItem name="page_title">
+                <Input type="text" size="large" placeholder="在此输入文章标题" />
+              </FormItem>
+              <FormItem name="page_content">
+                <SimpleMDE className="markdown-body" />
+              </FormItem>
+            </div>
           </div>
-          <div className={styles.sider}>
-            <dl className={styles.block}>
-              <dt className={styles.blockTitle}>发布</dt>
-              <dd className={styles.blockContent}>
-                <Choose>
-                  <When condition={currentItem?._id}>
-                    <If condition={currentItem!.page_status === PageStatus.PUBLISHED}>
-                      <Button type="primary" onClick={() => handleUpdate(0)}>
-                        更新
-                      </Button>
-                    </If>
-                    <If condition={currentItem!.page_status === PageStatus.DRAFT}>
-                      <Button
-                        type="primary"
-                        className={styles.rightButton}
-                        onClick={() => handleUpdate(PageStatus.PUBLISHED)}
-                      >
-                        发布
-                      </Button>
-                      <Button onClick={() => handleUpdate(PageStatus.DRAFT)}>保存</Button>
-                    </If>
-                  </When>
-                  <Otherwise>
-                    <Button
-                      type="primary"
-                      className={styles.rightButton}
-                      onClick={() => handleSubmit.bind(PageStatus.PUBLISHED)}
-                    >
-                      发布
-                    </Button>
-                    <Button onClick={() => handleSubmit(PageStatus.DRAFT)}>保存草稿</Button>
-                  </Otherwise>
-                </Choose>
-              </dd>
-            </dl>
-          </div>
-        </div>
-      </Form>
-    </Card>
+        </Form>
+      </Card>
+    </PageContainer>
   );
 };
 

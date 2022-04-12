@@ -3,32 +3,14 @@ import { Button, message, Popconfirm } from 'antd';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ActionType } from '@ant-design/pro-table';
 import { PlusOutlined } from '@ant-design/icons';
-import {
-  StringParam,
-  NumberParam,
-  useQueryParams,
-  withDefault,
-  NumericArrayParam,
-} from 'use-query-params';
 import { Link } from 'umi';
 import { pageListTableColumns } from '@/pages/page/list/constants/pageListTableColumns';
-import type { PageStatus } from '@/pages/page/types/PageStatus';
-import { PaginationRequest } from '@/types/PaginationRequest';
 import { PageEntity } from '@/pages/page/types/page.entity';
 import * as PageService from '../service';
 
 const Page = () => {
   const actionRef = useRef<ActionType>();
   const [selectedRows, setSelectedRows] = useState<PageEntity[]>([]);
-
-  const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    limit: withDefault(NumberParam, 10),
-    page_status: NumericArrayParam,
-    keyword: StringParam,
-  });
-
-  const { page, limit, page_status, keyword } = query;
 
   /**
    * 列表查询方法
@@ -40,14 +22,14 @@ const Page = () => {
     params: {
       pageSize: number;
       current: number;
+      page_title?: string;
     },
-    sort,
-    filter,
+    sort: any,
+    filter: any,
   ) => {
-    const { pageSize, current, ...rest } = params;
-    console.log(sort, filter);
+    const { pageSize, current, page_title } = params;
     const result = await PageService.indexPageList({
-      ...rest,
+      page_title,
       ...filter,
       page: current,
       limit: pageSize,
@@ -82,13 +64,12 @@ const Page = () => {
 
   return (
     <PageContainer>
-      <ProTable<PageEntity, PaginationRequest>
+      <ProTable<PageEntity, any>
         rowKey="_id"
         request={request}
         actionRef={actionRef}
         columns={pageListTableColumns({
           handleDeleteItem,
-          page_status: page_status as PageStatus[],
         })}
         rowSelection={{
           selectedRowKeys: selectedRows.map((item) => item._id),

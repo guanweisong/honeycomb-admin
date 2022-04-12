@@ -4,6 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { If, Choose, When, Otherwise, For } from 'tsx-control-statements/components';
 import SimpleMDE from 'react-simplemde-editor';
+import { PageContainer } from '@ant-design/pro-layout';
 import { StringParam, useQueryParams } from 'use-query-params';
 import PhotoPickerModal from '@/components/PhotoPicker';
 import 'easymde/dist/easymde.min.css';
@@ -34,7 +35,8 @@ const { TextArea } = Input;
 
 const PostDetail = () => {
   const { initialState } = useModel('@@initialState');
-  const [detail, setDetail] = useState<PostEntity>();
+  // @ts-ignore
+  const [detail, setDetail] = useState<PostEntity>({ post_type: PostType.ARTICLE });
   const [list, setList] = useState<CategoryEntity[]>([]);
   const [showPhotoPicker, setShowPhotoPicker] = useState<boolean>(false);
   const [modalProps, setModalProps] = useState<{
@@ -262,10 +264,6 @@ const PostDetail = () => {
 
   console.log('detail', detail);
 
-  if (!detail) {
-    return null;
-  }
-
   /**
    * 定义tag选择器的参数
    */
@@ -299,162 +297,158 @@ const PostDetail = () => {
   };
 
   return (
-    <Card>
-      <Form
-        form={form}
-        onValuesChange={(changedValues) => {
-          setDetail({ ...detail, ...changedValues });
-        }}
-      >
-        <div className={styles.main}>
-          <div className={styles.mainArea}>
-            <If
-              condition={
-                [PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(
-                  detail.post_type,
-                ) || !detail.post_type
-              }
-            >
-              <FormItem name="post_title" rules={[{ required: true, message: '请输入标题' }]}>
-                <Input type="text" size="large" placeholder="在此输入文章标题" maxLength={20} />
-              </FormItem>
-              <FormItem
-                name="post_content"
-                rules={[
-                  { max: 20000, message: '最多只能输入20000个字符' },
-                  { required: true, message: '请输入内容' },
-                ]}
-              >
-                <SimpleMDE className="markdown-body" />
-              </FormItem>
-              <FormItem name="post_excerpt">
-                <TextArea rows={4} placeholder="内容简介" maxLength={200} />
-              </FormItem>
-            </If>
-            <If condition={[PostType.QUOTE].includes(detail.post_type)}>
-              <FormItem name="quote_content" rules={[{ required: true, message: '请输入内容' }]}>
-                <TextArea rows={4} placeholder="请输入话语" maxLength={500} />
-              </FormItem>
-              <FormItem name="quote_author" rules={[{ required: true, message: '请输入作者名' }]}>
-                <Input type="text" size="large" placeholder="请输入作者" max={50} />
-              </FormItem>
-            </If>
-          </div>
-          <div className={styles.sider}>
-            <Block title="发布">
-              <Choose>
-                <When condition={!!detail._id}>
-                  <If condition={detail.post_status === PostStatus.PUBLISHED}>
-                    <Button
-                      type="primary"
-                      onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}
-                    >
-                      更新
-                    </Button>
-                  </If>
-                  <If condition={detail.post_status === PostStatus.DRAFT}>
-                    <Button
-                      type="primary"
-                      className={styles.rightButton}
-                      onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}
-                    >
-                      发布
-                    </Button>
-                    <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'update')}>保存</Button>
-                  </If>
-                </When>
-                <Otherwise>
-                  <Button
-                    type="primary"
-                    className={styles.rightButton}
-                    onClick={() => handleSubmit(PostStatus.PUBLISHED, 'create')}
-                  >
-                    发布
-                  </Button>
-                  <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'create')}>保存草稿</Button>
-                </Otherwise>
-              </Choose>
-            </Block>
-            <Block title="文章类型">
-              <FormItem
-                name="post_type"
-                className={styles.lastMargin}
-                initialValue={PostType.ARTICLE}
-              >
-                <Select options={postTypeOptions} />
-              </FormItem>
-            </Block>
-            <Block title="分类目录">
-              <FormItem name="post_category" rules={[{ required: true, message: '请选择分类' }]}>
-                <Select
-                  showSearch
-                  optionFilterProp="children"
-                  placeholder="请选择"
-                  filterOption={(input, option) =>
-                    option?.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  <For
-                    each="option"
-                    of={list}
-                    body={(option) => (
-                      <Select.Option value={option._id} key={option._id}>
-                        {creatCategoryTitleByDepth(option.category_title, option)}
-                      </Select.Option>
-                    )}
-                  />
-                </Select>
-              </FormItem>
-              <Button type="dashed" onClick={handleAddNewCategory}>
-                <PlusOutlined />
-                新建分类
+    <PageContainer
+      extra={[
+        <Choose>
+          <When condition={!!detail._id}>
+            <If condition={detail.post_status === PostStatus.PUBLISHED}>
+              <Button type="primary" onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}>
+                更新
               </Button>
-            </Block>
-            <If
-              condition={[PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(
-                detail.post_type,
-              )}
+            </If>
+            <If condition={detail.post_status === PostStatus.DRAFT}>
+              <Button
+                type="primary"
+                className={styles.rightButton}
+                onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}
+              >
+                发布
+              </Button>
+              <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'update')}>保存</Button>
+            </If>
+          </When>
+          <Otherwise>
+            <Button
+              type="primary"
+              className={styles.rightButton}
+              onClick={() => handleSubmit(PostStatus.PUBLISHED, 'create')}
             >
-              <PhotoPickerItem {...postCoverProps} />
-            </If>
-            <If condition={detail.post_type === PostType.MOVIE}>
-              <Block title="电影英文名">
-                <FormItem name="movie_name_en" className={styles.lastMargin}>
-                  <Input type="text" placeholder="请输入英文名" />
+              发布
+            </Button>
+            <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'create')}>保存草稿</Button>
+          </Otherwise>
+        </Choose>,
+      ]}
+    >
+      <Card>
+        <Form
+          form={form}
+          onValuesChange={(changedValues) => {
+            setDetail({ ...detail, ...changedValues });
+          }}
+        >
+          <div className={styles.main}>
+            <div className={styles.mainArea}>
+              <If
+                condition={
+                  [PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(
+                    detail.post_type,
+                  ) || !detail.post_type
+                }
+              >
+                <FormItem name="post_title" rules={[{ required: true, message: '请输入标题' }]}>
+                  <Input type="text" size="large" placeholder="在此输入文章标题" maxLength={20} />
+                </FormItem>
+                <FormItem
+                  name="post_content"
+                  rules={[
+                    { max: 20000, message: '最多只能输入20000个字符' },
+                    { required: true, message: '请输入内容' },
+                  ]}
+                >
+                  <SimpleMDE className="markdown-body" />
+                </FormItem>
+                <FormItem name="post_excerpt">
+                  <TextArea rows={4} placeholder="内容简介" maxLength={200} />
+                </FormItem>
+              </If>
+              <If condition={[PostType.QUOTE].includes(detail.post_type)}>
+                <FormItem name="quote_content" rules={[{ required: true, message: '请输入内容' }]}>
+                  <TextArea rows={4} placeholder="请输入话语" maxLength={500} />
+                </FormItem>
+                <FormItem name="quote_author" rules={[{ required: true, message: '请输入作者名' }]}>
+                  <Input type="text" size="large" placeholder="请输入作者" max={50} />
+                </FormItem>
+              </If>
+            </div>
+            <div className={styles.sider}>
+              <Block title="文章类型">
+                <FormItem name="post_type" className={styles.lastMargin}>
+                  <Select options={postTypeOptions} />
                 </FormItem>
               </Block>
-              <Block title="上映年代">
-                <FormItem name="movie_time" className={styles.lastMargin}>
-                  <DatePicker placeholder="请选择上映年代" />
+              <Block title="分类目录">
+                <FormItem name="post_category" rules={[{ required: true, message: '请选择分类' }]}>
+                  <Select
+                    showSearch
+                    optionFilterProp="children"
+                    placeholder="请选择"
+                    filterOption={(input, option) =>
+                      option?.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    <For
+                      each="option"
+                      of={list}
+                      body={(option) => (
+                        <Select.Option value={option._id} key={option._id}>
+                          {creatCategoryTitleByDepth(option.category_title, option)}
+                        </Select.Option>
+                      )}
+                    />
+                  </Select>
                 </FormItem>
+                <Button type="dashed" onClick={handleAddNewCategory}>
+                  <PlusOutlined />
+                  新建分类
+                </Button>
               </Block>
-              <MultiTag {...movieDirectorProps} />
-              <MultiTag {...movieActorProps} />
-              <MultiTag {...movieStyleProps} />
-            </If>
-            <If condition={detail.post_type === PostType.PHOTOGRAPH}>
-              <Block title="拍摄地点">
-                <FormItem name="gallery_location" className={styles.lastMargin}>
-                  <Input type="text" placeholder="请填写地址" />
-                </FormItem>
-              </Block>
-              <Block title="拍摄时间">
-                <FormItem name="gallery_time" className={styles.lastMargin}>
-                  <DatePicker placeholder="请选择拍摄时间" />
-                </FormItem>
-              </Block>
-              <MultiTag {...galleryStyleProps} />
-            </If>
+              <If
+                condition={[PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(
+                  detail.post_type,
+                )}
+              >
+                <PhotoPickerItem {...postCoverProps} />
+              </If>
+              <If condition={detail.post_type === PostType.MOVIE}>
+                <Block title="电影英文名">
+                  <FormItem name="movie_name_en" className={styles.lastMargin}>
+                    <Input type="text" placeholder="请输入英文名" />
+                  </FormItem>
+                </Block>
+                <Block title="上映年代">
+                  <FormItem name="movie_time" className={styles.lastMargin}>
+                    <DatePicker placeholder="请选择上映年代" />
+                  </FormItem>
+                </Block>
+                <MultiTag {...movieDirectorProps} />
+                <MultiTag {...movieActorProps} />
+                <MultiTag {...movieStyleProps} />
+              </If>
+              <If condition={detail.post_type === PostType.PHOTOGRAPH}>
+                <Block title="拍摄地点">
+                  <FormItem name="gallery_location" className={styles.lastMargin}>
+                    <Input type="text" placeholder="请填写地址" />
+                  </FormItem>
+                </Block>
+                <Block title="拍摄时间">
+                  <FormItem name="gallery_time" className={styles.lastMargin}>
+                    <DatePicker placeholder="请选择拍摄时间" />
+                  </FormItem>
+                </Block>
+                <MultiTag {...galleryStyleProps} />
+              </If>
+            </div>
           </div>
-        </div>
-      </Form>
-      <PhotoPickerModal
-        showPhotoPicker={showPhotoPicker}
-        handlePhotoPickerOk={handlePhotoPickerOk}
-        handlePhotoPickerCancel={handlePhotoPickerCancel}
-      />
-      <AddCategoryModal modalProps={modalProps} setModalProps={setModalProps} />
-    </Card>
+        </Form>
+        <PhotoPickerModal
+          showPhotoPicker={showPhotoPicker}
+          handlePhotoPickerOk={handlePhotoPickerOk}
+          handlePhotoPickerCancel={handlePhotoPickerCancel}
+        />
+        <AddCategoryModal modalProps={modalProps} setModalProps={setModalProps} />
+      </Card>
+    </PageContainer>
   );
 };
 

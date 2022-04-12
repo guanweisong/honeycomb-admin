@@ -19,6 +19,8 @@ const Media = () => {
   const [tab, setTab] = useState<TabType>(TabType.ALL);
   const [loading, setLoading] = useState(false);
 
+  console.log(total);
+
   /**
    * 查询已上传列表
    * @param values
@@ -41,7 +43,9 @@ const Media = () => {
     action: `${
       process.env.NODE_ENV === 'development' ? '//127.0.0.1:7002' : 'https://api.guanweisong.com'
     }/media`,
-    withCredentials: true,
+    headers: {
+      'x-auth-token': localStorage.getItem('token'),
+    },
     onChange(info: any) {
       setLoading(true);
       const { response } = info.file;

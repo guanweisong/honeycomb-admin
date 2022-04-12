@@ -6,20 +6,12 @@ import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProTable, { ActionType } from '@ant-design/pro-table';
 import type { RuleObject } from 'antd/es/form';
 import { PlusOutlined } from '@ant-design/icons';
-import {
-  StringParam,
-  NumberParam,
-  useQueryParams,
-  withDefault,
-  NumericArrayParam,
-} from 'use-query-params';
 import { linkTableColumns } from '@/pages/link/constants/linkTableColumns';
 import type { LinkEntity } from '@/pages/link/types/link.entity';
 import { ModalType, ModalTypeName } from '@/types/ModalType';
 import { EnableType } from '@/types/EnableType';
 import { enableOptions } from '@/types/EnableType';
 import { formItemLayout } from '@/constants/formItemLayout';
-import { PaginationRequest } from '@/types/PaginationRequest';
 import * as LinkService from './service';
 import * as linksService from '@/pages/link/service';
 
@@ -36,15 +28,6 @@ const Link = () => {
     visible: false,
   });
 
-  const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    limit: withDefault(NumberParam, 10),
-    keyword: StringParam,
-    link_status: NumericArrayParam,
-  });
-
-  const { page, limit, keyword, link_status } = query;
-
   /**
    * 列表查询方法
    * @param params
@@ -55,15 +38,17 @@ const Link = () => {
     params: {
       pageSize: number;
       current: number;
+      link_name?: string;
+      link_url?: string;
     },
-    sort,
-    filter,
+    sort: any,
+    filter: any,
   ) => {
-    const { pageSize, current, ...rest } = params;
-    console.log(sort, filter);
+    const { pageSize, current, link_name, link_url } = params;
     const result = await LinkService.index({
-      ...rest,
       ...filter,
+      link_name,
+      link_url,
       page: current,
       limit: pageSize,
     });
@@ -177,14 +162,13 @@ const Link = () => {
 
   return (
     <PageContainer>
-      <ProTable<LinkEntity, PaginationRequest>
+      <ProTable<LinkEntity, any>
         rowKey="_id"
         request={request}
         actionRef={actionRef}
         columns={linkTableColumns({
           handleEditItem,
           handleDeleteItem,
-          link_status: link_status as EnableType[],
         })}
         rowSelection={{
           selectedRowKeys: selectedRows.map((item) => item._id),

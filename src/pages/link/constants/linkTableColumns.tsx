@@ -7,7 +7,7 @@ import { enableOptions, EnableTypeName, EnableType } from '@/types/EnableType';
 export interface LinkTableColumnsProps {
   handleEditItem: (record: LinkEntity) => void;
   handleDeleteItem: (ids: string[]) => void;
-  link_status: EnableType[];
+  // link_status: EnableType[];
 }
 
 export const linkTableColumns = (props: LinkTableColumnsProps) =>
@@ -27,7 +27,7 @@ export const linkTableColumns = (props: LinkTableColumnsProps) =>
       dataIndex: 'link_status',
       key: 'link_status',
       filters: enableOptions.map((item) => ({ text: item.label, value: item.value })),
-      filteredValue: props.link_status,
+      // filteredValue: props.link_status,
       render: (text: EnableType) => EnableTypeName[EnableType[text] as keyof typeof EnableTypeName],
       search: false,
     },
