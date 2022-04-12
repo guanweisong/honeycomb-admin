@@ -19,7 +19,7 @@
     routes: [
       {
         path: '/post/edit',
-        name: '添加新文档',
+        name: '添加新文章',
         component: './post/edit',
       },
       {

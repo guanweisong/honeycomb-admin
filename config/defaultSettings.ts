@@ -14,8 +14,7 @@ const Settings: LayoutSettings & {
   colorWeak: false,
   title: '稻草人博客',
   pwa: false,
-  logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-  iconfontUrl: '',
+  logo: '/favicon.ico',
 };
 
 export default Settings;
