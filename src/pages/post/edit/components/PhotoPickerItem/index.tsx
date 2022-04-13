@@ -21,7 +21,7 @@ const PhotoPickerItem = (props: PhotoPickerItemProps) => {
 
   return (
     <Block title={title} tip={`（尺寸：${size}）`}>
-      <FormItem name={name} style={{ display: 'none' }}>
+      <FormItem name={'post_cover'} style={{ display: 'none' }}>
         <Input type="text" />
       </FormItem>
       <Choose>

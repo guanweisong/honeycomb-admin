@@ -158,7 +158,7 @@ const Media = (props: MediaProps) => {
                           <div className={styles.mediaLayer}>
                             <Space>
                               <CopyToClipboard
-                                text={`//${currentItem?.media_url}`}
+                                text={`//${item?.media_url}`}
                                 onCopy={() => message.success('已复制至剪切板')}
                               >
                                 <CopyOutlined title={'复制链接'} />
