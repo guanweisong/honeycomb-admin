@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react';
 import { Button, message, Popconfirm } from 'antd';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import ProTable, { ActionType } from '@ant-design/pro-table';
+import type { ActionType } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link } from 'umi';
 import { PostListTableColumns } from './constants/postListTableColumns';
 import * as postsService from '../service';
-import { PostEntity } from '@/pages/post/types/post.entity';
-import { PostIndexRequest } from '@/pages/post/types/post.index.request';
+import type { PostEntity } from '@/pages/post/types/post.entity';
+import type { PostIndexRequest } from '@/pages/post/types/post.index.request';
 
 const PostList = () => {
   const actionRef = useRef<ActionType>();
@@ -90,7 +91,7 @@ const PostList = () => {
         toolBarRender={() => [
           <Button type="primary" key="primary">
             <Link to="/post/edit">
-              <PlusOutlined /> 添加新页面
+              <PlusOutlined /> 添加新文章
             </Link>
           </Button>,
         ]}

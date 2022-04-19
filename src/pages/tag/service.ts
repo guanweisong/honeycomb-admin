@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import type { TagIndexRequest } from '@/pages/tag/types/tag.index.request';
-import type { TagIndexResponse } from '@/pages/tag/types/tag.index.response.ts';
+import type { TagIndexResponse } from '@/pages/tag/types/tag.index.response';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
 import type { TagCreateResponse } from '@/pages/tag/types/tag.create.response';
 import type { BaseResponse } from '@/types/BaseResponse';

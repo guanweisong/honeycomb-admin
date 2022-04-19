@@ -108,7 +108,7 @@ const MultiTag = (props: MultiTagProps) => {
       timeout.current = undefined;
     }
     const fake = async () => {
-      const result = await index({ keyword: value });
+      const result = await index({ tag_name: value });
       const items: DataSourceItemObject[] = [];
       console.log(result.data.list);
       result.data.list.forEach((r) => {
@@ -151,7 +151,7 @@ const MultiTag = (props: MultiTagProps) => {
           style={{ width: 78 }}
           dataSource={data}
           onSelect={handleInputConfirm}
-          onChange={handleChange}
+          onSearch={handleChange}
           onBlur={handleBlur}
         />
       )}

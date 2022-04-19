@@ -37,8 +37,10 @@ ol {
 }
 
 .markdown-body {
-  position: relative;
-  z-index: 999;
+  .fullscreen,
+  .CodeMirror-fullscreen {
+    z-index: 999 !important;
+  }
 }
 
 @media (max-width: @screen-xs) {

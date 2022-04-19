@@ -151,7 +151,7 @@ const PostDetail = () => {
       }
       if (
         [PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(data.post_type) &&
-        !data.post_cover._id
+        !data.post_cover?._id
       ) {
         message.error('请上传封面');
         return;
@@ -201,7 +201,7 @@ const PostDetail = () => {
       setDetail({
         ...detail,
         // @ts-ignore
-        [name]: [...detail[name], { _id: result.data._id, tag_name: result.data.tag_name }],
+        [name]: [...(detail[name] ?? []), { _id: result.data._id, tag_name: result.data.tag_name }],
       } as PostEntity);
     }
   };
@@ -301,7 +301,7 @@ const PostDetail = () => {
     <PageContainer
       extra={[
         <Choose>
-          <When condition={!!detail._id}>
+          <When condition={!!detail?._id}>
             <If condition={detail.post_status === PostStatus.PUBLISHED}>
               <Button type="primary" onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}>
                 更新
