@@ -1,7 +1,7 @@
 export enum UserStatus {
-  DELETE = '-1',
-  DISABLE = '0',
-  ENABLE = '1',
+  DELETE = -1,
+  DISABLE = 0,
+  ENABLE = 1,
 }
 
 export enum UserStatusName {

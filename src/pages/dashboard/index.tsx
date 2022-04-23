@@ -5,7 +5,7 @@ import ChartItem from './components/chartItem';
 import { PostType, PostTypeName } from '@/pages/post/types/PostType';
 import { CommentStatus, CommentStatusName } from '@/pages/comment/types/CommentStatus';
 import { UserLevel, UserLevelName } from '@/pages/user/types/UserLevel';
-import { StatisticsType } from '@/pages/dashboard/types/StatisticsType';
+import type { StatisticsType } from '@/pages/dashboard/types/StatisticsType';
 import * as statisticsService from '@/pages/dashboard/service';
 
 const Dashboard = () => {
@@ -21,6 +21,13 @@ const Dashboard = () => {
   useEffect(() => {
     index();
   }, []);
+
+  console.log(
+    statistics?.postType?.map((n) => ({
+      ...n,
+      item: PostTypeName[PostType[n.item] as keyof typeof PostTypeName] as string,
+    })),
+  );
 
   return (
     <PageContainer>
