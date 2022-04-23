@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react';
 import { Button, message, Popconfirm } from 'antd';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import ProTable, { ActionType } from '@ant-design/pro-table';
+import type { ActionType } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import { PlusOutlined } from '@ant-design/icons';
 import { Link } from 'umi';
 import { pageListTableColumns } from '@/pages/page/list/constants/pageListTableColumns';
-import { PageEntity } from '@/pages/page/types/page.entity';
+import type { PageEntity } from '@/pages/page/types/page.entity';
 import * as PageService from '../service';
+import type { PageStatus } from '../types/PageStatus';
 
 const Page = () => {
   const actionRef = useRef<ActionType>();
@@ -18,19 +20,16 @@ const Page = () => {
    * @param sort
    * @param filter
    */
-  const request = async (
-    params: {
-      pageSize: number;
-      current: number;
-      page_title?: string;
-    },
-    sort: any,
-    filter: any,
-  ) => {
-    const { pageSize, current, page_title } = params;
+  const request = async (params: {
+    pageSize: number;
+    current: number;
+    page_title?: string;
+    page_status?: PageStatus[];
+  }) => {
+    const { pageSize, current, page_title, page_status } = params;
     const result = await PageService.indexPageList({
       page_title,
-      ...filter,
+      page_status,
       page: current,
       limit: pageSize,
     });
@@ -67,6 +66,7 @@ const Page = () => {
       <ProTable<PageEntity, any>
         rowKey="_id"
         request={request}
+        form={{ syncToUrl: true }}
         actionRef={actionRef}
         columns={pageListTableColumns({
           handleDeleteItem,

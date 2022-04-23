@@ -3,7 +3,8 @@ import { message } from 'antd';
 import { Input, Radio, Button, Modal, Form, Popconfirm } from 'antd';
 import { For } from 'tsx-control-statements/components';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import ProTable, { ActionType } from '@ant-design/pro-table';
+import type { ActionType } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import type { RuleObject } from 'antd/es/form';
 import { PlusOutlined } from '@ant-design/icons';
 import { linkTableColumns } from '@/pages/link/constants/linkTableColumns';
@@ -34,21 +35,18 @@ const Link = () => {
    * @param sort
    * @param filter
    */
-  const request = async (
-    params: {
-      pageSize: number;
-      current: number;
-      link_name?: string;
-      link_url?: string;
-    },
-    sort: any,
-    filter: any,
-  ) => {
-    const { pageSize, current, link_name, link_url } = params;
+  const request = async (params: {
+    pageSize: number;
+    current: number;
+    link_name?: string;
+    link_url?: string;
+    link_status?: EnableType[];
+  }) => {
+    const { pageSize, current, link_name, link_url, link_status } = params;
     const result = await LinkService.index({
-      ...filter,
       link_name,
       link_url,
+      link_status,
       page: current,
       limit: pageSize,
     });

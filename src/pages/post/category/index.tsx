@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { Button, message, Popconfirm } from 'antd';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import ProTable, { ActionType } from '@ant-design/pro-table';
+import type { ActionType } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import { PlusOutlined } from '@ant-design/icons';
 import AddCategoryModal from './components/AddCategoryModal';
 import type { CategoryEntity } from '@/pages/post/category/types/category.entity';
@@ -96,6 +97,7 @@ const Category = () => {
       <ProTable<CategoryEntity, any>
         rowKey="_id"
         request={request}
+        form={{ syncToUrl: true }}
         tableLayout="fixed"
         actionRef={actionRef}
         columns={categoryListTableColumns({ handleEditItem, handleDeleteItem })}

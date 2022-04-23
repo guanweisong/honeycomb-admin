@@ -1,16 +1,14 @@
 import moment from 'moment';
 import { If } from 'tsx-control-statements/components';
 import { Popconfirm } from 'antd';
-import { ProColumns } from '@ant-design/pro-table';
+import type { ProColumns } from '@ant-design/pro-table';
 import type { UserEntity } from '@/pages/user/types/user.entity';
-import { UserStatus, UserStatusName, userStatusOptions } from '@/pages/user/types/UserStatus';
-import { UserLevel, UserLevelName, userLevelOptions } from '@/pages/user/types/UserLevel';
+import { UserStatus, userStatusOptions } from '@/pages/user/types/UserStatus';
+import { UserLevel, userLevelOptions } from '@/pages/user/types/UserLevel';
 
 export interface userTableColumnsProps {
   handleEditItem: (record: UserEntity) => void;
   handleDeleteItem: (ids: string[]) => void;
-  // user_status: UserStatus[];
-  // user_level: UserLevel[];
 }
 
 export const userTableColumns = (props: userTableColumnsProps) =>
@@ -24,19 +22,21 @@ export const userTableColumns = (props: userTableColumnsProps) =>
       title: '级别',
       dataIndex: 'user_level',
       key: 'user_level',
-      filters: userLevelOptions.map((item) => ({ text: item.label, value: item.value })),
-      // filteredValue: props.user_level,
-      search: false,
-      render: (text: UserLevel) => UserLevelName[UserLevel[text] as keyof typeof UserLevelName],
+      valueType: 'select',
+      fieldProps: {
+        mode: 'multiple',
+        options: userLevelOptions,
+      },
     },
     {
       title: '状态',
       dataIndex: 'user_status',
       key: 'user_status',
-      filters: userStatusOptions.map((item) => ({ text: item.label, value: item.value })),
-      // filteredValue: props.user_status,
-      search: false,
-      render: (text: UserStatus) => UserStatusName[UserStatus[text] as keyof typeof UserStatusName],
+      valueType: 'select',
+      fieldProps: {
+        mode: 'multiple',
+        options: userStatusOptions,
+      },
     },
     {
       title: '用户邮箱',

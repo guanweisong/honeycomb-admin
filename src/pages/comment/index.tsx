@@ -1,18 +1,11 @@
 import { useRef, useState } from 'react';
 import { Popconfirm, message, Button } from 'antd';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import ProTable, { ActionType } from '@ant-design/pro-table';
-import {
-  StringParam,
-  NumberParam,
-  useQueryParams,
-  withDefault,
-  NumericArrayParam,
-} from 'use-query-params';
+import type { ActionType } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import { commentTableColumns } from './constants/commentTableColumns';
 import { CommentStatus } from '@/pages/comment/types/CommentStatus';
 import type { CommentEntity } from '@/pages/comment/types/comment.entity';
-import { PaginationRequest } from '@/types/PaginationRequest';
 import * as CommentService from './service';
 import * as commentsService from '@/pages/comment/service';
 
@@ -20,34 +13,18 @@ const Comment = () => {
   const actionRef = useRef<ActionType>();
   const [selectedRows, setSelectedRows] = useState<CommentEntity[]>([]);
 
-  const [query, setQuery] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    limit: withDefault(NumberParam, 10),
-    keyword: StringParam,
-    comment_status: NumericArrayParam,
-  });
-
-  const { comment_status, keyword, limit, page } = query;
-
   /**
    * 列表查询方法
    * @param params
-   * @param sort
-   * @param filter
    */
-  const request = async (
-    params: {
-      pageSize: number;
-      current: number;
-    },
-    sort,
-    filter,
-  ) => {
-    const { pageSize, current, ...rest } = params;
-    console.log(sort, filter);
+  const request = async (params: {
+    pageSize: number;
+    current: number;
+    comment_status?: CommentStatus[];
+  }) => {
+    const { pageSize, current, comment_status } = params;
     const result = await CommentService.index({
-      ...rest,
-      ...filter,
+      comment_status,
       page: current,
       limit: pageSize,
     });
@@ -155,12 +132,11 @@ const Comment = () => {
 
   return (
     <PageContainer>
-      <ProTable<CommentEntity, PaginationRequest>
+      <ProTable<CommentEntity, any>
         rowKey="_id"
         request={request}
         actionRef={actionRef}
         columns={commentTableColumns({
-          comment_status: comment_status as CommentStatus[],
           renderOpt,
           handleDelete,
         })}

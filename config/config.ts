@@ -1,4 +1,5 @@
 // https://umijs.org/config/
+import { truncate } from 'lodash';
 import { defineConfig } from 'umi';
 
 import defaultSettings from './defaultSettings';
@@ -42,7 +43,7 @@ export default defineConfig({
   // Fast Refresh 热更新
   fastRefresh: {},
   nodeModulesTransform: { type: 'none' },
-  mfsu: false,
+  mfsu: {},
   webpack5: {},
   exportStatic: {},
   extraBabelPlugins: ['jsx-control-statements'],

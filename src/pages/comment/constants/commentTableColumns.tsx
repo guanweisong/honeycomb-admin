@@ -1,17 +1,11 @@
 import moment from 'moment';
 import { Popconfirm } from 'antd';
-import { ProColumns } from '@ant-design/pro-table';
+import type { ProColumns } from '@ant-design/pro-table';
 import type { CommentEntity } from '@/pages/comment/types/comment.entity';
-import {
-  CommentStatus,
-  CommentStatusName,
-  commentStatusOptions,
-} from '@/pages/comment/types/CommentStatus';
-
+import { commentStatusOptions } from '@/pages/comment/types/CommentStatus';
 export interface CommentTableColumnsProps {
   handleDelete: (ids: string[]) => void;
   renderOpt: (record: CommentEntity) => void;
-  comment_status: CommentStatus[];
 }
 
 export const commentTableColumns = (props: CommentTableColumnsProps) =>
@@ -48,11 +42,10 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
       title: '评论状态',
       dataIndex: 'comment_status',
       key: 'comment_status',
-      search: false,
-      filters: commentStatusOptions.map((item) => ({ text: item.label, value: item.value })),
-      filteredValue: props.comment_status,
-      render: (text: CommentStatus) => {
-        return CommentStatusName[CommentStatus[text] as keyof typeof CommentStatusName];
+      valueType: 'select',
+      fieldProps: {
+        mode: 'multiple',
+        options: commentStatusOptions,
       },
     },
     {

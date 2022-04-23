@@ -1,14 +1,12 @@
 import moment from 'moment';
 import { Link } from 'umi';
-import { ProColumns } from '@ant-design/pro-table';
+import type { ProColumns } from '@ant-design/pro-table';
 import { Popconfirm } from 'antd';
 import type { CategoryReadOnly, PostEntity, UserReadOnly } from '@/pages/post/types/post.entity';
-import { PostType, postTypeOptions, PostTypeName } from '@/pages/post/types/PostType';
-import { PostStatus, PostStatusName, postStatusOptions } from '@/pages/post/types/PostStatus';
+import { postTypeOptions } from '@/pages/post/types/PostType';
+import { postStatusOptions } from '@/pages/post/types/PostStatus';
 
 export interface PostListTableColumnsProps {
-  // post_type: PostType[];
-  // post_status: PostStatus[];
   handleDeleteItem: (id: string[]) => void;
 }
 
@@ -39,11 +37,12 @@ export const PostListTableColumns = (props: PostListTableColumnsProps) =>
       title: '类型',
       dataIndex: 'post_type',
       key: 'post_type',
-      filters: postTypeOptions.map((item) => ({ text: item.label, value: item.value })),
-      // filteredValue: props.post_type,
-      search: false,
       width: 70,
-      render: (text: PostType) => PostTypeName[PostType[text] as keyof typeof PostTypeName],
+      valueType: 'select',
+      fieldProps: {
+        mode: 'multiple',
+        options: postTypeOptions,
+      },
     },
     {
       title: '作者',
@@ -57,11 +56,12 @@ export const PostListTableColumns = (props: PostListTableColumnsProps) =>
       title: '状态',
       dataIndex: 'post_status',
       key: 'post_status',
-      filters: postStatusOptions.map((item) => ({ text: item.label, value: item.value })),
-      // filteredValue: props.post_status,
-      search: false,
+      valueType: 'select',
       width: 70,
-      render: (text: PostStatus) => PostStatusName[PostStatus[text] as keyof typeof PostStatusName],
+      fieldProps: {
+        mode: 'multiple',
+        options: postStatusOptions,
+      },
     },
     {
       title: '发表时间',

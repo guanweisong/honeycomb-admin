@@ -91,6 +91,7 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-helmet": "^6.1.0",
     "@types/react-sortable-tree": "^0.3.15",
+    "@types/showdown": "^2.0.0",
     "@umijs/fabric": "^2.8.0",
     "@umijs/plugin-blocks": "^2.2.0",
     "@umijs/plugin-esbuild": "^1.4.0",

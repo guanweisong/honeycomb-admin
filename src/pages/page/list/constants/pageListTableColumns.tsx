@@ -1,14 +1,13 @@
 import { Popconfirm } from 'antd';
 import { Link } from 'umi';
 import moment from 'moment';
-import { ProColumns } from '@ant-design/pro-table';
+import type { ProColumns } from '@ant-design/pro-table';
 import type { PageEntity } from '@/pages/page/types/page.entity';
-import { PageStatusName, pageStatusOptions, PageStatus } from '@/pages/page/types/PageStatus';
-import { UserReadOnly } from '@/pages/post/types/post.entity';
+import { pageStatusOptions } from '@/pages/page/types/PageStatus';
+import type { UserReadOnly } from '@/pages/post/types/post.entity';
 
 export interface PageListTableColumnsProps {
   handleDeleteItem: (ids: string[]) => void;
-  // page_status: PageStatus[];
 }
 
 export const pageListTableColumns = (props: PageListTableColumnsProps) =>
@@ -29,10 +28,11 @@ export const pageListTableColumns = (props: PageListTableColumnsProps) =>
       title: '状态',
       dataIndex: 'page_status',
       key: 'page_status',
-      filters: pageStatusOptions.map((item) => ({ text: item.label, value: item.value })),
-      // filteredValue: props.page_status,
-      search: false,
-      render: (text: PageStatus) => PageStatusName[PageStatus[text] as keyof typeof PageStatusName],
+      valueType: 'select',
+      fieldProps: {
+        mode: 'multiple',
+        options: pageStatusOptions,
+      },
     },
     {
       title: '发表时间',

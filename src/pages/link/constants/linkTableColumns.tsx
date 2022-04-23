@@ -1,13 +1,12 @@
 import moment from 'moment';
 import { Popconfirm } from 'antd';
-import { ProColumns } from '@ant-design/pro-table';
+import type { ProColumns } from '@ant-design/pro-table';
 import type { LinkEntity } from '@/pages/link/types/link.entity';
-import { enableOptions, EnableTypeName, EnableType } from '@/types/EnableType';
+import { enableOptions } from '@/types/EnableType';
 
 export interface LinkTableColumnsProps {
   handleEditItem: (record: LinkEntity) => void;
   handleDeleteItem: (ids: string[]) => void;
-  // link_status: EnableType[];
 }
 
 export const linkTableColumns = (props: LinkTableColumnsProps) =>
@@ -26,10 +25,11 @@ export const linkTableColumns = (props: LinkTableColumnsProps) =>
       title: '状态',
       dataIndex: 'link_status',
       key: 'link_status',
-      filters: enableOptions.map((item) => ({ text: item.label, value: item.value })),
-      // filteredValue: props.link_status,
-      render: (text: EnableType) => EnableTypeName[EnableType[text] as keyof typeof EnableTypeName],
-      search: false,
+      valueType: 'select',
+      fieldProps: {
+        mode: 'multiple',
+        options: enableOptions,
+      },
     },
     {
       title: '链接描述',

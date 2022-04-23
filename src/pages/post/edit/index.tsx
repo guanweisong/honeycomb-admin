@@ -7,11 +7,12 @@ import SimpleMDE from 'react-simplemde-editor';
 import { PageContainer } from '@ant-design/pro-layout';
 import { StringParam, useQueryParams } from 'use-query-params';
 import PhotoPickerModal from '@/components/PhotoPicker';
-import 'easymde/dist/easymde.min.css';
 import styles from './index.less';
-import MultiTag, { MultiTagProps } from './components/MultiTag';
+import type { MultiTagProps } from './components/MultiTag';
+import MultiTag from './components/MultiTag';
 import AddCategoryModal from '../category/components/AddCategoryModal';
-import PhotoPickerItem, { PhotoPickerItemProps } from './components/PhotoPickerItem';
+import type { PhotoPickerItemProps } from './components/PhotoPickerItem';
+import PhotoPickerItem from './components/PhotoPickerItem';
 import Block from '@/pages/post/edit/components/Block';
 import { PostType, postTypeOptions } from '@/pages/post/types/PostType';
 import { PostStatus } from '@/pages/post/types/PostStatus';
@@ -22,12 +23,12 @@ import { ModalType } from '@/types/ModalType';
 import { history } from 'umi';
 import { useModel } from '@@/plugin-model/useModel';
 import * as postsService from '@/pages/post/service';
-import { CategoryReadOnly } from '@/pages/post/types/post.entity';
-import { CategoryEntity } from '@/pages/post/category/types/category.entity';
+import type { CategoryReadOnly } from '@/pages/post/types/post.entity';
+import type { CategoryEntity } from '@/pages/post/category/types/category.entity';
 import * as tagsService from '@/pages/tag/service';
 import * as categoryService from '@/pages/post/category/service';
-import { MediaEntity } from '@/pages/media/types/media.entity';
-const showdown = require('showdown');
+import type { MediaEntity } from '@/pages/media/types/media.entity';
+import showdown from 'showdown';
 
 const converter = new showdown.Converter();
 
@@ -88,7 +89,7 @@ const PostDetail = () => {
         result.gallery_time = moment(result.movie_time);
       }
       if (result.post_content) {
-        result.post_content = converter.makeMd(result.post_content);
+        result.post_content = converter.makeMarkdown(result.post_content);
       }
       const post_category = result.post_category as CategoryReadOnly;
       if (post_category) {
@@ -213,7 +214,7 @@ const PostDetail = () => {
    */
   const onUpdateTags = (
     name: 'movie_actor' | 'movie_director' | 'movie_style' | 'gallery_style',
-    tags: TagEntity[],
+    tags: Omit<TagEntity, 'updated_at' | 'created_at'>[],
   ) => {
     setDetail({
       ...detail,
@@ -272,7 +273,7 @@ const PostDetail = () => {
     detail,
     onTagsChange: onUpdateTags,
     onAddTag,
-  } as MultiTagProps;
+  };
   const galleryStyleProps: MultiTagProps = {
     ...tagProps,
     name: 'gallery_style',

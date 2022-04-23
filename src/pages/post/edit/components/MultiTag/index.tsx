@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Tag, Button, Input, AutoComplete, Form } from 'antd';
 import type { DataSourceItemObject } from 'antd/es/auto-complete';
 import { index } from '@/pages/tag/service';
@@ -16,7 +16,10 @@ export interface MultiTagProps {
     name: 'gallery_style' | 'movie_director' | 'movie_actor' | 'movie_style',
     value: string,
   ) => void;
-  onTagsChange: (name: string, tags: Omit<TagEntity, 'updated_at' | 'created_at'>[]) => void;
+  onTagsChange: (
+    name: 'movie_actor' | 'movie_director' | 'movie_style' | 'gallery_style',
+    tags: Omit<TagEntity, 'updated_at' | 'created_at'>[],
+  ) => void;
 }
 
 const MultiTag = (props: MultiTagProps) => {

@@ -1,8 +1,8 @@
 export enum PostType {
-  ARTICLE,
-  MOVIE,
-  PHOTOGRAPH,
-  QUOTE,
+  ARTICLE = '0',
+  MOVIE = '1',
+  PHOTOGRAPH = '2',
+  QUOTE = '3',
 }
 
 export enum PostTypeName {

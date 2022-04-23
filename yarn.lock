@@ -3394,6 +3394,11 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
+"@types/showdown@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/@types/showdown/-/showdown-2.0.0.tgz#3e800eca8573848cac4e5555f4377ba3a0e7b1f2"
+  integrity sha512-70xBJoLv+oXjB5PhtA8vo7erjLDp9/qqI63SRHm4REKrwuPOLs8HhXwlZJBJaB4kC18cCZ1UUZ6Fb/PLFW4TCA==
+
 "@types/signale@1.4.1":
   version "1.4.1"
   resolved "https://registry.npmjs.org/@types/signale/-/signale-1.4.1.tgz#6137a6fd7960b48703dd2793c5b795480368b246"

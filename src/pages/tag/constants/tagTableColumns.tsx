@@ -1,5 +1,5 @@
 import { Popconfirm } from 'antd';
-import { ProColumns } from '@ant-design/pro-table';
+import type { ProColumns } from '@ant-design/pro-table';
 import moment from 'moment';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
 

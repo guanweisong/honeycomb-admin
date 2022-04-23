@@ -5,13 +5,12 @@ import SimpleMDE from 'react-simplemde-editor';
 import { PageContainer } from '@ant-design/pro-layout';
 import { history } from 'umi';
 import { StringParam, useQueryParams } from 'use-query-params';
-import '/node_modules/easymde/dist/easymde.min.css';
 import styles from './index.less';
 import { PageStatus } from '@/pages/page/types/PageStatus';
 import { useModel } from '@@/plugin-model/useModel';
-import { PageEntity } from '@/pages/page/types/page.entity';
+import type { PageEntity } from '@/pages/page/types/page.entity';
 import * as pagesService from '@/pages/page/service';
-const showdown = require('showdown');
+import showdown from 'showdown';
 
 const converter = new showdown.Converter();
 const FormItem = Form.Item;
@@ -40,7 +39,7 @@ const Page = () => {
       result = await pagesService.indexPageDetail(values);
       result = result.data;
       if (result.page_content) {
-        result.page_content = converter.makeMd(result.page_content);
+        result.page_content = converter.makeMarkdown(result.page_content);
       }
     }
     setCurrentItem(result);

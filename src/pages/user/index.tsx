@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import { Input, Radio, Button, Modal, Form, message, Popconfirm } from 'antd';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import ProTable, { ActionType } from '@ant-design/pro-table';
+import type { ActionType } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import { PlusOutlined } from '@ant-design/icons';
 import md5 from 'md5';
 import type { RuleObject } from 'antd/es/form';
@@ -13,7 +14,7 @@ import { formItemLayout } from '@/constants/formItemLayout';
 import { userTableColumns } from './constants/userTableColumns';
 import * as UserService from './service';
 import * as usersService from '@/pages/user/service';
-import { UserIndexRequest } from '@/pages/user/types/user.index.request';
+import type { UserIndexRequest } from '@/pages/user/types/user.index.request';
 
 const User = () => {
   const [form] = Form.useForm();
@@ -40,15 +41,17 @@ const User = () => {
       current: number;
       user_name?: string;
       user_email?: string;
+      user_level?: UserLevel[];
+      user_status?: UserStatus[];
     },
     sort: any,
-    filter: any,
   ) => {
-    const { pageSize, current, user_name, user_email } = params;
+    const { pageSize, current, user_name, user_email, user_level, user_status } = params;
     const data: UserIndexRequest = {
-      ...filter,
       user_name,
       user_email,
+      user_status,
+      user_level,
       page: current,
       limit: pageSize,
     };

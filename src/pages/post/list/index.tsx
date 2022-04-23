@@ -9,6 +9,8 @@ import { PostListTableColumns } from './constants/postListTableColumns';
 import * as postsService from '../service';
 import type { PostEntity } from '@/pages/post/types/post.entity';
 import type { PostIndexRequest } from '@/pages/post/types/post.index.request';
+import type { PostType } from '../types/PostType';
+import type { PostStatus } from '../types/PostStatus';
 
 const PostList = () => {
   const actionRef = useRef<ActionType>();
@@ -25,15 +27,16 @@ const PostList = () => {
       pageSize: number;
       current: number;
       post_title?: string;
+      post_type?: PostType[];
+      post_status?: PostStatus[];
     },
     sort: any,
-    filter: any,
   ) => {
-    const { pageSize, current, post_title } = params;
-    console.log(sort, filter);
+    const { pageSize, current, post_title, post_type, post_status } = params;
     const data: PostIndexRequest = {
       post_title,
-      ...filter,
+      post_type,
+      post_status,
       page: current,
       limit: pageSize,
     };
@@ -75,6 +78,7 @@ const PostList = () => {
     <PageContainer>
       <ProTable<PostEntity, any>
         rowKey="_id"
+        form={{ syncToUrl: true }}
         request={request}
         tableLayout="fixed"
         scroll={{ x: 'max-content' }}

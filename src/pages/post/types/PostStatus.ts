@@ -1,7 +1,7 @@
 export enum PostStatus {
-  PUBLISHED,
-  DRAFT,
-  TO_AUDIT,
+  PUBLISHED = '0',
+  DRAFT = '1',
+  TO_AUDIT = '2',
 }
 
 export enum PostStatusName {
