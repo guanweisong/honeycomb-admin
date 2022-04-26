@@ -13,14 +13,14 @@ export enum PostStatusName {
 export const postStatusOptions = [
   {
     label: PostStatusName.PUBLISHED,
-    value: PostStatus.PUBLISHED,
+    value: PostStatus.PUBLISHED.toString(),
   },
   {
     label: PostStatusName.DRAFT,
-    value: PostStatus.DRAFT,
+    value: PostStatus.DRAFT.toString(),
   },
   {
     label: PostStatusName.TO_AUDIT,
-    value: PostStatus.TO_AUDIT,
+    value: PostStatus.TO_AUDIT.toString(),
   },
 ];

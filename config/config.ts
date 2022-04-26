@@ -1,5 +1,4 @@
 // https://umijs.org/config/
-import { truncate } from 'lodash';
 import { defineConfig } from 'umi';
 
 import defaultSettings from './defaultSettings';

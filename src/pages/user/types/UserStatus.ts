@@ -13,14 +13,14 @@ export enum UserStatusName {
 export const userStatusOptions = [
   {
     label: UserStatusName.DELETE,
-    value: UserStatus.DELETE,
+    value: UserStatus.DELETE.toString(),
   },
   {
     label: UserStatusName.DISABLE,
-    value: UserStatus.DISABLE,
+    value: UserStatus.DISABLE.toString(),
   },
   {
     label: UserStatusName.ENABLE,
-    value: UserStatus.ENABLE,
+    value: UserStatus.ENABLE.toString(),
   },
 ];

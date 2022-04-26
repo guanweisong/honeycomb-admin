@@ -15,18 +15,18 @@ export enum PostTypeName {
 export const postTypeOptions = [
   {
     label: PostTypeName.ARTICLE,
-    value: PostType.ARTICLE,
+    value: PostType.ARTICLE.toString(),
   },
   {
     label: PostTypeName.MOVIE,
-    value: PostType.MOVIE,
+    value: PostType.MOVIE.toString(),
   },
   {
     label: PostTypeName.PHOTOGRAPH,
-    value: PostType.PHOTOGRAPH,
+    value: PostType.PHOTOGRAPH.toString(),
   },
   {
     label: PostTypeName.QUOTE,
-    value: PostType.QUOTE,
+    value: PostType.QUOTE.toString(),
   },
 ];

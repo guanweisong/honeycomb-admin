@@ -13,14 +13,14 @@ export enum PageStatusName {
 export const pageStatusOptions = [
   {
     label: PageStatusName.PUBLISHED,
-    value: PageStatus.PUBLISHED,
+    value: PageStatus.PUBLISHED.toString(),
   },
   {
     label: PageStatusName.DRAFT,
-    value: PageStatus.DRAFT,
+    value: PageStatus.DRAFT.toString(),
   },
   {
     label: PageStatusName.TO_AUDIT,
-    value: PageStatus.TO_AUDIT,
+    value: PageStatus.TO_AUDIT.toString(),
   },
 ];

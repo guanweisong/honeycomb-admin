@@ -11,10 +11,10 @@ export enum EnableTypeName {
 export const enableOptions = [
   {
     label: EnableTypeName.DISABLE,
-    value: EnableType.DISABLE,
+    value: EnableType.DISABLE.toString(),
   },
   {
     label: EnableTypeName.ENABLE,
-    value: EnableType.ENABLE,
+    value: EnableType.ENABLE.toString(),
   },
 ];

@@ -13,14 +13,14 @@ export enum UserLevelName {
 export const userLevelOptions = [
   {
     label: UserLevelName.ADMIN,
-    value: UserLevel.ADMIN,
+    value: UserLevel.ADMIN.toString(),
   },
   {
     label: UserLevelName.EDITOR,
-    value: UserLevel.EDITOR,
+    value: UserLevel.EDITOR.toString(),
   },
   {
     label: UserLevelName.GUEST,
-    value: UserLevel.GUEST,
+    value: UserLevel.GUEST.toString(),
   },
 ];

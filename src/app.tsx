@@ -8,8 +8,8 @@ import { Route } from 'react-router-dom';
 import { GithubOutlined, IeOutlined } from '@ant-design/icons';
 import * as CommonService from '@/services/common';
 import * as SettingService from '@/pages/setting/service';
-import { UserEntity } from '@/pages/user/types/user.entity';
-import { SettingEntity } from '@/pages/setting/types/setting.entity';
+import type { UserEntity } from '@/pages/user/types/user.entity';
+import type { SettingEntity } from '@/pages/setting/types/setting.entity';
 
 const loginPath = '/login';
 
@@ -52,11 +52,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       }
     },
     links: [
-      <a key={'fontSite'} href="https://guanweisong.com" target={'_blank'}>
+      <a key={'fontSite'} href="https://guanweisong.com" target={'_blank'} rel="noreferrer">
         <IeOutlined />
         <span>博客前台</span>
       </a>,
-      <a key={'github'} href="https://github.com/guanweisong" target={'_blank'}>
+      <a key={'github'} href="https://github.com/guanweisong" target={'_blank'} rel="noreferrer">
         <GithubOutlined />
         <span>作者Github</span>
       </a>,
@@ -67,6 +67,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     // 增加一个 loading 的状态
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
+      // @ts-ignore
       return <QueryParamProvider ReactRouterRoute={Route}>{children}</QueryParamProvider>;
     },
   };

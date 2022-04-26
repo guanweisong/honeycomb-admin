@@ -15,18 +15,18 @@ export enum CommentStatusName {
 export const commentStatusOptions = [
   {
     label: CommentStatusName.TO_AUDIT,
-    value: CommentStatus.TO_AUDIT,
+    value: CommentStatus.TO_AUDIT.toString(),
   },
   {
     label: CommentStatusName.PUBLISH,
-    value: CommentStatus.PUBLISH,
+    value: CommentStatus.PUBLISH.toString(),
   },
   {
     label: CommentStatusName.RUBBISH,
-    value: CommentStatus.RUBBISH,
+    value: CommentStatus.RUBBISH.toString(),
   },
   {
     label: CommentStatusName.BAN,
-    value: CommentStatus.BAN,
+    value: CommentStatus.BAN.toString(),
   },
 ];
