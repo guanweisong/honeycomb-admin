@@ -104,7 +104,8 @@ const PostDetail = () => {
       indexDetail({ _id });
     }
     return () => {
-      setDetail(undefined);
+      // @ts-ignore
+      setDetail({ post_type: PostType.ARTICLE });
     };
   }, [_id]);
 

@@ -9,6 +9,7 @@ import type { TagEntity } from '@/pages/tag/types/tag.entity';
 import { ModalType, ModalTypeName } from '@/types/ModalType';
 import { formItemLayout } from '@/constants/formItemLayout';
 import * as TagService from './service';
+import { TagIndexRequest } from '@/pages/tag/types/tag.index.request';
 
 const Tag = () => {
   const [form] = Form.useForm();
@@ -29,13 +30,24 @@ const Tag = () => {
    * @param sort
    * @param filter
    */
-  const request = async (params: { pageSize: number; current: number; tag_name?: string }) => {
+  const request = async (
+    params: { pageSize: number; current: number; tag_name?: string },
+    sort: any,
+  ) => {
     const { pageSize, current } = params;
-    const result = await TagService.index({
+    const data: TagIndexRequest = {
       page: current,
       limit: pageSize,
       tag_name: params.tag_name,
-    });
+    };
+
+    const sortKeys = Object.keys(sort);
+    if (sortKeys.length > 0) {
+      data.sortField = sortKeys[0];
+      data.sortOrder = sort[sortKeys[0]];
+    }
+
+    const result = await TagService.index(data);
     return {
       data: result.data.list,
       success: true,

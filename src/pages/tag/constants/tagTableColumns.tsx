@@ -27,6 +27,8 @@ export const tagTableColumns = (props: TagTableColumnsProps) =>
       dataIndex: 'updated_at',
       key: 'updated_at',
       search: false,
+      sorter: true,
+      defaultSortOrder: 'descend',
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
