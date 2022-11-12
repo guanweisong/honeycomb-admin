@@ -50,7 +50,7 @@ const Login: React.FC = () => {
           form={form}
           title="稻草人博客"
           subTitle="稻草人的自留地"
-          message={<div className={styles.tip}>游客账号：guest guest</div>}
+          message={<div className={styles.tip}>游客账号：guest 123456</div>}
           initialValues={{
             autoLogin: true,
           }}
