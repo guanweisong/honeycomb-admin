@@ -19,10 +19,10 @@ const Setting = () => {
    */
   const handleSubmit = () => {
     form.validateFields().then(async (values) => {
-      const result = await SettingService.update(setting!._id, values);
+      const result = await SettingService.update(setting!.id, values);
       if (result.status === 201) {
         const settingInfo = await SettingService.querySetting();
-        setInitialState({ ...initialState, setting: settingInfo.data?.[0] });
+        setInitialState({ ...initialState, setting: settingInfo.data });
         message.success('更新成功');
       }
     });
@@ -35,7 +35,7 @@ const Setting = () => {
           <Card title="基础信息">
             <Form.Item
               {...formItemLayout}
-              name="site_name"
+              name="siteName"
               label="站点名称"
               rules={[{ required: true, message: '请填写站点名称' }]}
             >
@@ -43,7 +43,7 @@ const Setting = () => {
             </Form.Item>
             <Form.Item
               {...formItemLayout}
-              name="site_subName"
+              name="siteSubName"
               label="副标题"
               rules={[{ required: true, message: '请填写站点副标题' }]}
             >
@@ -51,7 +51,7 @@ const Setting = () => {
             </Form.Item>
             <Form.Item
               {...formItemLayout}
-              name="site_signature"
+              name="siteSignature"
               label="签名"
               rules={[{ required: true, message: '请填写签名' }]}
             >
@@ -59,7 +59,7 @@ const Setting = () => {
             </Form.Item>
             <Form.Item
               {...formItemLayout}
-              name="site_copyright"
+              name="siteCopyright"
               label="版权信息"
               rules={[{ required: true, message: '请填写版权信息' }]}
             >
@@ -67,10 +67,10 @@ const Setting = () => {
             </Form.Item>
           </Card>
           <Card title="备案信息">
-            <Form.Item {...formItemLayout} name="site_record_no" label="备案号">
+            <Form.Item {...formItemLayout} name="siteRecordNo" label="备案号">
               <Input placeholder="用填写备案号" maxLength={100} />
             </Form.Item>
-            <Form.Item {...formItemLayout} name="site_record_url" label="工信部网址">
+            <Form.Item {...formItemLayout} name="siteRecordUrl" label="工信部网址">
               <Input placeholder="用填写工信部网址，有备案号时显示链接" maxLength={100} />
             </Form.Item>
           </Card>

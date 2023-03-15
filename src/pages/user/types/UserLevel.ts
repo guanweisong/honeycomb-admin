@@ -1,7 +1,7 @@
 export enum UserLevel {
-  ADMIN = 1,
-  EDITOR = 2,
-  GUEST = 3,
+  ADMIN = 'ADMIN',
+  EDITOR = 'EDITOR',
+  GUEST = 'GUEST',
 }
 
 export enum UserLevelName {

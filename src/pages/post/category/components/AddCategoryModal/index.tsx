@@ -30,8 +30,8 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
   const initForm = () => {
     form.resetFields();
     form.setFieldsValue({
-      category_parent: '0',
-      category_status: EnableType.ENABLE,
+      parent: '0',
+      status: EnableType.ENABLE,
     });
   };
 
@@ -76,8 +76,8 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
     form
       .validateFields()
       .then(async (values) => {
-        if (values.category_parent === '0') {
-          delete values.category_parent;
+        if (values.parent === '0') {
+          delete values.parent;
         }
         switch (modalProps.type!) {
           case ModalType.ADD:
@@ -89,7 +89,7 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
             break;
           case ModalType.EDIT:
             const updateResult = await CategoryService.update(
-              modalProps.record?._id as string,
+              modalProps.record?.id as string,
               values,
             );
             if (updateResult.status === 201) {
@@ -116,7 +116,7 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
       <Form form={form}>
         <Form.Item
           {...formItemLayout}
-          name="category_title"
+          name="title"
           label="分类名称"
           rules={[{ required: true, message: '请输入分类名称' }]}
         >
@@ -124,7 +124,7 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
         </Form.Item>
         <Form.Item
           {...formItemLayout}
-          name="category_title_en"
+          name="titleEn"
           label="分类英文名"
           rules={[{ required: true, message: '请输入分类英文名' }]}
         >
@@ -132,7 +132,7 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
         </Form.Item>
         <Form.Item
           {...formItemLayout}
-          name="category_parent"
+          name="parent"
           label="父级分类"
           rules={[{ required: true, message: '请选择父级分类' }]}
         >
@@ -143,11 +143,11 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
               of={list}
               body={(option) => (
                 <Option
-                  value={option._id}
-                  key={option._id}
-                  disabled={option._id === modalProps.record?._id}
+                  value={option.id}
+                  key={option.id}
+                  disabled={option.id === modalProps.record?.id}
                 >
-                  {creatCategoryTitleByDepth(option.category_title, option)}
+                  {creatCategoryTitleByDepth(option.title, option)}
                 </Option>
               )}
             />
@@ -155,13 +155,13 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
         </Form.Item>
         <Form.Item
           {...formItemLayout}
-          name="category_description"
+          name="description"
           label="分类描述："
           rules={[{ required: true, message: '请输入分类描述' }]}
         >
           <Input.TextArea rows={3} autoComplete="off" maxLength={200} />
         </Form.Item>
-        <Form.Item {...formItemLayout} name="category_status" label="状态">
+        <Form.Item {...formItemLayout} name="status" label="状态">
           <Radio.Group buttonStyle="solid" options={enableOptions} />
         </Form.Item>
       </Form>

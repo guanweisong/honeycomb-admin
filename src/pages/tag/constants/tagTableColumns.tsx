@@ -12,23 +12,23 @@ export const tagTableColumns = (props: TagTableColumnsProps) =>
   [
     {
       title: '标签名称',
-      dataIndex: 'tag_name',
-      key: 'tag_name',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: '添加时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       search: false,
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '最后更新日期',
-      dataIndex: 'updated_at',
-      key: 'updated_at',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
       search: false,
       sorter: true,
-      defaultSortOrder: 'descend',
+      defaultSortOrder: 'desc',
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
@@ -39,7 +39,7 @@ export const tagTableColumns = (props: TagTableColumnsProps) =>
       render: (text, record) => (
         <p>
           <a onClick={() => props.handleEditItem(record)}>编辑</a>&nbsp;
-          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDeleteItem([record._id])}>
+          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDeleteItem([record.id])}>
             <a>删除</a>
           </Popconfirm>
         </p>

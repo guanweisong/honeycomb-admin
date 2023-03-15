@@ -7,27 +7,27 @@ import type { UserCreateResponse } from '@/pages/user/types/user.create.response
 import type { BaseResponse } from '@/types/BaseResponse';
 
 export const index = (params?: UserIndexRequest): Promise<UserIndexResponse> => {
-  console.log('users=>service=>index', params);
+  console.log('user=>service=>index', params);
   return request({
-    url: '/users',
+    url: '/user',
     method: 'get',
     params,
   });
 };
 
-export const create = (params: Omit<UserEntity, '_id'>): Promise<UserCreateResponse> => {
-  console.log('users=>service=>create', params);
+export const create = (params: Omit<UserEntity, 'id'>): Promise<UserCreateResponse> => {
+  console.log('user=>service=>create', params);
   return request({
-    url: '/users',
+    url: '/user',
     method: 'post',
     data: params,
   });
 };
 
 export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
-  console.log('users=>service=>distory', ids);
+  console.log('user=>service=>distory', ids);
   return request({
-    url: `/users`,
+    url: `/user`,
     method: 'delete',
     params: { ids },
   });
@@ -35,11 +35,11 @@ export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
 
 export const update = (
   id: string,
-  params: Partial<Omit<UserEntity, '_id'>>,
+  params: Partial<Omit<UserEntity, 'id'>>,
 ): Promise<UserCreateResponse> => {
-  console.log('users=>service=>update', id, params);
+  console.log('user=>service=>update', id, params);
   return request({
-    url: `/users/${id}`,
+    url: `/user/${id}`,
     method: 'patch',
     data: params,
   });

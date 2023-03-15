@@ -31,13 +31,13 @@ const Category = () => {
   const request = async (params: {
     pageSize: number;
     current: number;
-    category_title?: string;
-    category_title_en?: string;
+    title?: string;
+    titleEn?: string;
   }) => {
-    const { pageSize, current, category_title, category_title_en } = params;
+    const { pageSize, current, title, titleEn } = params;
     const result = await CategoryService.index({
-      category_title,
-      category_title_en,
+      title,
+      titleEn,
       page: current,
       limit: pageSize,
     });
@@ -76,7 +76,7 @@ const Category = () => {
    * 批量删除
    */
   const handleDeleteBatch = async () => {
-    const ids = selectedRows.map((item) => item._id);
+    const ids = selectedRows.map((item) => item.id);
     await handleDeleteItem(ids);
     setSelectedRows([]);
   };
@@ -95,14 +95,14 @@ const Category = () => {
   return (
     <PageContainer>
       <ProTable<CategoryEntity, any>
-        rowKey="_id"
+        rowKey="id"
         request={request}
         form={{ syncToUrl: true }}
         tableLayout="fixed"
         actionRef={actionRef}
         columns={categoryListTableColumns({ handleEditItem, handleDeleteItem })}
         rowSelection={{
-          selectedRowKeys: selectedRows.map((item) => item._id),
+          selectedRowKeys: selectedRows.map((item) => item.id),
           onChange: (_, rows) => {
             setSelectedRows(rows);
           },

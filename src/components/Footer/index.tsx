@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
 
   const currentYear = new Date().getFullYear();
 
-  return <DefaultFooter copyright={`${currentYear} ${setting?.site_copyright}`} />;
+  return <DefaultFooter copyright={`${currentYear} ${setting?.siteCopyright}`} />;
 };
 
 export default Footer;

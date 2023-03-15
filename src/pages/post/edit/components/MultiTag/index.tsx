@@ -9,16 +9,16 @@ import type { TagEntity } from '@/pages/tag/types/tag.entity';
 const FormItem = Form.Item;
 
 export interface MultiTagProps {
-  name: 'gallery_style' | 'movie_director' | 'movie_actor' | 'movie_style';
+  name: 'galleryStyle' | 'movieDirector' | 'movieActor' | 'movieStyle';
   detail: PostEntity;
   title: string;
   onAddTag: (
-    name: 'gallery_style' | 'movie_director' | 'movie_actor' | 'movie_style',
+    name: 'galleryStyle' | 'movieDirector' | 'movieActor' | 'movieStyle',
     value: string,
   ) => void;
   onTagsChange: (
-    name: 'movie_actor' | 'movie_director' | 'movie_style' | 'gallery_style',
-    tags: Omit<TagEntity, 'updated_at' | 'created_at'>[],
+    name: 'movieActor' | 'movieDirector' | 'movieStyle' | 'galleryStyle',
+    tags: Omit<TagEntity, 'updatedAt' | 'createdAt'>[],
   ) => void;
 }
 
@@ -33,7 +33,7 @@ const MultiTag = (props: MultiTagProps) => {
    * 获取tag列表
    */
   const getTags = () => {
-    return (detail[name] as Omit<TagEntity, 'updated_at' | 'created_at'>[]) || [];
+    return (detail[name] as Omit<TagEntity, 'updatedAt' | 'createdAt'>[]) || [];
   };
 
   /**
@@ -42,7 +42,7 @@ const MultiTag = (props: MultiTagProps) => {
    */
   const handleClose = (removedTag: string) => {
     console.log('handleClose', removedTag);
-    const tags = getTags().filter((tag) => tag._id !== removedTag);
+    const tags = getTags().filter((tag) => tag.id !== removedTag);
     onTagsChange(name, tags);
   };
 
@@ -53,10 +53,10 @@ const MultiTag = (props: MultiTagProps) => {
     setInputVisible(true);
   };
 
-  const handleUpdateTags = (tag: Omit<TagEntity, 'updated_at' | 'created_at'>) => {
+  const handleUpdateTags = (tag: Omit<TagEntity, 'updatedAt' | 'createdAt'>) => {
     console.log('handleUpdateTags', tag);
     const tags = getTags();
-    if (tags.some((item) => item._id === tag._id)) {
+    if (tags.some((item) => item.id === tag.id)) {
       return;
     }
     onTagsChange(props.name, [...tags, tag]);
@@ -69,7 +69,7 @@ const MultiTag = (props: MultiTagProps) => {
    */
   const handleInputConfirm = (value: string, option: any) => {
     console.log('handleInputConfirm', value, option.props.children);
-    handleUpdateTags({ _id: value, tag_name: option.props.children });
+    handleUpdateTags({ id: value, name: option.props.children });
     setInputVisible(false);
   };
 
@@ -95,7 +95,7 @@ const MultiTag = (props: MultiTagProps) => {
       onAddTag(name, value);
     } else {
       const obj = data.find((item) => item.text === value) as DataSourceItemObject;
-      handleUpdateTags({ _id: obj.value, tag_name: obj.text });
+      handleUpdateTags({ id: obj.value, name: obj.text });
     }
     setInputVisible(false);
   };
@@ -111,13 +111,13 @@ const MultiTag = (props: MultiTagProps) => {
       timeout.current = undefined;
     }
     const fake = async () => {
-      const result = await index({ tag_name: value });
+      const result = await index({ name: value });
       const items: DataSourceItemObject[] = [];
       console.log(result.data.list);
       result.data.list.forEach((r) => {
         items.push({
-          value: r._id,
-          text: r.tag_name,
+          value: r.id,
+          text: r.name,
         });
       });
       callback(items);
@@ -140,8 +140,8 @@ const MultiTag = (props: MultiTagProps) => {
       </FormItem>
       {getTags().map((tag) => {
         const tagElem = (
-          <Tag key={tag._id} closable onClose={() => handleClose(tag._id)}>
-            {tag.tag_name}
+          <Tag key={tag.id} closable onClose={() => handleClose(tag.id)}>
+            {tag.name}
           </Tag>
         );
         return tagElem;

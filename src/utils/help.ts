@@ -7,7 +7,7 @@ import type { CategoryEntity } from '@/pages/post/category/types/category.entity
  */
 export function creatCategoryTitleByDepth(text: string, record: CategoryEntity) {
   let prefix = '';
-  for (let i = 0; i < record.deep_path; i++) {
+  for (let i = 0; i < record.deepPath; i++) {
     prefix += '—— ';
   }
   return prefix + text;

@@ -71,7 +71,7 @@ const Menu = () => {
   const removeItem = (id: string) => {
     const newArr = [...checkedList];
     checkedList.forEach((item, index) => {
-      if (item._id === id) {
+      if (item.id === id) {
         newArr.splice(index, 1);
       }
     });
@@ -87,7 +87,7 @@ const Menu = () => {
     if (e.target.checked) {
       setCheckedList([...checkedList, { ...e.target.value, parent: '0', type }]);
     } else {
-      removeItem(e.target.value._id);
+      removeItem(e.target.value.id);
     }
   };
 
@@ -99,7 +99,7 @@ const Menu = () => {
   const getCheckedStatus = (item: CategoryEntity | PageEntity) => {
     let checked = false;
     checkedList.forEach((m) => {
-      if (m._id === item._id) {
+      if (m.id === item.id) {
         checked = true;
       }
     });
@@ -114,7 +114,7 @@ const Menu = () => {
   const getDisabledStatus = (item: CategoryEntity | PageEntity) => {
     let disabled = false;
     checkedList.forEach((m) => {
-      if (m.parent === item._id) {
+      if (m.parent === item.id) {
         disabled = true;
       }
     });
@@ -129,35 +129,16 @@ const Menu = () => {
     const listData = getFlatDataFromTree({
       treeData,
       // @ts-ignore
-      getNodeKey: (node) => node._id,
+      getNodeKey: (node) => node.id,
     });
     const list = listData.map(({ node, parentNode }) => ({
       ...node,
       // @ts-ignore
-      parent: parentNode ? parentNode._id : '0',
+      parent: parentNode ? parentNode.id : '0',
       expanded: !!node.children,
     }));
     // @ts-ignore
     setCheckedList(list);
-  };
-
-  /**
-   * 获取数据树的标题字段
-   * @param item
-   * @returns {string}
-   */
-  const getTreeNodeTitle = (item: MenuEntity) => {
-    let title = '';
-    switch (item.type) {
-      case MenuType.PAGE:
-        title = item.page_title!;
-        break;
-      case MenuType.POST:
-        title = item.category_title!;
-        break;
-      default:
-    }
-    return title;
   };
 
   /**
@@ -169,7 +150,6 @@ const Menu = () => {
     checkedList.forEach((item) => {
       format.push({
         ...item,
-        title: getTreeNodeTitle(item),
         subtitle: MenuTypeName[MenuType[item.type]],
         expanded: true,
       });
@@ -177,7 +157,7 @@ const Menu = () => {
     const tree = getTreeFromFlatData({
       flatData: format,
       // @ts-ignore
-      getKey: (node) => node._id,
+      getKey: (node) => node.id,
       // @ts-ignore
       getParentKey: (node) => node.parent,
     });
@@ -191,7 +171,7 @@ const Menu = () => {
     const data: MenuEntity[] = [];
     checkedList.forEach((item, index) => {
       const menu = {
-        _id: item._id,
+        id: item.id,
         type: item.type,
         power: index,
       } as MenuEntity;
@@ -218,14 +198,14 @@ const Menu = () => {
               <TabPane tab="分类" key="1">
                 <div className={styles.items}>
                   {categoryList.map((item) => (
-                    <li key={item._id} className={styles.item}>
+                    <li key={item.id} className={styles.item}>
                       <Checkbox
                         value={item}
-                        onChange={(e) => onCheck(e, MenuType.POST)}
+                        onChange={(e) => onCheck(e, MenuType.CATEGORY)}
                         checked={getCheckedStatus(item)}
                         disabled={getDisabledStatus(item)}
                       >
-                        {creatCategoryTitleByDepth(item.category_title, item)}
+                        {creatCategoryTitleByDepth(item.title, item)}
                       </Checkbox>
                     </li>
                   ))}
@@ -234,14 +214,14 @@ const Menu = () => {
               <TabPane tab="页面" key="2">
                 <div className={styles.items}>
                   {pageList.map((item) => (
-                    <li key={item._id} className={styles.item}>
+                    <li key={item.id} className={styles.item}>
                       <Checkbox
                         value={item}
                         onChange={(e) => onCheck(e, MenuType.PAGE)}
                         defaultChecked={getCheckedStatus(item)}
                         disabled={getDisabledStatus(item)}
                       >
-                        {item.page_title}
+                        {item.title}
                       </Checkbox>
                     </li>
                   ))}

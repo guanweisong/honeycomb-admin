@@ -6,9 +6,9 @@ import type { CategoryCreateResponse } from '@/pages/post/category/types/categor
 import type { BaseResponse } from '@/types/BaseResponse';
 
 export const index = (params?: CategoryIndexRequest): Promise<CategoryIndexResponse> => {
-  console.log('categories=>service=>index', params);
+  console.log('category=>service=>index', params);
   return request({
-    url: '/categories',
+    url: '/category',
     method: 'get',
     params: {
       limit: 999,
@@ -17,19 +17,19 @@ export const index = (params?: CategoryIndexRequest): Promise<CategoryIndexRespo
   });
 };
 
-export const create = (params: Omit<CategoryEntity, '_id'>): Promise<CategoryCreateResponse> => {
-  console.log('categories=>service=>create', params);
+export const create = (params: Omit<CategoryEntity, 'id'>): Promise<CategoryCreateResponse> => {
+  console.log('category=>service=>create', params);
   return request({
-    url: '/categories',
+    url: '/category',
     method: 'post',
     data: params,
   });
 };
 
 export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
-  console.log('categories=>service=>destroy', ids);
+  console.log('category=>service=>destroy', ids);
   return request({
-    url: `/categories`,
+    url: `/category`,
     params: { ids },
     method: 'delete',
   });
@@ -37,11 +37,11 @@ export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
 
 export const update = (
   id: string,
-  params: Partial<Omit<CategoryEntity, '_id'>>,
+  params: Partial<Omit<CategoryEntity, 'id'>>,
 ): Promise<CategoryCreateResponse> => {
-  console.log('categories=>service=>update', id, params);
+  console.log('category=>service=>update', id, params);
   return request({
-    url: `/categories/${id}`,
+    url: `/category/${id}`,
     method: 'patch',
     data: params,
   });

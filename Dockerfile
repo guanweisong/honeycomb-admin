@@ -1,4 +1,4 @@
-FROM mhart/alpine-node-auto AS Builder
+FROM node:16-slim AS Builder
 
 # 创建app目录
 RUN mkdir -p /usr/src/honeycomb-admin

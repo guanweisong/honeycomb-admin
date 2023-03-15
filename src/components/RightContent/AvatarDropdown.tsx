@@ -59,7 +59,7 @@ const AvatarDropdown: React.FC = () => {
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
         <span className={`${styles.name} anticon`}>
-          欢迎 {UserLevelName[UserLevel[userInfo.user_level]]}: {userInfo.user_name}
+          欢迎 {UserLevelName[UserLevel[userInfo.level]]}: {userInfo.name}
         </span>
       </span>
     </HeaderDropdown>

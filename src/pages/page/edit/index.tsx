@@ -23,35 +23,35 @@ const Page = () => {
   const [form] = Form.useForm();
 
   const [query] = useQueryParams({
-    _id: StringParam,
+    id: StringParam,
   });
 
-  const { _id } = query;
+  const { id } = query;
 
   /**
    * 查询详情
    * @param values
    */
   const detail = async (values: Partial<PageEntity>) => {
-    console.log('pages=>model=>detial', values);
+    console.log('pages=>model=>detail', values);
     let result;
-    if (typeof values._id !== 'undefined') {
+    if (typeof values.id !== 'undefined') {
       result = await pagesService.indexPageDetail(values);
       result = result.data;
-      if (result.page_content) {
-        result.page_content = converter.makeMarkdown(result.page_content);
+      if (result.content) {
+        result.content = converter.makeMarkdown(result.content);
       }
     }
     setCurrentItem(result);
   };
 
   useEffect(() => {
-    if (_id) {
-      detail({ _id });
+    if (id) {
+      detail({ id });
     } else {
       setCurrentItem(undefined);
     }
-  }, [_id]);
+  }, [id]);
 
   useEffect(() => {
     form.resetFields();
@@ -68,10 +68,10 @@ const Page = () => {
       .then(async (values) => {
         const data = values;
         data.page_status = status;
-        const result = await pagesService.update(currentItem?._id as string, values);
+        const result = await pagesService.update(currentItem?.id as string, values);
         if (result && result.status === 201) {
           message.success('更新成功');
-          detail({ _id: currentItem?._id as string });
+          detail({ id: currentItem?.id as string });
         }
       })
       .catch((e) => {
@@ -88,15 +88,15 @@ const Page = () => {
       .validateFields()
       .then(async (values) => {
         const data = values;
-        data.page_status = status;
-        data.page_author = userInfo?._id;
+        data.status = status;
+        data.author = userInfo?.id;
         const result = await pagesService.create(data);
         if (result && result.status === 201) {
           message.success('添加成功');
           history.push({
             pathname: '/page/edit',
             query: {
-              _id: result.data._id,
+              id: result.data.id,
             },
           });
         }
@@ -110,13 +110,13 @@ const Page = () => {
     <PageContainer
       extra={[
         <Choose>
-          <When condition={currentItem?._id}>
-            <If condition={currentItem!.page_status === PageStatus.PUBLISHED}>
-              <Button type="primary" onClick={() => handleUpdate(0)}>
+          <When condition={currentItem?.id}>
+            <If condition={currentItem!.status === PageStatus.PUBLISHED}>
+              <Button type="primary" onClick={() => handleUpdate(PageStatus.PUBLISHED)}>
                 更新
               </Button>
             </If>
-            <If condition={currentItem!.page_status === PageStatus.DRAFT}>
+            <If condition={currentItem!.status === PageStatus.DRAFT}>
               <Button
                 type="primary"
                 className={styles.rightButton}
@@ -144,10 +144,10 @@ const Page = () => {
         <Form form={form}>
           <div className={styles.main}>
             <div className={styles.mainArea}>
-              <FormItem name="page_title">
+              <FormItem name="title">
                 <Input type="text" size="large" placeholder="在此输入文章标题" />
               </FormItem>
-              <FormItem name="page_content">
+              <FormItem name="content">
                 <SimpleMDE className="markdown-body" />
               </FormItem>
             </div>

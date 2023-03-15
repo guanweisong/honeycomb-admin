@@ -23,13 +23,13 @@ const Page = () => {
   const request = async (params: {
     pageSize: number;
     current: number;
-    page_title?: string;
-    page_status?: PageStatus[];
+    title?: string;
+    status?: PageStatus[];
   }) => {
-    const { pageSize, current, page_title, page_status } = params;
+    const { pageSize, current, title, status } = params;
     const result = await PageService.indexPageList({
-      page_title,
-      page_status,
+      title,
+      status,
       page: current,
       limit: pageSize,
     });
@@ -56,7 +56,7 @@ const Page = () => {
    * 批量删除
    */
   const handleDeleteBatch = async () => {
-    const ids = selectedRows.map((item) => item._id);
+    const ids = selectedRows.map((item) => item.id);
     await handleDeleteItem(ids);
     setSelectedRows([]);
   };
@@ -64,7 +64,7 @@ const Page = () => {
   return (
     <PageContainer>
       <ProTable<PageEntity, any>
-        rowKey="_id"
+        rowKey="id"
         request={request}
         form={{ syncToUrl: true }}
         actionRef={actionRef}
@@ -72,7 +72,7 @@ const Page = () => {
           handleDeleteItem,
         })}
         rowSelection={{
-          selectedRowKeys: selectedRows.map((item) => item._id),
+          selectedRowKeys: selectedRows.map((item) => item.id),
           onChange: (_, rows) => {
             setSelectedRows(rows);
           },

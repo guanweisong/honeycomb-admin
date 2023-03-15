@@ -12,36 +12,36 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
   [
     {
       title: '评论内容',
-      dataIndex: 'comment_content',
-      key: 'comment_content',
+      dataIndex: 'content',
+      key: 'content',
     },
     {
       title: '评论文章',
-      dataIndex: 'comment_post',
-      key: 'comment_post',
+      dataIndex: 'postId',
+      key: 'postId',
       render: (text: any) => {
         return text?.post_title;
       },
     },
     {
       title: '评论人',
-      dataIndex: 'comment_author',
-      key: 'comment_author',
+      dataIndex: 'author',
+      key: 'author',
     },
     {
       title: '评论人邮箱',
-      dataIndex: 'comment_email',
-      key: 'comment_email',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
       title: '评论IP',
-      dataIndex: 'comment_ip',
-      key: 'comment_ip',
+      dataIndex: 'ip',
+      key: 'ip',
     },
     {
       title: '评论状态',
-      dataIndex: 'comment_status',
-      key: 'comment_status',
+      dataIndex: 'status',
+      key: 'status',
       valueType: 'select',
       fieldProps: {
         mode: 'multiple',
@@ -50,15 +50,15 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
     },
     {
       title: '添加时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       search: false,
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '最后更新日期',
-      dataIndex: 'updated_at',
-      key: 'updated_at',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
       search: false,
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
@@ -70,7 +70,7 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
       render: (text, record) => (
         <div>
           {props.renderOpt(record)}&nbsp;
-          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDelete([record._id])}>
+          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDelete([record.id])}>
             <a>删除</a>
           </Popconfirm>
         </div>

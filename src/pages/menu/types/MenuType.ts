@@ -1,9 +1,9 @@
 export enum MenuType {
-  POST,
-  PAGE,
+  CATEGORY = 'CATEGORY',
+  PAGE = 'PAGE',
 }
 
 export enum MenuTypeName {
-  POST = '分类',
+  CATEGORY = '分类',
   PAGE = '页面',
 }

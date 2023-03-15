@@ -13,18 +13,18 @@ export const linkTableColumns = (props: LinkTableColumnsProps) =>
   [
     {
       title: '链接名称',
-      dataIndex: 'link_name',
-      key: 'link_name',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: 'URL',
-      dataIndex: 'link_url',
-      key: 'link_url',
+      dataIndex: 'url',
+      key: 'url',
     },
     {
       title: '状态',
-      dataIndex: 'link_status',
-      key: 'link_status',
+      dataIndex: 'status',
+      key: 'status',
       valueType: 'select',
       fieldProps: {
         mode: 'multiple',
@@ -33,21 +33,21 @@ export const linkTableColumns = (props: LinkTableColumnsProps) =>
     },
     {
       title: '链接描述',
-      dataIndex: 'link_description',
-      key: 'link_description',
+      dataIndex: 'description',
+      key: 'description',
       search: false,
     },
     {
       title: '添加时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       search: false,
     },
     {
       title: '最后更新日期',
-      dataIndex: 'updated_at',
-      key: 'updated_at',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       search: false,
     },
@@ -59,7 +59,7 @@ export const linkTableColumns = (props: LinkTableColumnsProps) =>
       render: (text: string, record: LinkEntity) => (
         <p>
           <a onClick={() => props.handleEditItem(record)}>编辑</a>&nbsp;
-          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDeleteItem([record._id])}>
+          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDeleteItem([record.id])}>
             <a>删除</a>
           </Popconfirm>
         </p>

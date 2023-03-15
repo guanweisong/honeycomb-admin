@@ -25,7 +25,7 @@ const Login: React.FC = () => {
         const values = form.getFieldsValue();
         const result = await LoginService.login({
           ...values,
-          user_password: md5(values.user_password),
+          password: md5(values.password),
           captcha: {
             ticket: res.ticket,
             randstr: res.randstr,
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
           }}
         >
           <ProFormText
-            name="user_name"
+            name="name"
             fieldProps={{
               size: 'large',
               prefix: <UserOutlined className={styles.prefixIcon} />,
@@ -73,7 +73,7 @@ const Login: React.FC = () => {
             ]}
           />
           <ProFormText.Password
-            name="user_password"
+            name="password"
             fieldProps={{
               size: 'large',
               prefix: <LockOutlined className={styles.prefixIcon} />,

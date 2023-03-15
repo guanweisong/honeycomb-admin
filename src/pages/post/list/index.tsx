@@ -26,17 +26,17 @@ const PostList = () => {
     params: {
       pageSize: number;
       current: number;
-      post_title?: string;
-      post_type?: PostType[];
-      post_status?: PostStatus[];
+      title?: string;
+      type?: PostType[];
+      status?: PostStatus[];
     },
     sort: any,
   ) => {
-    const { pageSize, current, post_title, post_type, post_status } = params;
+    const { pageSize, current, title, type, status } = params;
     const data: PostIndexRequest = {
-      post_title,
-      post_type,
-      post_status,
+      title,
+      type,
+      status,
       page: current,
       limit: pageSize,
     };
@@ -69,7 +69,7 @@ const PostList = () => {
    * 批量删除
    */
   const handleDeleteBatch = async () => {
-    const ids = selectedRows.map((item) => item._id);
+    const ids = selectedRows.map((item) => item.id);
     await handleDeleteItem(ids);
     setSelectedRows([]);
   };
@@ -77,7 +77,7 @@ const PostList = () => {
   return (
     <PageContainer>
       <ProTable<PostEntity, any>
-        rowKey="_id"
+        rowKey="id"
         form={{ syncToUrl: true }}
         request={request}
         tableLayout="fixed"
@@ -87,7 +87,7 @@ const PostList = () => {
           handleDeleteItem,
         })}
         rowSelection={{
-          selectedRowKeys: selectedRows.map((item) => item._id),
+          selectedRowKeys: selectedRows.map((item) => item.id),
           onChange: (_, rows) => {
             setSelectedRows(rows);
           },

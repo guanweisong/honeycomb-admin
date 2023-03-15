@@ -39,19 +39,19 @@ const User = () => {
     params: {
       pageSize: number;
       current: number;
-      user_name?: string;
-      user_email?: string;
-      user_level?: UserLevel[];
-      user_status?: UserStatus[];
+      name?: string;
+      email?: string;
+      level?: UserLevel[];
+      status?: UserStatus[];
     },
     sort: any,
   ) => {
-    const { pageSize, current, user_name, user_email, user_level, user_status } = params;
+    const { pageSize, current, name, email, level, status } = params;
     const data: UserIndexRequest = {
-      user_name,
-      user_email,
-      user_status,
-      user_level,
+      name,
+      email,
+      status,
+      level,
       page: current,
       limit: pageSize,
     };
@@ -84,7 +84,7 @@ const User = () => {
    * 批量删除
    */
   const handleDeleteBatch = async () => {
-    const ids = selectedRows.map((item) => item._id);
+    const ids = selectedRows.map((item) => item.id);
     await handleDeleteItem(ids);
     setSelectedRows([]);
   };
@@ -109,10 +109,10 @@ const User = () => {
     form
       .validateFields()
       .then(async (values) => {
-        const { user_password, ...rest } = values;
+        const { password, ...rest } = values;
         const params = rest;
-        if (user_password) {
-          params.user_password = md5(values.user_password);
+        if (password) {
+          params.password = md5(values.password);
         }
         switch (modalProps.type!) {
           case ModalType.ADD:
@@ -123,7 +123,7 @@ const User = () => {
             }
             break;
           case ModalType.EDIT:
-            const updateResult = await UserService.update(modalProps.record?._id as string, params);
+            const updateResult = await UserService.update(modalProps.record?.id as string, params);
             if (updateResult.status === 201) {
               actionRef.current?.reload();
               message.success('更新成功');
@@ -142,7 +142,7 @@ const User = () => {
    */
   const handleAddNew = () => {
     form.resetFields();
-    form.setFieldsValue({ user_level: UserLevel.EDITOR, user_status: UserStatus.ENABLE });
+    form.setFieldsValue({ level: UserLevel.EDITOR, status: UserStatus.ENABLE });
     setModalProps({
       type: ModalType.ADD,
       visible: true,
@@ -155,18 +155,12 @@ const User = () => {
    * @param user_name
    * @param user_email
    */
-  const checkExist = async ({
-    user_name,
-    user_email,
-  }: {
-    user_name?: string;
-    user_email?: string;
-  }) => {
-    console.log('users=>model=>checkExist', { user_name });
+  const checkExist = async ({ name, email }: { name?: string; email?: string }) => {
+    console.log('users=>model=>checkExist', { name });
     let exist = false;
-    const result = await usersService.index({ user_name, user_email });
-    const currentId = modalProps.record?._id;
-    if (result.data.total > 0 && result.data.list[0]._id !== currentId) {
+    const result = await usersService.index({ name, email });
+    const currentId = modalProps.record?.id;
+    if (result.data.total > 0 && result.data.list[0].id !== currentId) {
       exist = true;
     }
     return exist;
@@ -179,7 +173,7 @@ const User = () => {
    */
   const validateUserName = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
-      const result = await checkExist({ user_name: value });
+      const result = await checkExist({ name: value });
       if (result) {
         return Promise.reject('抱歉，用户名已存在，请换一个用户名');
       }
@@ -195,7 +189,7 @@ const User = () => {
    */
   const validateUserEmail = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
-      const result = await checkExist({ user_email: value });
+      const result = await checkExist({ email: value });
       if (result) {
         return Promise.reject('抱歉，用户邮箱已存在，请换一个用户邮箱');
       }
@@ -207,13 +201,13 @@ const User = () => {
   return (
     <PageContainer>
       <ProTable<UserEntity, any>
-        rowKey="_id"
+        rowKey="id"
         form={{ syncToUrl: true }}
         request={request}
         actionRef={actionRef}
         columns={userTableColumns({ handleEditItem, handleDeleteItem })}
         rowSelection={{
-          selectedRowKeys: selectedRows.map((item) => item._id),
+          selectedRowKeys: selectedRows.map((item) => item.id),
           onChange: (_, rows) => {
             setSelectedRows(rows);
           },
@@ -247,7 +241,7 @@ const User = () => {
         <Form form={form} onFinish={handleModalOk}>
           <Form.Item
             {...formItemLayout}
-            name="user_name"
+            name="name"
             label="用户名"
             rules={[{ required: true, message: '请输入用户名' }, { validator: validateUserName }]}
           >
@@ -255,7 +249,7 @@ const User = () => {
           </Form.Item>
           <Form.Item
             {...formItemLayout}
-            name="user_password"
+            name="password"
             label="密码"
             rules={[{ required: modalProps.type === ModalType.ADD, message: '请输入密码' }]}
           >
@@ -270,7 +264,7 @@ const User = () => {
           <Form.Item
             {...formItemLayout}
             label="邮箱"
-            name="user_email"
+            name="email"
             rules={[
               { required: true, message: '请输入用户邮箱' },
               { type: 'email', message: '请输入正确的邮箱' },
@@ -279,17 +273,17 @@ const User = () => {
           >
             <Input.TextArea rows={3} autoComplete="off" maxLength={20} />
           </Form.Item>
-          <Form.Item {...formItemLayout} name="user_level" label="级别">
+          <Form.Item {...formItemLayout} name="level" label="级别">
             <Radio.Group
               buttonStyle="solid"
-              disabled={modalProps.record?.user_level === UserLevel.ADMIN}
+              disabled={modalProps.record?.level === UserLevel.ADMIN}
               options={userLevelOptions}
             />
           </Form.Item>
-          <Form.Item {...formItemLayout} name="user_status" label="状态">
+          <Form.Item {...formItemLayout} name="status" label="状态">
             <Radio.Group
               buttonStyle="solid"
-              disabled={modalProps.record?.user_level === UserLevel.ADMIN}
+              disabled={modalProps.record?.level === UserLevel.ADMIN}
               options={userStatusOptions}
             />
           </Form.Item>

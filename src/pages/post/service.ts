@@ -6,9 +6,9 @@ import type { PostEntity } from '@/pages/post/types/post.entity';
 import type { PostCreateResponse } from '@/pages/post/types/post.create.response';
 
 export const indexPostList = (params?: PostIndexRequest): Promise<PostIndexResponse> => {
-  console.log('posts=>service=>indexPostList', params);
+  console.log('post=>service=>indexPostList', params);
   return request({
-    url: '/posts',
+    url: '/post',
     method: 'get',
     params,
   });
@@ -17,24 +17,24 @@ export const indexPostList = (params?: PostIndexRequest): Promise<PostIndexRespo
 export const indexPostDetail = (params: Partial<PostEntity>): Promise<PostCreateResponse> => {
   console.log('post=>service=>indexPostDetail');
   return request({
-    url: `/posts/${params._id}`,
+    url: `/post/${params.id}`,
     method: 'get',
   });
 };
 
-export const create = (params: Omit<PostEntity, '_id'>): Promise<PostCreateResponse> => {
-  console.log('posts=>service=>create', params);
+export const create = (params: Omit<PostEntity, 'id'>): Promise<PostCreateResponse> => {
+  console.log('post=>service=>create', params);
   return request({
-    url: '/posts',
+    url: '/post',
     method: 'post',
     data: params,
   });
 };
 
 export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
-  console.log('posts=>service=>destroy', ids);
+  console.log('post=>service=>destroy', ids);
   return request({
-    url: `/posts`,
+    url: `/post`,
     params: { ids },
     method: 'delete',
   });
@@ -42,11 +42,11 @@ export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
 
 export const update = (
   id: string,
-  params: Partial<Omit<PostEntity, '_id'>>,
+  params: Partial<Omit<PostEntity, 'id'>>,
 ): Promise<PostCreateResponse> => {
-  console.log('posts=>service=>update', id, params);
+  console.log('post=>service=>update', id, params);
   return request({
-    url: `/posts/${id}`,
+    url: `/post/${id}`,
     method: 'patch',
     data: params,
   });

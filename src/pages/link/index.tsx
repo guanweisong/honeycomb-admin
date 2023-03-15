@@ -38,15 +38,15 @@ const Link = () => {
   const request = async (params: {
     pageSize: number;
     current: number;
-    link_name?: string;
-    link_url?: string;
-    link_status?: EnableType[];
+    name?: string;
+    url?: string;
+    status?: EnableType[];
   }) => {
-    const { pageSize, current, link_name, link_url, link_status } = params;
+    const { pageSize, current, name, url, status } = params;
     const result = await LinkService.index({
-      link_name,
-      link_url,
-      link_status,
+      name,
+      url,
+      status,
       page: current,
       limit: pageSize,
     });
@@ -73,10 +73,7 @@ const Link = () => {
             }
             break;
           case ModalType.EDIT:
-            const updateResult = await linksService.update(
-              modalProps.record?._id as string,
-              values,
-            );
+            const updateResult = await linksService.update(modalProps.record?.id as string, values);
             if (updateResult.status === 201) {
               actionRef.current?.reload();
               message.success('更新成功');
@@ -100,7 +97,7 @@ const Link = () => {
       record: undefined,
     });
     form.resetFields();
-    form.setFieldsValue({ link_status: EnableType.ENABLE });
+    form.setFieldsValue({ status: EnableType.ENABLE });
   };
 
   /**
@@ -119,7 +116,7 @@ const Link = () => {
    * 批量删除
    */
   const handleDeleteBatch = async () => {
-    const ids = selectedRows.map((item) => item._id);
+    const ids = selectedRows.map((item) => item.id);
     await handleDeleteItem(ids);
     setSelectedRows([]);
   };
@@ -145,9 +142,9 @@ const Link = () => {
   const validateLinkUrl = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
       let exist = false;
-      const result = await linksService.index({ link_url: value });
-      const currentId = modalProps.record?._id;
-      if (result.data.total > 0 && result.data.list[0]._id !== currentId) {
+      const result = await linksService.index({ url: value });
+      const currentId = modalProps.record?.id;
+      if (result.data.total > 0 && result.data.list[0].id !== currentId) {
         exist = true;
       }
       if (exist) {
@@ -161,7 +158,7 @@ const Link = () => {
   return (
     <PageContainer>
       <ProTable<LinkEntity, any>
-        rowKey="_id"
+        rowKey="id"
         request={request}
         actionRef={actionRef}
         columns={linkTableColumns({
@@ -169,7 +166,7 @@ const Link = () => {
           handleDeleteItem,
         })}
         rowSelection={{
-          selectedRowKeys: selectedRows.map((item) => item._id),
+          selectedRowKeys: selectedRows.map((item) => item.id),
           onChange: (_, rows) => {
             setSelectedRows(rows);
           },
@@ -203,7 +200,7 @@ const Link = () => {
         <Form form={form} onFinish={handleModalOk}>
           <Form.Item
             {...formItemLayout}
-            name="link_name"
+            name="name"
             label="链接名称"
             rules={[{ required: true, message: '请输入链接名称' }]}
           >
@@ -211,7 +208,7 @@ const Link = () => {
           </Form.Item>
           <Form.Item
             {...formItemLayout}
-            name="link_url"
+            name="url"
             label="链接URL"
             rules={[
               { required: true, message: '请输入链接URL' },
@@ -223,13 +220,13 @@ const Link = () => {
           </Form.Item>
           <Form.Item
             {...formItemLayout}
-            name="link_description"
+            name="description"
             label="链接描述："
             rules={[{ required: true, message: '请输入链接描述' }]}
           >
             <Input.TextArea rows={3} autoComplete="off" maxLength={20} />
           </Form.Item>
-          <Form.Item {...formItemLayout} name="link_status" label="状态">
+          <Form.Item {...formItemLayout} name="status" label="状态">
             <Radio.Group buttonStyle="solid">
               <For
                 each="item"

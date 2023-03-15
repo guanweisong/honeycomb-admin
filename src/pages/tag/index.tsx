@@ -31,14 +31,14 @@ const Tag = () => {
    * @param filter
    */
   const request = async (
-    params: { pageSize: number; current: number; tag_name?: string },
+    params: { pageSize: number; current: number; name?: string },
     sort: any,
   ) => {
     const { pageSize, current } = params;
     const data: TagIndexRequest = {
       page: current,
       limit: pageSize,
-      tag_name: params.tag_name,
+      name: params.name,
     };
 
     const sortKeys = Object.keys(sort);
@@ -83,7 +83,7 @@ const Tag = () => {
    * 批量删除
    */
   const handleDeleteBatch = async () => {
-    const ids = selectedRows.map((item) => item._id);
+    const ids = selectedRows.map((item) => item.id);
     await handleDeleteItem(ids);
     setSelectedRows([]);
   };
@@ -117,7 +117,7 @@ const Tag = () => {
             }
             break;
           case ModalType.EDIT:
-            const updateResult = await TagService.update(modalProps.record?._id as string, values);
+            const updateResult = await TagService.update(modalProps.record?.id as string, values);
             if (updateResult.status === 201) {
               actionRef.current?.reload();
               message.success('更新成功');
@@ -139,9 +139,9 @@ const Tag = () => {
   const validateTagName = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
       let exist = false;
-      const result = await TagService.index({ tag_name: value });
-      const currentId = modalProps.record?._id;
-      if (result.data.total > 0 && result.data.list[0]._id !== currentId) {
+      const result = await TagService.index({ name: value });
+      const currentId = modalProps.record?.id;
+      if (result.data.total > 0 && result.data.list[0].id !== currentId) {
         exist = true;
       }
       if (exist) {
@@ -156,12 +156,12 @@ const Tag = () => {
     <PageContainer>
       <ProTable<TagEntity, any>
         form={{ syncToUrl: true }}
-        rowKey="_id"
+        rowKey="id"
         request={request}
         actionRef={actionRef}
         columns={tagTableColumns({ handleEditItem, handleDeleteItem })}
         rowSelection={{
-          selectedRowKeys: selectedRows.map((item) => item._id),
+          selectedRowKeys: selectedRows.map((item) => item.id),
           onChange: (_, rows) => {
             setSelectedRows(rows);
           },
@@ -195,7 +195,7 @@ const Tag = () => {
         <Form form={form}>
           <Form.Item
             {...formItemLayout}
-            name="tag_name"
+            name="name"
             label="标签名称"
             rules={[{ required: true, message: '请输入标签名称' }, { validator: validateTagName }]}
           >

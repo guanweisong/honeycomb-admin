@@ -14,39 +14,39 @@ export const categoryListTableColumns = (props: CategoryListTableColumnsProps) =
   [
     {
       title: '分类名称',
-      dataIndex: 'category_title',
-      key: 'category_title',
+      dataIndex: 'title',
+      key: 'title',
       render: (text: string, record) => creatCategoryTitleByDepth(text, record),
     },
     {
       title: '分类英文名',
-      dataIndex: 'category_title_en',
-      key: 'category_title_en',
+      dataIndex: 'titleEn',
+      key: 'titleEn',
     },
     {
       title: '分类描述',
-      dataIndex: 'category_description',
-      key: 'category_description',
+      dataIndex: 'description',
+      key: 'description',
       search: false,
     },
     {
       title: '状态',
-      dataIndex: 'category_status',
-      key: 'category_status',
+      dataIndex: 'status',
+      key: 'status',
       render: (text: EnableType) => EnableTypeName[EnableType[text] as keyof typeof EnableTypeName],
       search: false,
     },
     {
       title: '添加时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       search: false,
     },
     {
       title: '最后更新日期',
-      dataIndex: 'updated_at',
-      key: 'updated_at',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       search: false,
     },
@@ -58,7 +58,7 @@ export const categoryListTableColumns = (props: CategoryListTableColumnsProps) =
       render: (text, record) => (
         <p>
           <a onClick={() => props.handleEditItem(record)}>编辑</a>&nbsp;
-          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDeleteItem([record._id])}>
+          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDeleteItem([record.id])}>
             <a>删除</a>
           </Popconfirm>
         </p>

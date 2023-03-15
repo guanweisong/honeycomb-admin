@@ -1,19 +1,19 @@
 export enum UserStatus {
-  DELETE = -1,
-  DISABLE = 0,
-  ENABLE = 1,
+  DELETED = 'DELETED',
+  DISABLE = 'DISABLE',
+  ENABLE = 'ENABLE',
 }
 
 export enum UserStatusName {
-  DELETE = '已删除',
+  DELETED = '已删除',
   DISABLE = '禁用',
   ENABLE = '启用',
 }
 
 export const userStatusOptions = [
   {
-    label: UserStatusName.DELETE,
-    value: UserStatus.DELETE,
+    label: UserStatusName.DELETED,
+    value: UserStatus.DELETED,
   },
   {
     label: UserStatusName.DISABLE,

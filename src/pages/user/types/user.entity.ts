@@ -3,10 +3,10 @@ import type { UserStatus } from '@/pages/user/types/UserStatus';
 import type { BaseEntity } from '@/types/BaseEntity';
 
 export interface UserEntity extends BaseEntity {
-  _id: string;
-  user_email: string;
-  user_level: UserLevel;
-  user_name: string;
-  user_password: string;
-  user_status: UserStatus;
+  id: string;
+  email: string;
+  level: UserLevel;
+  name: string;
+  password: string;
+  status: UserStatus;
 }

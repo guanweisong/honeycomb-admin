@@ -15,13 +15,13 @@ export const userTableColumns = (props: userTableColumnsProps) =>
   [
     {
       title: '用户名',
-      dataIndex: 'user_name',
-      key: 'user_name',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: '级别',
-      dataIndex: 'user_level',
-      key: 'user_level',
+      dataIndex: 'level',
+      key: 'level',
       valueType: 'select',
       fieldProps: {
         mode: 'multiple',
@@ -30,8 +30,8 @@ export const userTableColumns = (props: userTableColumnsProps) =>
     },
     {
       title: '状态',
-      dataIndex: 'user_status',
-      key: 'user_status',
+      dataIndex: 'status',
+      key: 'status',
       valueType: 'select',
       fieldProps: {
         mode: 'multiple',
@@ -40,22 +40,22 @@ export const userTableColumns = (props: userTableColumnsProps) =>
     },
     {
       title: '用户邮箱',
-      dataIndex: 'user_email',
-      key: 'user_email',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
       title: '添加时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       sorter: true,
-      defaultSortOrder: 'descend',
+      defaultSortOrder: 'desc',
       search: false,
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '最后更新日期',
-      dataIndex: 'updated_at',
-      key: 'updated_at',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
       sorter: true,
       search: false,
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
@@ -68,14 +68,10 @@ export const userTableColumns = (props: userTableColumnsProps) =>
       render: (text, record) => (
         <p>
           <a onClick={() => props.handleEditItem(record)}>编辑</a>&nbsp;
-          <If
-            condition={
-              record.user_level !== UserLevel.ADMIN && record.user_status !== UserStatus.DELETE
-            }
-          >
+          <If condition={record.level !== UserLevel.ADMIN && record.status !== UserStatus.DELETED}>
             <Popconfirm
               title="确定要删除吗？"
-              onConfirm={() => props.handleDeleteItem([record._id])}
+              onConfirm={() => props.handleDeleteItem([record.id])}
             >
               <a>删除</a>
             </Popconfirm>

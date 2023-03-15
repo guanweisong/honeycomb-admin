@@ -20,11 +20,13 @@ const Comment = () => {
   const request = async (params: {
     pageSize: number;
     current: number;
-    comment_status?: CommentStatus[];
+    content?: string;
+    status?: CommentStatus[];
   }) => {
-    const { pageSize, current, comment_status } = params;
+    const { pageSize, current, status, content } = params;
     const result = await CommentService.index({
-      comment_status,
+      status,
+      content,
       page: current,
       limit: pageSize,
     });
@@ -41,7 +43,7 @@ const Comment = () => {
    * @param type
    */
   const handleSetStatus = async (id: string, type: CommentStatus) => {
-    const result = await commentsService.update(id, { comment_status: type });
+    const result = await commentsService.update(id, { status: type });
     if (result.status === 201) {
       actionRef.current?.reload();
       message.success('更新成功');
@@ -54,20 +56,20 @@ const Comment = () => {
    */
   const renderOpt = (record: CommentEntity) => {
     let dom;
-    switch (record.comment_status) {
+    switch (record.status) {
       case CommentStatus.TO_AUDIT:
         dom = (
           <p>
             <Popconfirm
               title="确定要通过吗？"
-              onConfirm={() => handleSetStatus(record._id, CommentStatus.PUBLISH)}
+              onConfirm={() => handleSetStatus(record.id, CommentStatus.PUBLISH)}
             >
               <a>通过</a>
             </Popconfirm>
             &nbsp;
             <Popconfirm
               title="确定要驳回吗？"
-              onConfirm={() => handleSetStatus(record._id, CommentStatus.RUBBISH)}
+              onConfirm={() => handleSetStatus(record.id, CommentStatus.RUBBISH)}
             >
               <a>驳回</a>
             </Popconfirm>
@@ -78,7 +80,7 @@ const Comment = () => {
         dom = (
           <Popconfirm
             title="确定要屏蔽吗？"
-            onConfirm={() => handleSetStatus(record._id, CommentStatus.BAN)}
+            onConfirm={() => handleSetStatus(record.id, CommentStatus.BAN)}
           >
             <a>屏蔽</a>
           </Popconfirm>
@@ -88,7 +90,7 @@ const Comment = () => {
         dom = (
           <Popconfirm
             title="确定要通过吗？"
-            onConfirm={() => handleSetStatus(record._id, CommentStatus.PUBLISH)}
+            onConfirm={() => handleSetStatus(record.id, CommentStatus.PUBLISH)}
           >
             <a>通过</a>
           </Popconfirm>
@@ -98,7 +100,7 @@ const Comment = () => {
         dom = (
           <Popconfirm
             title="确定要解除屏蔽吗？"
-            onConfirm={() => handleSetStatus(record._id, CommentStatus.PUBLISH)}
+            onConfirm={() => handleSetStatus(record.id, CommentStatus.PUBLISH)}
           >
             <a>解除屏蔽</a>
           </Popconfirm>
@@ -125,7 +127,7 @@ const Comment = () => {
    * 批量删除
    */
   const handleDeleteBatch = async () => {
-    const ids = selectedRows.map((item) => item._id);
+    const ids = selectedRows.map((item) => item.id);
     await handleDelete(ids);
     setSelectedRows([]);
   };
@@ -133,7 +135,7 @@ const Comment = () => {
   return (
     <PageContainer>
       <ProTable<CommentEntity, any>
-        rowKey="_id"
+        rowKey="id"
         request={request}
         actionRef={actionRef}
         columns={commentTableColumns({
@@ -141,7 +143,7 @@ const Comment = () => {
           handleDelete,
         })}
         rowSelection={{
-          selectedRowKeys: selectedRows.map((item) => item._id),
+          selectedRowKeys: selectedRows.map((item) => item.id),
           onChange: (_, rows) => {
             setSelectedRows(rows);
           },

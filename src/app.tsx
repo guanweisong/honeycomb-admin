@@ -29,7 +29,7 @@ export async function getInitialState(): Promise<{
   const settingInfo = await SettingService.querySetting();
   return {
     userInfo: userInfo.data,
-    setting: settingInfo.data?.[0],
+    setting: settingInfo.data,
   };
 }
 

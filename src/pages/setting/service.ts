@@ -5,15 +5,15 @@ import { BaseResponse } from '@/types/BaseResponse';
 
 export const querySetting = (): Promise<BaseResponse<SettingEntity>> => {
   return request({
-    url: '/settings',
+    url: '/setting',
     method: 'get',
   });
 };
 
 export const update = (id: string, params: SettingEntity): Promise<SettingUpdateResponse> => {
   return request({
-    url: `/settings/${id}`,
-    method: 'put',
+    url: `/setting/${id}`,
+    method: 'patch',
     data: params,
   });
 };

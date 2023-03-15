@@ -6,35 +6,35 @@ import type { PageCreateResponse } from '@/pages/page/types/page.create.response
 import type { BaseResponse } from '@/types/BaseResponse';
 
 export const indexPageList = (params?: PageIndexListRequest): Promise<PageIndexListResponse> => {
-  console.log('pages=>service=>indexPageList', params);
+  console.log('page=>service=>indexPageList', params);
   return request({
-    url: '/pages',
+    url: '/page',
     method: 'get',
     params,
   });
 };
 
 export const indexPageDetail = (params: Partial<PageEntity>): Promise<PageCreateResponse> => {
-  console.log('pages=>service=>indexPageDetail');
+  console.log('page=>service=>indexPageDetail');
   return request({
-    url: `/pages/${params._id}`,
+    url: `/page/${params.id}`,
     method: 'get',
   });
 };
 
-export const create = (params: Omit<PageEntity, '_id'>): Promise<PageCreateResponse> => {
-  console.log('pages=>service=>create', params);
+export const create = (params: Omit<PageEntity, 'id'>): Promise<PageCreateResponse> => {
+  console.log('page=>service=>create', params);
   return request({
-    url: '/pages',
+    url: '/page',
     method: 'post',
     data: params,
   });
 };
 
 export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
-  console.log('pages=>service=>destroy', ids);
+  console.log('page=>service=>destroy', ids);
   return request({
-    url: `/pages`,
+    url: `/page`,
     params: { ids },
     method: 'delete',
   });
@@ -42,11 +42,11 @@ export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
 
 export const update = (
   id: string,
-  params: Partial<Omit<PageEntity, '_id'>>,
+  params: Partial<Omit<PageEntity, 'id'>>,
 ): Promise<PageCreateResponse> => {
-  console.log('pages=>service=>update', id, params);
+  console.log('page=>service=>update', id, params);
   return request({
-    url: `/pages/${id}`,
+    url: `/page/${id}`,
     method: 'patch',
     data: params,
   });

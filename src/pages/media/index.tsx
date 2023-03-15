@@ -136,18 +136,16 @@ const Media = (props: MediaProps) => {
                       body={(item) => (
                         <li
                           className={
-                            item._id === currentItem?._id
-                              ? styles.mediaItemActive
-                              : styles.mediaItem
+                            item.id === currentItem?.id ? styles.mediaItemActive : styles.mediaItem
                           }
-                          key={item._id}
+                          key={item.id}
                           onClick={() => onEditItem(item)}
-                          title={item.media_name}
+                          title={item.name}
                         >
                           <Choose>
-                            <When condition={item.media_type.indexOf('image') !== -1}>
+                            <When condition={item.type.indexOf('image') !== -1}>
                               <img
-                                src={`//${item.media_url}?imageMogr2/thumbnail/114x`}
+                                src={`//${item.url}?imageMogr2/thumbnail/114x`}
                                 className={styles.mediaImage}
                               />
                             </When>
@@ -158,14 +156,14 @@ const Media = (props: MediaProps) => {
                           <div className={styles.mediaLayer}>
                             <Space>
                               <CopyToClipboard
-                                text={`//${item?.media_url}`}
+                                text={`//${item?.url}`}
                                 onCopy={() => message.success('已复制至剪切板')}
                               >
                                 <CopyOutlined title={'复制链接'} />
                               </CopyToClipboard>
                               <Popconfirm
                                 title="确定要删除吗？"
-                                onConfirm={() => onDeleteItem(currentItem?._id as string)}
+                                onConfirm={() => onDeleteItem(currentItem?.id as string)}
                               >
                                 <DeleteOutlined title="删除资源" />
                               </Popconfirm>

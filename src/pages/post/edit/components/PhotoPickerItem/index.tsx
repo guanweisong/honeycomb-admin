@@ -25,9 +25,9 @@ const PhotoPickerItem = (props: PhotoPickerItemProps) => {
         <Input type="text" />
       </FormItem>
       <Choose>
-        <When condition={mediaObj?._id}>
+        <When condition={mediaObj?.id}>
           <div className={styles.coverWrap}>
-            <img src={`//${mediaObj.media_url}`} />
+            <img src={`//${mediaObj.url}`} />
           </div>
           <Button onClick={() => handlePhotoClear()} className={styles.rightButton}>
             <DeleteOutlined />

@@ -8,16 +8,16 @@ import type { BaseResponse } from '@/types/BaseResponse';
 export const index = (params?: CommentIndexRequest): Promise<CommentIndexResponse> => {
   console.log('comments=>service=>index', params);
   return request({
-    url: '/comments',
+    url: '/comment',
     method: 'get',
     params,
   });
 };
 
-export const create = (params: Omit<CommentEntity, '_id'>): Promise<CommentCreateResponse> => {
+export const create = (params: Omit<CommentEntity, 'id'>): Promise<CommentCreateResponse> => {
   console.log('comments=>service=>create', params);
   return request({
-    url: '/comments',
+    url: '/comment',
     method: 'post',
     data: params,
   });
@@ -26,7 +26,7 @@ export const create = (params: Omit<CommentEntity, '_id'>): Promise<CommentCreat
 export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
   console.log('comments=>service=>distory', ids);
   return request({
-    url: `/comments`,
+    url: `/comment`,
     method: 'delete',
     params: { ids },
   });
@@ -34,11 +34,11 @@ export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
 
 export const update = (
   id: string,
-  params: Partial<Omit<CommentEntity, '_id'>>,
+  params: Partial<Omit<CommentEntity, 'id'>>,
 ): Promise<CommentCreateResponse> => {
   console.log('comments=>service=>update', id, params);
   return request({
-    url: `/comments/${id}`,
+    url: `/comment/${id}`,
     method: 'patch',
     data: params,
   });

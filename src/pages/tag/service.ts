@@ -8,18 +8,18 @@ import type { BaseResponse } from '@/types/BaseResponse';
 export const index = (params?: TagIndexRequest): Promise<TagIndexResponse> => {
   console.log('tags=>service=>index', params);
   return request({
-    url: '/tags',
+    url: '/tag',
     method: 'get',
     params,
   });
 };
 
 export const create = (
-  params: Omit<TagEntity, '_id' | 'created_at' | 'updated_at'>,
+  params: Omit<TagEntity, 'id' | 'createdAt' | 'updatedAt'>,
 ): Promise<TagCreateResponse> => {
   console.log('tags=>service=>create', params);
   return request({
-    url: '/tags',
+    url: '/tag',
     method: 'post',
     data: params,
   });
@@ -28,7 +28,7 @@ export const create = (
 export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
   console.log('tags=>service=>destroy', ids);
   return request({
-    url: `/tags`,
+    url: `/tag`,
     params: { ids },
     method: 'delete',
   });
@@ -36,11 +36,11 @@ export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
 
 export const update = (
   id: string,
-  params: Partial<Omit<TagEntity, '_id'>>,
+  params: Partial<Omit<TagEntity, 'id'>>,
 ): Promise<TagCreateResponse> => {
   console.log('tags=>service=>update', id, params);
   return request({
-    url: `/tags/${id}`,
+    url: `/tag/${id}`,
     method: 'patch',
     data: params,
   });

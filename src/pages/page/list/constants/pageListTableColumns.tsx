@@ -14,20 +14,20 @@ export const pageListTableColumns = (props: PageListTableColumnsProps) =>
   [
     {
       title: '文章名称',
-      dataIndex: 'page_title',
-      key: 'page_title',
+      dataIndex: 'title',
+      key: 'title',
     },
     {
       title: '作者',
-      dataIndex: 'page_author',
-      key: 'page_author',
+      dataIndex: 'author',
+      key: 'author',
       search: false,
-      render: (text: UserReadOnly) => text.user_name,
+      render: (text: UserReadOnly) => text.name,
     },
     {
       title: '状态',
-      dataIndex: 'page_status',
-      key: 'page_status',
+      dataIndex: 'status',
+      key: 'status',
       valueType: 'select',
       fieldProps: {
         mode: 'multiple',
@@ -36,22 +36,22 @@ export const pageListTableColumns = (props: PageListTableColumnsProps) =>
     },
     {
       title: '发表时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       search: false,
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '最后更新日期',
-      dataIndex: 'updated_at',
-      key: 'updated_at',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
       search: false,
       render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '点击量',
-      dataIndex: 'page_views',
-      key: 'page_views',
+      dataIndex: 'views',
+      key: 'views',
       search: false,
     },
     {
@@ -61,8 +61,8 @@ export const pageListTableColumns = (props: PageListTableColumnsProps) =>
       search: false,
       render: (text, record) => (
         <p>
-          <Link to={`/page/edit?_id=${record._id}`}>编辑</Link>&nbsp;
-          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDeleteItem([record._id])}>
+          <Link to={`/page/edit?id=${record.id}`}>编辑</Link>&nbsp;
+          <Popconfirm title="确定要删除吗？" onConfirm={() => props.handleDeleteItem([record.id])}>
             <a>删除</a>
           </Popconfirm>
         </p>

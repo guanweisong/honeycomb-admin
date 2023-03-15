@@ -1,4 +1,4 @@
 export enum TabType {
-  ALL = 'all',
-  UPLOAD = 'upload',
+  ALL = 'ALL',
+  UPLOAD = 'UPLOAD',
 }

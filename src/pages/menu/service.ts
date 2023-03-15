@@ -3,9 +3,9 @@ import type { MenuIndexResponse } from '@/pages/menu/types/menu.index.response';
 import type { MenuEntity } from '@/pages/menu/types/menu.entity';
 
 export const index = (): Promise<MenuIndexResponse> => {
-  console.log('menus=>service=>index');
+  console.log('menu=>service=>index');
   return request({
-    url: '/menus',
+    url: '/menu',
     method: 'get',
   }).then((result: MenuIndexResponse) => {
     result.data.list = result.data.list.map((item) => ({ ...item, parent: item.parent || '0' }));
@@ -14,9 +14,9 @@ export const index = (): Promise<MenuIndexResponse> => {
 };
 
 export const update = (params: MenuEntity[]) => {
-  console.log('menus=>service=>update', params);
+  console.log('menu=>service=>update', params);
   return request({
-    url: `/menus`,
+    url: `/menu`,
     method: 'patch',
     data: params,
   });

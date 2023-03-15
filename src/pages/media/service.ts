@@ -14,7 +14,7 @@ export const index = (params?: MediaIndexRequest): Promise<MediaIndexResponse> =
   });
 };
 
-export const create = (params: Omit<MediaEntity, '_id'>): Promise<MediaCreateResponse> => {
+export const create = (params: Omit<MediaEntity, 'id'>): Promise<MediaCreateResponse> => {
   console.log('media=>service=>create', params);
   return request({
     url: '/media',
@@ -34,7 +34,7 @@ export const destroy = (ids: string[]): Promise<BaseResponse<null>> => {
 
 export const update = (
   id: string,
-  params: Partial<Omit<MediaEntity, '_id'>>,
+  params: Partial<Omit<MediaEntity, 'id'>>,
 ): Promise<MediaCreateResponse> => {
   console.log('media=>service=>update', id, params);
   return request({
