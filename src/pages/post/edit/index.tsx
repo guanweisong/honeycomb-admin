@@ -23,7 +23,6 @@ import { ModalType } from '@/types/ModalType';
 import { history } from 'umi';
 import { useModel } from '@@/plugin-model/useModel';
 import * as postsService from '@/pages/post/service';
-import type { CategoryReadOnly } from '@/pages/post/types/post.entity';
 import type { CategoryEntity } from '@/pages/post/category/types/category.entity';
 import * as tagsService from '@/pages/tag/service';
 import * as categoryService from '@/pages/post/category/service';
@@ -38,7 +37,7 @@ const { TextArea } = Input;
 const PostDetail = () => {
   const { initialState } = useModel('@@initialState');
   // @ts-ignore
-  const [detail, setDetail] = useState<PostEntity>({ post_type: PostType.ARTICLE });
+  const [detail, setDetail] = useState<PostEntity>({ type: PostType.ARTICLE });
   const [list, setList] = useState<CategoryEntity[]>([]);
   const [showPhotoPicker, setShowPhotoPicker] = useState<boolean>(false);
   const [modalProps, setModalProps] = useState<{
@@ -55,10 +54,10 @@ const PostDetail = () => {
   const [form] = Form.useForm();
 
   const [query] = useQueryParams({
-    _id: StringParam,
+    id: StringParam,
   });
 
-  const { _id } = query;
+  const { id } = query;
 
   /**
    * 分类列表获取
@@ -77,37 +76,33 @@ const PostDetail = () => {
   const indexDetail = async (values: Partial<PostEntity>) => {
     console.log('post=>model=>detail', values);
     let result;
-    if (typeof values._id !== 'undefined') {
+    if (typeof values.id !== 'undefined') {
       result = await postsService.indexPostDetail(values);
       result = result.data;
-      if (result.movie_time) {
+      if (result.movieTime) {
         // @ts-ignore
-        result.movie_time = moment(result.movie_time);
+        result.movieTime = moment(result.movieTime);
       }
-      if (result.gallery_time) {
+      if (result.galleryTime) {
         // @ts-ignore
-        result.gallery_time = moment(result.movie_time);
+        result.galleryTime = moment(result.movie_time);
       }
-      if (result.post_content) {
-        result.post_content = converter.makeMarkdown(result.post_content);
-      }
-      const post_category = result.post_category as CategoryReadOnly;
-      if (post_category) {
-        result.post_category = post_category._id as string;
+      if (result.content) {
+        result.content = converter.makeMarkdown(result.content);
       }
       setDetail(result);
     }
   };
 
   useEffect(() => {
-    if (_id) {
-      indexDetail({ _id });
+    if (id) {
+      indexDetail({ id });
     }
     return () => {
       // @ts-ignore
-      setDetail({ post_type: PostType.ARTICLE });
+      setDetail({ type: PostType.ARTICLE });
     };
-  }, [_id]);
+  }, [id]);
 
   useEffect(() => {
     index();
@@ -121,10 +116,10 @@ const PostDetail = () => {
    * 从tag对象数组中收集id数组
    * @param values
    */
-  const getTagsValue = (values: Omit<TagEntity, 'created_at' | 'updated_at'>[]) => {
+  const getTagsValue = (values: Omit<TagEntity, 'createdAt' | 'updatedAt'>[]) => {
     const result: string[] = [];
     values.forEach((item) => {
-      result.push(item._id);
+      result.push(item.id);
     });
     return result;
   };
@@ -138,32 +133,37 @@ const PostDetail = () => {
     form.validateFields().then(async (values) => {
       const data = values;
       console.log('values', data);
-      data.post_status = status;
-      if (data.gallery_style) {
-        data.gallery_style = getTagsValue(data.gallery_style);
+      data.status = status;
+      if (data.galleryStyles) {
+        data.galleryStyleIds = getTagsValue(data.galleryStyles);
+        delete data.galleryStyles;
       }
-      if (data.movie_director) {
-        data.movie_director = getTagsValue(data.movie_director);
+      if (data.movieDirectors) {
+        data.movieDirectorIds = getTagsValue(data.movieDirectors);
+        delete data.movieDirectors;
       }
-      if (data.movie_actor) {
-        data.movie_actor = getTagsValue(data.movie_actor);
+      if (data.movieActors) {
+        data.movieActorIds = getTagsValue(data.movieActors);
+        delete data.movieActors;
       }
-      if (data.movie_style) {
-        data.movie_style = getTagsValue(data.movie_style);
+      if (data.movieStyles) {
+        data.movieStyleIds = getTagsValue(data.movieStyles);
+        delete data.movieStyles;
       }
       if (
-        [PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(data.post_type) &&
-        !data.post_cover?._id
+        [PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(data.type) &&
+        !data.cover?.id
       ) {
         message.error('请上传封面');
         return;
       }
-      if (data.post_cover) {
-        data.post_cover = data.post_cover._id;
+      if (data.cover) {
+        data.coverId = data.cover.id;
+        delete data.cover;
       }
       switch (type) {
         case 'create':
-          data.post_author = userInfo!._id;
+          data.authorId = userInfo!.id;
           console.log('create', data);
           const createResult = await postsService.create(data);
           if (createResult.status === 201) {
@@ -171,17 +171,17 @@ const PostDetail = () => {
             history.push({
               pathname: '/post/edit',
               query: {
-                _id: createResult.data._id,
+                id: createResult.data.id,
               },
             });
           }
           break;
         case 'update':
-          console.log('update', detail!._id, data);
-          const updateResult = await postsService.update(detail!._id, data);
+          console.log('update', detail!.id, data);
+          const updateResult = await postsService.update(detail!.id, data);
           if (updateResult.status === 201) {
             message.success('更新成功');
-            indexDetail({ _id: detail!._id });
+            indexDetail({ id: detail!.id });
           }
           break;
         default:
@@ -195,15 +195,15 @@ const PostDetail = () => {
    * @param tag_name
    */
   const onAddTag = async (
-    name: 'movie_actor' | 'movie_director' | 'movie_style' | 'gallery_style',
+    name: 'movieActors' | 'movieDirectors' | 'movieStyles' | 'galleryStyles',
     tag_name: string,
   ) => {
-    const result = await tagsService.create({ tag_name });
+    const result = await tagsService.create({ name: tag_name });
     if (result && result.status === 201) {
       setDetail({
         ...detail,
         // @ts-ignore
-        [name]: [...(detail[name] ?? []), { _id: result.data._id, tag_name: result.data.tag_name }],
+        [name]: [...(detail[name] ?? []), { id: result.data.id, tag_name: result.data.tag_name }],
       } as PostEntity);
     }
   };
@@ -214,8 +214,8 @@ const PostDetail = () => {
    * @param tags
    */
   const onUpdateTags = (
-    name: 'movie_actor' | 'movie_director' | 'movie_style' | 'gallery_style',
-    tags: Omit<TagEntity, 'updated_at' | 'created_at'>[],
+    name: 'movieActors' | 'movieDirectors' | 'movieStyles' | 'galleryStyles',
+    tags: Omit<TagEntity, 'updatedAt' | 'createdAt'>[],
   ) => {
     setDetail({
       ...detail,
@@ -242,7 +242,7 @@ const PostDetail = () => {
    * 图片选择器的确认事件
    */
   const handlePhotoPickerOk = (media: MediaEntity) => {
-    setDetail({ ...detail, post_cover: media } as PostEntity);
+    setDetail({ ...detail, cover: media, coverId: media.id } as PostEntity);
     handlePhotoPickerCancel();
   };
 
@@ -251,7 +251,7 @@ const PostDetail = () => {
    * @param type
    */
   const handlePhotoClear = () => {
-    const { post_cover, ...rest } = detail as PostEntity;
+    const { cover, ...rest } = detail as PostEntity;
     setDetail(rest);
   };
 
@@ -277,12 +277,12 @@ const PostDetail = () => {
   };
   const galleryStyleProps: MultiTagProps = {
     ...tagProps,
-    name: 'gallery_style',
+    name: 'galleryStyles',
     title: '照片风格',
   };
-  const movieDirectorProps: MultiTagProps = { ...tagProps, name: 'movie_director', title: '导演' };
-  const movieActorProps: MultiTagProps = { ...tagProps, name: 'movie_actor', title: '演员' };
-  const movieStyleProps: MultiTagProps = { ...tagProps, name: 'movie_style', title: '电影风格' };
+  const movieDirectorProps: MultiTagProps = { ...tagProps, name: 'movieDirectors', title: '导演' };
+  const movieActorProps: MultiTagProps = { ...tagProps, name: 'movieActors', title: '演员' };
+  const movieStyleProps: MultiTagProps = { ...tagProps, name: 'movieStyles', title: '电影风格' };
 
   /**
    * 定义图片选择的参数
@@ -303,13 +303,13 @@ const PostDetail = () => {
     <PageContainer
       extra={[
         <Choose>
-          <When condition={!!detail?._id}>
-            <If condition={detail.post_status === PostStatus.PUBLISHED}>
+          <When condition={!!detail?.id}>
+            <If condition={detail.status === PostStatus.PUBLISHED}>
               <Button type="primary" onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}>
                 更新
               </Button>
             </If>
-            <If condition={detail.post_status === PostStatus.DRAFT}>
+            <If condition={detail.status === PostStatus.DRAFT}>
               <Button
                 type="primary"
                 className={styles.rightButton}
@@ -344,16 +344,15 @@ const PostDetail = () => {
             <div className={styles.mainArea}>
               <If
                 condition={
-                  [PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(
-                    detail.post_type,
-                  ) || !detail.post_type
+                  [PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(detail.type) ||
+                  !detail.type
                 }
               >
-                <FormItem name="post_title" rules={[{ required: true, message: '请输入标题' }]}>
+                <FormItem name="title" rules={[{ required: true, message: '请输入标题' }]}>
                   <Input type="text" size="large" placeholder="在此输入文章标题" maxLength={20} />
                 </FormItem>
                 <FormItem
-                  name="post_content"
+                  name="content"
                   rules={[
                     { max: 20000, message: '最多只能输入20000个字符' },
                     { required: true, message: '请输入内容' },
@@ -361,27 +360,27 @@ const PostDetail = () => {
                 >
                   <SimpleMDE className="markdown-body" />
                 </FormItem>
-                <FormItem name="post_excerpt">
+                <FormItem name="excerpt">
                   <TextArea rows={4} placeholder="内容简介" maxLength={200} />
                 </FormItem>
               </If>
-              <If condition={[PostType.QUOTE].includes(detail.post_type)}>
-                <FormItem name="quote_content" rules={[{ required: true, message: '请输入内容' }]}>
+              <If condition={[PostType.QUOTE].includes(detail.type)}>
+                <FormItem name="quoteContent" rules={[{ required: true, message: '请输入内容' }]}>
                   <TextArea rows={4} placeholder="请输入话语" maxLength={500} />
                 </FormItem>
-                <FormItem name="quote_author" rules={[{ required: true, message: '请输入作者名' }]}>
+                <FormItem name="quoteAuthor" rules={[{ required: true, message: '请输入作者名' }]}>
                   <Input type="text" size="large" placeholder="请输入作者" max={50} />
                 </FormItem>
               </If>
             </div>
             <div className={styles.sider}>
               <Block title="文章类型">
-                <FormItem name="post_type" className={styles.lastMargin}>
+                <FormItem name="type" className={styles.lastMargin}>
                   <Select options={postTypeOptions} />
                 </FormItem>
               </Block>
               <Block title="分类目录">
-                <FormItem name="post_category" rules={[{ required: true, message: '请选择分类' }]}>
+                <FormItem name="categoryId" rules={[{ required: true, message: '请选择分类' }]}>
                   <Select
                     showSearch
                     optionFilterProp="children"
@@ -394,8 +393,8 @@ const PostDetail = () => {
                       each="option"
                       of={list}
                       body={(option) => (
-                        <Select.Option value={option._id} key={option._id}>
-                          {creatCategoryTitleByDepth(option.category_title, option)}
+                        <Select.Option value={option.id} key={option.id}>
+                          {creatCategoryTitleByDepth(option.title, option)}
                         </Select.Option>
                       )}
                     />
@@ -408,19 +407,19 @@ const PostDetail = () => {
               </Block>
               <If
                 condition={[PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(
-                  detail.post_type,
+                  detail.type,
                 )}
               >
                 <PhotoPickerItem {...postCoverProps} />
               </If>
-              <If condition={detail.post_type === PostType.MOVIE}>
+              <If condition={detail.type === PostType.MOVIE}>
                 <Block title="电影英文名">
-                  <FormItem name="movie_name_en" className={styles.lastMargin}>
+                  <FormItem name="movieNameEn" className={styles.lastMargin}>
                     <Input type="text" placeholder="请输入英文名" />
                   </FormItem>
                 </Block>
                 <Block title="上映年代">
-                  <FormItem name="movie_time" className={styles.lastMargin}>
+                  <FormItem name="movieTime" className={styles.lastMargin}>
                     <DatePicker placeholder="请选择上映年代" />
                   </FormItem>
                 </Block>
@@ -428,14 +427,14 @@ const PostDetail = () => {
                 <MultiTag {...movieActorProps} />
                 <MultiTag {...movieStyleProps} />
               </If>
-              <If condition={detail.post_type === PostType.PHOTOGRAPH}>
+              <If condition={detail.type === PostType.PHOTOGRAPH}>
                 <Block title="拍摄地点">
-                  <FormItem name="gallery_location" className={styles.lastMargin}>
+                  <FormItem name="galleryLocation" className={styles.lastMargin}>
                     <Input type="text" placeholder="请填写地址" />
                   </FormItem>
                 </Block>
                 <Block title="拍摄时间">
-                  <FormItem name="gallery_time" className={styles.lastMargin}>
+                  <FormItem name="galleryTime" className={styles.lastMargin}>
                     <DatePicker placeholder="请选择拍摄时间" />
                   </FormItem>
                 </Block>

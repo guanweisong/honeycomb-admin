@@ -17,11 +17,11 @@ export interface PhotoPickerItemProps {
 
 const PhotoPickerItem = (props: PhotoPickerItemProps) => {
   const { detail, title, size, handlePhotoClear, openPhotoPicker } = props;
-  const mediaObj = detail['post_cover'] as MediaReadOnly;
+  const mediaObj = detail['cover'] as MediaReadOnly;
 
   return (
     <Block title={title} tip={`（尺寸：${size}）`}>
-      <FormItem name={'post_cover'} style={{ display: 'none' }}>
+      <FormItem name={'cover'} style={{ display: 'none' }}>
         <Input type="text" />
       </FormItem>
       <Choose>

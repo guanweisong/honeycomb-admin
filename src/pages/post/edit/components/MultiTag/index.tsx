@@ -3,21 +3,21 @@ import { Tag, Button, Input, AutoComplete, Form } from 'antd';
 import type { DataSourceItemObject } from 'antd/es/auto-complete';
 import { index } from '@/pages/tag/service';
 import Block from '@/pages/post/edit/components/Block';
-import type { PostEntity } from '@/pages/post/types/post.entity';
+import type { PostEntity, TagReadOnly } from '@/pages/post/types/post.entity';
 import type { TagEntity } from '@/pages/tag/types/tag.entity';
 
 const FormItem = Form.Item;
 
 export interface MultiTagProps {
-  name: 'galleryStyle' | 'movieDirector' | 'movieActor' | 'movieStyle';
+  name: 'galleryStyles' | 'movieDirectors' | 'movieActors' | 'movieStyles';
   detail: PostEntity;
   title: string;
   onAddTag: (
-    name: 'galleryStyle' | 'movieDirector' | 'movieActor' | 'movieStyle',
+    name: 'galleryStyles' | 'movieDirectors' | 'movieActors' | 'movieStyles',
     value: string,
   ) => void;
   onTagsChange: (
-    name: 'movieActor' | 'movieDirector' | 'movieStyle' | 'galleryStyle',
+    name: 'movieActors' | 'movieDirectors' | 'movieStyles' | 'galleryStyles',
     tags: Omit<TagEntity, 'updatedAt' | 'createdAt'>[],
   ) => void;
 }
@@ -32,8 +32,8 @@ const MultiTag = (props: MultiTagProps) => {
   /**
    * 获取tag列表
    */
-  const getTags = () => {
-    return (detail[name] as Omit<TagEntity, 'updatedAt' | 'createdAt'>[]) || [];
+  const getTags = (): TagReadOnly[] => {
+    return detail[name] ?? [];
   };
 
   /**

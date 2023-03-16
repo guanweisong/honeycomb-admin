@@ -67,7 +67,7 @@ const Page = () => {
       .validateFields()
       .then(async (values) => {
         const data = values;
-        data.page_status = status;
+        data.status = status;
         const result = await pagesService.update(currentItem?.id as string, values);
         if (result && result.status === 201) {
           message.success('更新成功');
