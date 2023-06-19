@@ -1,0 +1,45 @@
+{
+  "name": "honeycomb-admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ant-design/charts": "^1.4.2",
+    "@ant-design/icons": "^5.1.4",
+    "@ant-design/pro-components": "^2.5.5",
+    "antd": "^5.6.1",
+    "axios": "^1.4.0",
+    "classnames": "^2.3.2",
+    "dayjs": "^1.11.8",
+    "easymde": "^2.18.0",
+    "hox": "^2.1.0",
+    "md5": "^2.3.0",
+    "next": "^13.4.5",
+    "react": "18.2.0",
+    "react-copy-to-clipboard": "^5.1.0",
+    "react-dom": "18.2.0",
+    "react-simplemde-editor": "^5.2.0",
+    "react-sortable-tree": "^2.8.0",
+    "showdown": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/md5": "^2.3.2",
+    "@types/node": "20.2.6",
+    "@types/react": "18.2.10",
+    "@types/react-copy-to-clipboard": "^5.0.4",
+    "@types/react-dom": "18.2.4",
+    "@types/react-sortable-tree": "^0.3.16",
+    "@types/showdown": "^2.0.1",
+    "@umijs/fabric": "^4.0.1",
+    "autoprefixer": "^10.4.14",
+    "postcss": "8.4.24",
+    "sass": "^1.63.3",
+    "tailwindcss": "3.3.2",
+    "typescript": "5.1.3"
+  }
+}
