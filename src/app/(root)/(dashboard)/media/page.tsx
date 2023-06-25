@@ -26,8 +26,6 @@ const Media = (props: MediaProps) => {
   const [tab, setTab] = useState<TabType>(TabType.ALL);
   const [loading, setLoading] = useState(false);
 
-  console.log(total);
-
   /**
    * 查询已上传列表
    * @param values
