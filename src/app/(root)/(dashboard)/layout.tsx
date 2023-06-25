@@ -45,7 +45,9 @@ export default ({ children }: { children: React.ReactNode }) => {
       layout="mix"
       title={setting?.siteName}
       menuProps={{ onSelect: handleMenuSelect }}
-      footerRender={() => <div className="text-gray-400 text-center">{setting?.siteSignature}</div>}
+      footerRender={() => (
+        <div className="text-gray-400 text-center pb-6">{setting?.siteSignature}</div>
+      )}
       waterMarkProps={{
         // @ts-ignore
         content: user.name,
