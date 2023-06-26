@@ -6,13 +6,22 @@ import { useUserStore } from '@/stores/useUserStore';
 import { LogoutOutlined } from '@ant-design/icons';
 import { ProLayout } from '@ant-design/pro-components';
 import { Dropdown, message } from 'antd';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import React from 'react';
 import * as LoginService from '../login/service';
+
+export interface MenuItem {
+  name: string;
+  path: string;
+  icon?: React.ReactNode;
+  children?: MenuItem[];
+}
 
 export default ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const userStore = useUserStore();
   const settingStore = useSettingStore();
+  const pathname = usePathname();
 
   const { setting } = settingStore;
   const { user, setUser } = userStore;
@@ -39,12 +48,56 @@ export default ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  /**
+   * 扁平化菜单
+   */
+  const treeToList = (data: MenuItem[]) => {
+    const arr: MenuItem[] = [];
+    const formatData = (data: MenuItem[]) => {
+      data.forEach((item) => {
+        arr.push({ path: item.path, name: item.name });
+        if (item.children) {
+          formatData(item.children);
+        }
+      });
+    };
+    formatData(data);
+    return arr;
+  };
+
+  const flatMenu = treeToList(proLayoutProps.route.children as MenuItem[]);
+
+  /**
+   * 渲染面包屑
+   */
+  const getBreadcrumb = () => {
+    const pathArray = pathname.split('/');
+    pathArray.shift();
+    const newArray: string[] = [];
+    pathArray.forEach((item, index) => {
+      if (index === 0) {
+        newArray.push(`/${item}`);
+      } else {
+        newArray.push(`${newArray[index - 1]}/${item}`);
+      }
+    });
+    return newArray.map((item) => ({
+      path: item,
+      breadcrumbName: flatMenu.find((m) => m.path === item)?.name,
+    }));
+  };
+
   return (
     <ProLayout
       {...proLayoutProps}
       layout="mix"
       title={setting?.siteName}
-      menuProps={{ onSelect: handleMenuSelect }}
+      pageTitleRender={(props) => flatMenu.find((item) => item.path === pathname)?.name ?? ''}
+      breadcrumbRender={() => getBreadcrumb()}
+      menuProps={{
+        onSelect: handleMenuSelect,
+        selectedKeys: [pathname],
+      }}
       footerRender={() => (
         <div className="text-gray-400 text-center pb-6">{setting?.siteSignature}</div>
       )}
