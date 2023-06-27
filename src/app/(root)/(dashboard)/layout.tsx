@@ -1,13 +1,13 @@
 'use client';
 
-import proLayoutProps from '@/constants/proLayoutProps';
+import { route } from '@/constants/menuData';
 import { useSettingStore } from '@/stores/useSettingStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { LogoutOutlined } from '@ant-design/icons';
 import { ProLayout } from '@ant-design/pro-components';
 import { Dropdown, message } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as LoginService from '../login/service';
 
 export interface MenuItem {
@@ -65,7 +65,18 @@ export default ({ children }: { children: React.ReactNode }) => {
     return arr;
   };
 
-  const flatMenu = treeToList(proLayoutProps.route.children as MenuItem[]);
+  const flatMenu = treeToList(route.children as MenuItem[]);
+
+  /**
+   * 预加载菜单
+   */
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      flatMenu.forEach((item) => {
+        router.prefetch(item.path);
+      });
+    }
+  }, []);
 
   /**
    * 渲染面包屑
@@ -89,7 +100,8 @@ export default ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ProLayout
-      {...proLayoutProps}
+      logo="/logo.jpg"
+      route={route}
       layout="mix"
       title={setting?.siteName}
       pageTitleRender={(props) => flatMenu.find((item) => item.path === pathname)?.name ?? ''}
