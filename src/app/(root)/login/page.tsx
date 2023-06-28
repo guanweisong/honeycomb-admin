@@ -6,7 +6,7 @@ import { Form, message } from 'antd';
 import md5 from 'md5';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import * as LoginService from './service';
+import LoginService from './service';
 
 const Login = () => {
   const captchaRef = useRef<any>();

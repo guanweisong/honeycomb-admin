@@ -6,7 +6,7 @@ import { ModalType, ModalTypeName } from '@/types/ModalType';
 import { creatCategoryTitleByDepth } from '@/utils/help';
 import { Form, Input, Modal, Radio, Select, message } from 'antd';
 import { useEffect, useState } from 'react';
-import * as CategoryService from '../../service';
+import CategoryService from '../../service';
 import { CategoryEntity } from '../../types/category.entity';
 
 const { Option } = Select;

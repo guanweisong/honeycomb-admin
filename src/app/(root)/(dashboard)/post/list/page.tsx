@@ -6,7 +6,7 @@ import { FooterToolbar, PageContainer, ProTable } from '@ant-design/pro-componen
 import { Button, Popconfirm, message } from 'antd';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
-import * as postsService from '../service';
+import PostService from '../service';
 import type { PostStatus } from '../types/PostStatus';
 import type { PostType } from '../types/PostType';
 import type { PostEntity } from '../types/post.entity';
@@ -46,7 +46,7 @@ const PostList = () => {
       data.sortField = sortKeys[0];
       data.sortOrder = sort[sortKeys[0]];
     }
-    const result = await postsService.indexPostList(data);
+    const result = await PostService.indexPostList(data);
     return {
       data: result.data.list,
       success: true,
@@ -59,7 +59,7 @@ const PostList = () => {
    * @param id
    */
   const handleDeleteItem = async (ids: string[]) => {
-    const result = await postsService.destroy(ids);
+    const result = await PostService.destroy(ids);
     if (result.status === 204) {
       actionRef.current?.reload();
       message.success('删除成功');

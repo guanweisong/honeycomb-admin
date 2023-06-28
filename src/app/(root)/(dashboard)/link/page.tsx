@@ -10,8 +10,7 @@ import { Button, Form, Input, Modal, Popconfirm, Radio, message } from 'antd';
 import type { RuleObject } from 'antd/es/form';
 import { useRef, useState } from 'react';
 import { linkTableColumns } from './constants/linkTableColumns';
-import * as LinkService from './service';
-import * as linksService from './service';
+import LinkService from './service';
 import type { LinkEntity } from './types/link.entity';
 
 const Link = () => {
@@ -64,14 +63,14 @@ const Link = () => {
       .then(async (values) => {
         switch (modalProps.type!) {
           case ModalType.ADD:
-            const createResult = await linksService.create(values);
+            const createResult = await LinkService.create(values);
             if (createResult.status === 201) {
               actionRef.current?.reload();
               message.success('添加成功');
             }
             break;
           case ModalType.EDIT:
-            const updateResult = await linksService.update(modalProps.record?.id as string, values);
+            const updateResult = await LinkService.update(modalProps.record?.id as string, values);
             if (updateResult.status === 201) {
               actionRef.current?.reload();
               message.success('更新成功');
@@ -140,7 +139,7 @@ const Link = () => {
   const validateLinkUrl = async (rule: RuleObject, value: string) => {
     if (value && value.length > 0) {
       let exist = false;
-      const result = await linksService.index({ url: value });
+      const result = await LinkService.index({ url: value });
       const currentId = modalProps.record?.id;
       if (result.data.total > 0 && result.data.list[0].id !== currentId) {
         exist = true;

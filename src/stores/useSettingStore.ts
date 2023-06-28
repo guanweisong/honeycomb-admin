@@ -1,4 +1,4 @@
-import * as SettingService from '@/app/(root)/(dashboard)/setting/service';
+import SettingService from '@/app/(root)/(dashboard)/setting/service';
 import { SettingEntity } from '@/app/(root)/(dashboard)/setting/types/setting.entity';
 import { createGlobalStore } from 'hox';
 import { useState } from 'react';

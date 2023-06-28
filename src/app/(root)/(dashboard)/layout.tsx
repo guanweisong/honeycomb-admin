@@ -8,7 +8,7 @@ import { ProLayout } from '@ant-design/pro-components';
 import { Dropdown, message } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
-import * as LoginService from '../login/service';
+import LoginService from '../login/service';
 
 export interface MenuItem {
   name: string;

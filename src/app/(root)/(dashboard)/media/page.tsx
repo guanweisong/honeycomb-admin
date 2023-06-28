@@ -6,7 +6,7 @@ import { Card, Popconfirm, Space, Spin, Upload, UploadProps, message } from 'ant
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import * as mediaService from './service';
+import MediaService from './service';
 import { TabType } from './types/TabType';
 import type { MediaEntity } from './types/media.entity';
 import { MediaIndexRequest } from './types/media.index.request';
@@ -31,7 +31,7 @@ const Media = (props: MediaProps) => {
    * @param values
    */
   const index = async (values?: MediaIndexRequest) => {
-    const result = await mediaService.index({ ...values, limit: 99999 });
+    const result = await MediaService.index({ ...values, limit: 99999 });
     if (result.status === 200) {
       setList(result.data.list);
       setTotal(result.data.total);
@@ -45,9 +45,7 @@ const Media = (props: MediaProps) => {
     name: 'file',
     multiple: true,
     showUploadList: false,
-    action: `${
-      process.env.NODE_ENV === 'development' ? '//127.0.0.1:7002' : 'https://api.guanweisong.com'
-    }/media`,
+    action: `${process.env.NEXT_PUBLIC_API_DOAMIN}/media`,
     headers: {
       'x-auth-token': localStorage.getItem('token')!,
     },
@@ -91,7 +89,7 @@ const Media = (props: MediaProps) => {
    * @param ids
    */
   const onDeleteItem = async (ids: string) => {
-    const result = await mediaService.destroy([ids]);
+    const result = await MediaService.destroy([ids]);
     if (result.status === 204) {
       index();
       setCurrentItem(undefined);

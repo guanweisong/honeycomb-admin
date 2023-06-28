@@ -8,7 +8,7 @@ import { Button, Form, Input, Modal, Popconfirm, message } from 'antd';
 import type { RuleObject } from 'antd/es/form';
 import { useRef, useState } from 'react';
 import { tagTableColumns } from './constants/tagTableColumns';
-import * as TagService from './service';
+import TagService from './service';
 import type { TagEntity } from './types/tag.entity';
 import { TagIndexRequest } from './types/tag.index.request';
 

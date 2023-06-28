@@ -5,7 +5,7 @@ import { useSettingStore } from '@/stores/useSettingStore';
 import { FooterToolbar, PageContainer } from '@ant-design/pro-components';
 import { Button, Card, Form, Input, Space, message } from 'antd';
 import { useEffect } from 'react';
-import * as SettingService from './service';
+import SettingService from './service';
 
 const Setting = () => {
   const [form] = Form.useForm();

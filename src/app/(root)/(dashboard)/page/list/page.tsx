@@ -6,7 +6,7 @@ import { FooterToolbar, PageContainer, ProTable } from '@ant-design/pro-componen
 import { Button, Popconfirm, message } from 'antd';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
-import * as PageService from '../service';
+import PageService from '../service';
 import type { PageStatus } from '../types/PageStatus';
 import type { PageEntity } from '../types/page.entity';
 import { pageListTableColumns } from './constants/pageListTableColumns';

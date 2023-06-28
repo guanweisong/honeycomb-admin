@@ -10,8 +10,7 @@ import type { RuleObject } from 'antd/es/form';
 import md5 from 'md5';
 import { useRef, useState } from 'react';
 import { userTableColumns } from './constants/userTableColumns';
-import * as UserService from './service';
-import * as usersService from './service';
+import UserService from './service';
 import { UserLevel, userLevelOptions } from './types/UserLevel';
 import { UserStatus, userStatusOptions } from './types/UserStatus';
 import type { UserEntity } from './types/user.entity';
@@ -159,7 +158,7 @@ const User = () => {
   const checkExist = async ({ name, email }: { name?: string; email?: string }) => {
     console.log('users=>model=>checkExist', { name });
     let exist = false;
-    const result = await usersService.index({ name, email });
+    const result = await UserService.index({ name, email });
     const currentId = modalProps.record?.id;
     if (result.data.total > 0 && result.data.list[0].id !== currentId) {
       exist = true;

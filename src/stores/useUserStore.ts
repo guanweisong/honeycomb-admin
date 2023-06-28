@@ -1,5 +1,5 @@
 import { UserEntity } from '@/app/(root)/(dashboard)/user/types/user.entity';
-import * as CommonService from '@/services/common';
+import CommonService from '@/services/common';
 import { createGlobalStore } from 'hox';
 import { useState } from 'react';
 

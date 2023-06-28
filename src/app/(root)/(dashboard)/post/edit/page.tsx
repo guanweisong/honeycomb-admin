@@ -1,7 +1,8 @@
 'use client';
 
 import type { MediaEntity } from '@/app/(root)/(dashboard)/media/types/media.entity';
-import * as tagsService from '@/app/(root)/(dashboard)/tag/service';
+import PostService from '@/app/(root)/(dashboard)/post/service';
+import TagService from '@/app/(root)/(dashboard)/tag/service';
 import type { TagEntity } from '@/app/(root)/(dashboard)/tag/types/tag.entity';
 import PhotoPickerModal from '@/components/PhotoPicker';
 import { ModalType } from '@/types/ModalType';
@@ -15,10 +16,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import showdown from 'showdown';
 import AddCategoryModal from '../category/components/AddCategoryModal';
-import * as categoryService from '../category/service';
+import CategoryService from '../category/service';
 import type { CategoryEntity } from '../category/types/category.entity';
 import Block from '../edit/components/Block';
-import * as postsService from '../service';
 import { PostStatus } from '../types/PostStatus';
 import { PostType, postTypeOptions } from '../types/PostType';
 import type { PostEntity } from '../types/post.entity';
@@ -58,7 +58,7 @@ const PostDetail = () => {
    * 分类列表获取
    */
   const index = async () => {
-    const result = await categoryService.index({ limit: 9999 });
+    const result = await CategoryService.index({ limit: 9999 });
     if (result.status === 200) {
       setList(result.data.list);
     }
@@ -72,7 +72,7 @@ const PostDetail = () => {
     console.log('post=>model=>detail', values);
     let result;
     if (typeof values.id !== 'undefined') {
-      result = await postsService.indexPostDetail(values);
+      result = await PostService.indexPostDetail(values);
       result = result.data;
       if (result.movieTime) {
         // @ts-ignore
@@ -159,7 +159,7 @@ const PostDetail = () => {
       switch (type) {
         case 'create':
           console.log('create', data);
-          const createResult = await postsService.create(data);
+          const createResult = await PostService.create(data);
           if (createResult.status === 201) {
             message.success('添加成功');
             router.push(`/post/edit/id=${createResult.data.id}`);
@@ -167,7 +167,7 @@ const PostDetail = () => {
           break;
         case 'update':
           console.log('update', detail!.id, data);
-          const updateResult = await postsService.update(detail!.id, data);
+          const updateResult = await PostService.update(detail!.id, data);
           if (updateResult.status === 201) {
             message.success('更新成功');
             indexDetail({ id: detail!.id });
@@ -187,7 +187,7 @@ const PostDetail = () => {
     name: 'movieActors' | 'movieDirectors' | 'movieStyles' | 'galleryStyles',
     tag_name: string,
   ) => {
-    const result = await tagsService.create({ name: tag_name });
+    const result = await TagService.create({ name: tag_name });
     if (result && result.status === 201) {
       setDetail({
         ...detail,

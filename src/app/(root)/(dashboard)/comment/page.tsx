@@ -5,7 +5,7 @@ import { FooterToolbar, PageContainer, ProTable } from '@ant-design/pro-componen
 import { Button, Popconfirm, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import { commentTableColumns } from './constants/commentTableColumns';
-import * as CommentService from './service';
+import CommentService from './service';
 import { CommentStatus } from './types/CommentStatus';
 import type { CommentEntity } from './types/comment.entity';
 

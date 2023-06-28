@@ -12,10 +12,10 @@ import SortableTree, {
   getTreeFromFlatData,
 } from 'react-sortable-tree';
 import 'react-sortable-tree/style.css';
-import * as pagesService from '../page/service';
-import * as categoryService from '../post/category/service';
+import PageService from '../page/service';
+import CategoryService from '../post/category/service';
 import { CategoryEntity } from '../post/category/types/category.entity';
-import * as menusService from './service';
+import MenuService from './service';
 import { MenuType, MenuTypeName } from './types/MenuType';
 import type { MenuEntity } from './types/menu.entity';
 
@@ -32,7 +32,7 @@ const Menu = () => {
    */
   const indexPage = async () => {
     console.log('pages=>model=>index');
-    const result = await pagesService.indexPageList();
+    const result = await PageService.indexPageList();
     if (result.status === 200) {
       setPageList(result.data.list);
     }
@@ -42,7 +42,7 @@ const Menu = () => {
    * 查询分类列表
    */
   const indexCategory = async () => {
-    const result = await categoryService.index({ limit: 9999 });
+    const result = await CategoryService.index({ limit: 9999 });
     if (result.status === 200) {
       setCategoryList(result.data.list);
     }
@@ -52,7 +52,7 @@ const Menu = () => {
    * 查询菜单集合
    */
   const indexMenu = async () => {
-    const result = await menusService.index();
+    const result = await MenuService.index();
     if (result.status === 200) {
       setCheckedList(result.data.list);
     }
@@ -180,7 +180,7 @@ const Menu = () => {
       }
       data.push(menu);
     });
-    const result = await menusService.update(data);
+    const result = await MenuService.update(data);
     if (result.status === 201) {
       message.success('更新成功');
       indexMenu();

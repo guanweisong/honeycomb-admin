@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import showdown from 'showdown';
-import * as pagesService from '../service';
+import PageService from '../service';
 import { PageStatus } from '../types/PageStatus';
 import type { PageEntity } from '../types/page.entity';
 
@@ -33,7 +33,7 @@ const Page = () => {
     console.log('pages=>model=>detail', values);
     let result;
     if (typeof values.id !== 'undefined') {
-      result = await pagesService.indexPageDetail(values);
+      result = await PageService.indexPageDetail(values);
       result = result.data;
       if (result.content) {
         result.content = converter.makeMarkdown(result.content);
@@ -65,7 +65,7 @@ const Page = () => {
       .then(async (values) => {
         const data = values;
         data.status = status;
-        const result = await pagesService.update(currentItem?.id as string, values);
+        const result = await PageService.update(currentItem?.id as string, values);
         if (result && result.status === 201) {
           message.success('更新成功');
           detail({ id: currentItem?.id as string });
@@ -86,7 +86,7 @@ const Page = () => {
       .then(async (values) => {
         const data = values;
         data.status = status;
-        const result = await pagesService.create(data);
+        const result = await PageService.create(data);
         if (result && result.status === 201) {
           message.success('添加成功');
           router.push(`/page/edit/id?=${result.data.id}`);

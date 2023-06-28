@@ -8,7 +8,7 @@ import { Button, Popconfirm, message } from 'antd';
 import { useRef, useState } from 'react';
 import AddCategoryModal from './components/AddCategoryModal';
 import { categoryListTableColumns } from './constans/categoryListTableColumns';
-import * as CategoryService from './service';
+import CategoryService from './service';
 import type { CategoryEntity } from './types/category.entity';
 
 const Category = () => {

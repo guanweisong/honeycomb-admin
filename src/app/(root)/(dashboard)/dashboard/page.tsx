@@ -11,7 +11,7 @@ import { PageContainer } from '@ant-design/pro-components';
 import { Card, Space } from 'antd';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
-import * as statisticsService from '../dashboard/service';
+import DashboardService from './service';
 import type { StatisticsType } from './types/StatisticsType';
 
 const Pie = dynamic(() => import('@ant-design/charts').then((mod) => mod.Pie) as any, {
@@ -22,7 +22,7 @@ const Dashboard = () => {
   const [statistics, setStatistics] = useState<StatisticsType>();
 
   const index = async () => {
-    const result = await statisticsService.index();
+    const result = await DashboardService.index();
     if (result.status === 200) {
       setStatistics(result.data);
     }
