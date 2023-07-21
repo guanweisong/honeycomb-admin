@@ -43,47 +43,57 @@ const Login = () => {
   }, []);
 
   return (
-    <div className="mt-40">
-      <LoginForm
-        form={form}
-        title={setting?.siteName}
-        message={<div className="text-center text-gray-400 mb-4">游客账号：guest 123456</div>}
-        initialValues={{
-          autoLogin: true,
-        }}
-        onFinish={async () => {
-          captchaRef.current.show();
-        }}
-      >
-        <ProFormText
-          name="name"
-          fieldProps={{
-            size: 'large',
-            prefix: <UserOutlined />,
+    <div className="bg-gray-300 min-h-screen box-border pt-48 text-center">
+      <video
+        src="/media/rainAndBird.mp4"
+        className="fixed inset-0"
+        autoPlay={true}
+        muted={true}
+        loop={true}
+        height="100%"
+      />
+      <div className="bg-white/10 inline-block rounded overflow-hidden relative z-10 text-left">
+        <LoginForm
+          form={form}
+          title={<div className="font-normal text-2xl text-white">{setting?.siteName}</div>}
+          message={<div className="text-center text-gray-400 my-4">游客账号：guest 123456</div>}
+          initialValues={{
+            autoLogin: true,
           }}
-          placeholder={'用户名'}
-          rules={[
-            {
-              required: true,
-              message: '请输入用户名',
-            },
-          ]}
-        />
-        <ProFormText.Password
-          name="password"
-          fieldProps={{
-            size: 'large',
-            prefix: <LockOutlined />,
+          onFinish={async () => {
+            captchaRef.current.show();
           }}
-          placeholder={'密码'}
-          rules={[
-            {
-              required: true,
-              message: '请输入密码',
-            },
-          ]}
-        />
-      </LoginForm>
+        >
+          <ProFormText
+            name="name"
+            fieldProps={{
+              size: 'large',
+              prefix: <UserOutlined />,
+            }}
+            placeholder={'用户名'}
+            rules={[
+              {
+                required: true,
+                message: '请输入用户名',
+              },
+            ]}
+          />
+          <ProFormText.Password
+            name="password"
+            fieldProps={{
+              size: 'large',
+              prefix: <LockOutlined />,
+            }}
+            placeholder={'密码'}
+            rules={[
+              {
+                required: true,
+                message: '请输入密码',
+              },
+            ]}
+          />
+        </LoginForm>
+      </div>
     </div>
   );
 };
