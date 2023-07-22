@@ -43,7 +43,7 @@ const Login = () => {
   }, []);
 
   return (
-    <div className="bg-gray-300 min-h-screen box-border pt-48 text-center">
+    <div className="min-h-screen box-border pt-48 text-center bg-green-700">
       <video
         src="https://honeycomb-1257715480.cos.ap-shanghai.myqcloud.com/common/rainAndBird.mp4"
         className="fixed inset-0"
@@ -52,7 +52,7 @@ const Login = () => {
         loop={true}
         height="100%"
       />
-      <div className="bg-white/10 inline-block rounded overflow-hidden relative z-10 text-left">
+      <div className="bg-white/10 backdrop-blur inline-block rounded overflow-hidden relative z-10 text-left">
         <LoginForm
           form={form}
           title={<div className="font-normal text-2xl text-white">{setting?.siteName}</div>}
