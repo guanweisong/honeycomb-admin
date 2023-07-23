@@ -46,11 +46,12 @@ const Login = () => {
     <div className="min-h-screen box-border pt-48 text-center bg-green-700">
       <video
         src="https://honeycomb-1257715480.cos.ap-shanghai.myqcloud.com/common/rainAndBird.mp4"
-        className="fixed inset-0"
+        className="fixed inset-0 object-fill"
         autoPlay={true}
         muted={true}
         loop={true}
         height="100%"
+        width="100%"
       />
       <div className="bg-white/10 backdrop-blur inline-block rounded overflow-hidden relative z-10 text-left">
         <LoginForm
