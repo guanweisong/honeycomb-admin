@@ -129,9 +129,10 @@ const Media = (props: MediaProps) => {
                 {list.map((item) => (
                   <li
                     className={classNames(
-                      'relative w-32 h-32 mr-2 mb-2 border-2 border-gray-100 bg-gray-100',
+                      'relative w-32 h-32 mr-2 mb-2 border-2 border-solid bg-gray-100',
                       {
                         'border-blue-500': item.id === currentItem?.id,
+                        'border-gray-100': item.id !== currentItem?.id,
                       },
                     )}
                     key={item.id}
