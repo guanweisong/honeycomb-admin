@@ -191,8 +191,7 @@ const PostDetail = () => {
     if (result && result.status === 201) {
       setDetail({
         ...detail,
-        // @ts-ignore
-        [name]: [...(detail[name] ?? []), { id: result.data.id, tag_name: result.data.tag_name }],
+        [name]: [...(detail[name] ?? []), { id: result.data.id, name: result.data.name }],
       } as PostEntity);
     }
   };

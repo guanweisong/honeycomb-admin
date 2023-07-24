@@ -132,7 +132,7 @@ const MultiTag = (props: MultiTagProps) => {
    * @param value
    */
   const handleChange = (value: string) => {
-    fetchTagsList(value, (items: DataSourceItemObject[]) => setData(items));
+    fetchTagsList(value.trim(), (items: DataSourceItemObject[]) => setData(items));
   };
 
   return (
