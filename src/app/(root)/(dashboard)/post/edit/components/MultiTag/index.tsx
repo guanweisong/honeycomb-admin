@@ -1,6 +1,6 @@
 'use client';
 
-import { index } from '@/app/(root)/(dashboard)/tag/service';
+import TagService from '@/app/(root)/(dashboard)/tag/service';
 import type { TagEntity } from '@/app/(root)/(dashboard)/tag/types/tag.entity';
 import { AutoComplete, Button, Form, Input, Tag } from 'antd';
 import type { DataSourceItemObject } from 'antd/es/auto-complete';
@@ -113,7 +113,7 @@ const MultiTag = (props: MultiTagProps) => {
       timeout.current = undefined;
     }
     const fake = async () => {
-      const result = await index({ name: value });
+      const result = await TagService.index({ name: value });
       const items: DataSourceItemObject[] = [];
       console.log(result.data.list);
       result.data.list.forEach((r) => {
