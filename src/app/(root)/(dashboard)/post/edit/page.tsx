@@ -308,7 +308,7 @@ const PostDetail = () => {
             className="float-right"
             onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}
           >
-            发布s
+            发布
           </Button>,
           <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'update')}>保存</Button>,
         );
