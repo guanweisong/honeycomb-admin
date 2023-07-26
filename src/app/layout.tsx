@@ -3,6 +3,7 @@
 import { StyleProvider } from '@ant-design/cssinjs';
 import { ProConfigProvider } from '@ant-design/pro-provider';
 import { ConfigProvider } from 'antd';
+import zhCN from 'antd/locale/zh_CN';
 import { HoxRoot } from 'hox';
 import { useEffect, useState } from 'react';
 
@@ -38,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Dynamic>
           <HoxRoot>
-            <ConfigProvider>
+            <ConfigProvider locale={zhCN}>
               <ProConfigProvider>
                 <StyleProvider ssrInline={true}>{children}</StyleProvider>
               </ProConfigProvider>
