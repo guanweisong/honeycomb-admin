@@ -97,6 +97,7 @@ const Category = () => {
     <PageContainer>
       <ProTable<CategoryEntity, any>
         rowKey="id"
+        size={'small'}
         request={request}
         form={{ syncToUrl: true }}
         tableLayout="fixed"

@@ -136,6 +136,7 @@ const Comment = () => {
     <PageContainer>
       <ProTable<CommentEntity, any>
         rowKey="id"
+        size={'small'}
         request={request}
         actionRef={actionRef}
         columns={commentTableColumns({

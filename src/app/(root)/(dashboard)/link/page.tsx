@@ -156,6 +156,7 @@ const Link = () => {
     <PageContainer>
       <ProTable<LinkEntity, any>
         rowKey="id"
+        size={'small'}
         request={request}
         actionRef={actionRef}
         columns={linkTableColumns({
