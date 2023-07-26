@@ -79,7 +79,7 @@ const PostList = () => {
     <PageContainer>
       <ProTable<PostEntity, any>
         rowKey="id"
-        size={'middle'}
+        defaultSize={'middle'}
         form={{ syncToUrl: true }}
         request={request}
         tableLayout="fixed"

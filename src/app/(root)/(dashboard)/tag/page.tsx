@@ -157,7 +157,7 @@ const Tag = () => {
     <PageContainer>
       <ProTable<TagEntity, any>
         form={{ syncToUrl: true }}
-        size={'middle'}
+        defaultSize={'middle'}
         rowKey="id"
         request={request}
         actionRef={actionRef}
