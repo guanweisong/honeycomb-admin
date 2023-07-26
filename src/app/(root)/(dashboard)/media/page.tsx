@@ -60,7 +60,7 @@ const Media = (props: MediaProps) => {
           setCurrentItem(response);
           index();
         } else {
-          message.error(response.error);
+          message.error('网络错误，请稍后再试');
         }
       }
     },
