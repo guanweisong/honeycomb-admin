@@ -66,7 +66,7 @@ const Page = () => {
     <PageContainer>
       <ProTable<PageEntity, any>
         rowKey="id"
-        size={'small'}
+        size={'middle'}
         request={request}
         form={{ syncToUrl: true }}
         actionRef={actionRef}

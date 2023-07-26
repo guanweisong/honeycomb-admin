@@ -202,7 +202,7 @@ const User = () => {
     <PageContainer>
       <ProTable<UserEntity, any>
         rowKey="id"
-        size={'small'}
+        size={'middle'}
         form={{ syncToUrl: true }}
         request={request}
         actionRef={actionRef}
