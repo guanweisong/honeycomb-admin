@@ -78,34 +78,14 @@ export default ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  /**
-   * 渲染面包屑
-   */
-  const getBreadcrumb = () => {
-    const pathArray = pathname.split('/');
-    pathArray.shift();
-    const newArray: string[] = [];
-    pathArray.forEach((item, index) => {
-      if (index === 0) {
-        newArray.push(`/${item}`);
-      } else {
-        newArray.push(`${newArray[index - 1]}/${item}`);
-      }
-    });
-    return newArray.map((item) => ({
-      path: item,
-      breadcrumbName: flatMenu.find((m) => m.path === item)?.name,
-    }));
-  };
-
   return (
     <ProLayout
       logo="/logo.jpg"
       route={route}
       layout="mix"
       title={setting?.siteName}
-      pageTitleRender={(props) => flatMenu.find((item) => item.path === pathname)?.name ?? ''}
-      breadcrumbRender={() => getBreadcrumb()}
+      pageTitleRender={false}
+      breadcrumbRender={() => []}
       menuProps={{
         onSelect: handleMenuSelect,
         selectedKeys: [pathname],
