@@ -11,6 +11,7 @@ const nextConfig = {
       exclude: ['error'],
     },
   },
+  poweredByHeader: false,
 };
 
 module.exports = nextConfig;
