@@ -9,7 +9,7 @@ export enum CommentStatusName {
   TO_AUDIT = '待审核',
   PUBLISH = '已发布',
   RUBBISH = '垃圾评论',
-  BAN = '已发布',
+  BAN = '已屏蔽',
 }
 
 export const commentStatusOptions = [
