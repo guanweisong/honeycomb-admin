@@ -7,7 +7,7 @@ import { LogoutOutlined } from '@ant-design/icons';
 import { ProLayout } from '@ant-design/pro-components';
 import { Dropdown, message } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginService from '../login/service';
 
 export interface MenuItem {
@@ -26,6 +26,8 @@ export default ({ children }: { children: React.ReactNode }) => {
   const { setting } = settingStore;
   const { user, setUser } = userStore;
 
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+
   /**
    * 菜单选中事件
    * @param key
@@ -34,6 +36,23 @@ export default ({ children }: { children: React.ReactNode }) => {
     console.log('onMenuChange', key);
     router.push(key);
   };
+
+  /**
+   * 菜单展开事件
+   */
+  const handleMenuOpen = (openKeys: string[]) => {
+    setOpenKeys(openKeys);
+  };
+
+  /**
+   * 初始化菜单展示
+   */
+  useEffect(() => {
+    const pathNameArray = pathname?.split('/') ?? [];
+    if (pathNameArray.length > 2) {
+      setOpenKeys([...openKeys, `/${pathNameArray[1]}`]);
+    }
+  }, [pathname]);
 
   /**
    * 退出登录
@@ -88,7 +107,9 @@ export default ({ children }: { children: React.ReactNode }) => {
       breadcrumbRender={() => []}
       menuProps={{
         onSelect: handleMenuSelect,
+        onOpenChange: handleMenuOpen,
         selectedKeys: [pathname],
+        openKeys: openKeys,
       }}
       footerRender={() => (
         <div className="text-gray-400 text-center pb-6">{setting?.siteSignature}</div>
