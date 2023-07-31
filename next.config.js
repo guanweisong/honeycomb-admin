@@ -6,6 +6,11 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  compiler: {
+    removeConsole: {
+      exclude: ['error'],
+    },
+  },
 };
 
 module.exports = nextConfig;
