@@ -1,3 +1,4 @@
+import { SortOrder } from '@/types/SortOrder';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Popconfirm } from 'antd';
 import dayjs from 'dayjs';
@@ -47,7 +48,7 @@ export const userTableColumns = (props: userTableColumnsProps) =>
       dataIndex: 'createdAt',
       key: 'createdAt',
       sorter: true,
-      defaultSortOrder: 'desc',
+      defaultSortOrder: SortOrder.descend,
       search: false,
       render: (text: string) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
     },

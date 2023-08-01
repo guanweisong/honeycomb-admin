@@ -1,3 +1,4 @@
+import { SortOrder } from '@/types/SortOrder';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Popconfirm } from 'antd';
 import dayjs from 'dayjs';
@@ -28,7 +29,7 @@ export const tagTableColumns = (props: TagTableColumnsProps) =>
       key: 'updatedAt',
       search: false,
       sorter: true,
-      defaultSortOrder: 'desc',
+      defaultSortOrder: SortOrder.descend,
       render: (text: string) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {

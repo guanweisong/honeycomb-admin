@@ -1,10 +1,15 @@
+import {
+  CategoryReadOnly,
+  PostEntity,
+  UserReadOnly,
+} from '@/app/(root)/(dashboard)/post/types/post.entity';
+import { SortOrder } from '@/types/SortOrder';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Popconfirm } from 'antd';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { postStatusOptions } from '../../types/PostStatus';
 import { postTypeOptions } from '../../types/PostType';
-import type { CategoryReadOnly, PostEntity, UserReadOnly } from '../../types/post.entity';
 
 export interface PostListTableColumnsProps {
   handleDeleteItem: (id: string[]) => void;
@@ -68,7 +73,7 @@ export const PostListTableColumns = (props: PostListTableColumnsProps) =>
       dataIndex: 'createdAt',
       key: 'createdAt',
       sorter: true,
-      defaultSortOrder: 'desc',
+      defaultSortOrder: SortOrder.descend,
       search: false,
       width: 180,
       render: (text: string) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
