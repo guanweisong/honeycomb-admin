@@ -8,7 +8,7 @@ import PhotoPickerModal from '@/components/PhotoPicker';
 import { ModalType } from '@/types/ModalType';
 import { creatCategoryTitleByDepth } from '@/utils/help';
 import { PlusOutlined } from '@ant-design/icons';
-import { PageContainer } from '@ant-design/pro-components';
+import { FooterToolbar, PageContainer } from '@ant-design/pro-components';
 import { Button, Card, DatePicker, Form, Input, Select, message } from 'antd';
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
@@ -315,11 +315,7 @@ const PostDetail = () => {
       }
     } else {
       btns.push(
-        <Button
-          type="primary"
-          className="float-right"
-          onClick={() => handleSubmit(PostStatus.PUBLISHED, 'create')}
-        >
+        <Button type="primary" onClick={() => handleSubmit(PostStatus.PUBLISHED, 'create')}>
           发布
         </Button>,
         <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'create')}>保存草稿</Button>,
@@ -329,7 +325,7 @@ const PostDetail = () => {
   };
 
   return (
-    <PageContainer extra={getBtns()}>
+    <PageContainer>
       <Card>
         <Form
           form={form}
@@ -446,6 +442,7 @@ const PostDetail = () => {
         />
         <AddCategoryModal modalProps={modalProps} setModalProps={setModalProps} />
       </Card>
+      <FooterToolbar>{getBtns()}</FooterToolbar>
     </PageContainer>
   );
 };

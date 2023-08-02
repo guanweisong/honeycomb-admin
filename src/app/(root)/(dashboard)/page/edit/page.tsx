@@ -1,6 +1,6 @@
 'use client';
 
-import { PageContainer } from '@ant-design/pro-components';
+import { FooterToolbar, PageContainer } from '@ant-design/pro-components';
 import { Button, Card, Form, Input, message } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -138,7 +138,7 @@ const Page = () => {
   };
 
   return (
-    <PageContainer extra={getBtns()}>
+    <PageContainer>
       <Card>
         <Form form={form}>
           <div className={styles.main}>
@@ -153,6 +153,7 @@ const Page = () => {
           </div>
         </Form>
       </Card>
+      <FooterToolbar>{getBtns()}</FooterToolbar>
     </PageContainer>
   );
 };
