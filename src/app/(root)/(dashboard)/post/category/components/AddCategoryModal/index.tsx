@@ -51,7 +51,7 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
         initForm();
         break;
       case ModalType.EDIT:
-        form.setFieldsValue(modalProps.record);
+        form.setFieldsValue({ ...modalProps.record, parent: modalProps.record.parent ?? '0' });
         break;
     }
   }, [modalProps.type]);
