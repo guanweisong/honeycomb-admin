@@ -3,7 +3,7 @@
 import { route } from '@/constants/menuData';
 import { useSettingStore } from '@/stores/useSettingStore';
 import { useUserStore } from '@/stores/useUserStore';
-import { LogoutOutlined } from '@ant-design/icons';
+import { GithubOutlined, IeOutlined, LogoutOutlined } from '@ant-design/icons';
 import { ProLayout } from '@ant-design/pro-components';
 import { Dropdown, message } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
@@ -118,6 +118,20 @@ export default ({ children }: { children: React.ReactNode }) => {
         // @ts-ignore
         content: user.name,
       }}
+      appList={[
+        {
+          icon: <IeOutlined style={{ fontSize: 32 }} />,
+          title: '博客前台',
+          url: 'https://guanweisong.com',
+          target: '_blank',
+        },
+        {
+          icon: <GithubOutlined style={{ fontSize: 32 }} />,
+          title: 'Github',
+          url: 'https://github.com/guanweisong',
+          target: '_blank',
+        },
+      ]}
       avatarProps={{
         src: 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
         size: 'small',
