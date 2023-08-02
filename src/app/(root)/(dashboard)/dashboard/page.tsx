@@ -44,7 +44,7 @@ const Dashboard = () => {
 
   return (
     <PageContainer>
-      <Space>
+      <Space wrap={true}>
         <div className="w-80 h-80">
           <Card>
             <Pie
