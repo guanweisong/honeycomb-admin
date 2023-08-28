@@ -162,7 +162,7 @@ const PostDetail = () => {
           const createResult = await PostService.create(data);
           if (createResult.status === 201) {
             message.success('添加成功');
-            router.push(`/post/edit/id=${createResult.data.id}`);
+            router.push(`/post/edit?id=${createResult.data.id}`);
           }
           break;
         case 'update':
