@@ -303,22 +303,18 @@ const PostDetail = () => {
       }
       if (detail.status === PostStatus.DRAFT) {
         btns.push(
-          <Button
-            type="primary"
-            className="float-right"
-            onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}
-          >
+          <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'update')}>保存</Button>,
+          <Button type="primary" onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}>
             发布
           </Button>,
-          <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'update')}>保存</Button>,
         );
       }
     } else {
       btns.push(
+        <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'create')}>保存草稿</Button>,
         <Button type="primary" onClick={() => handleSubmit(PostStatus.PUBLISHED, 'create')}>
           发布
         </Button>,
-        <Button onClick={() => handleSubmit(PostStatus.DRAFT, 'create')}>保存草稿</Button>,
       );
     }
     return btns;
