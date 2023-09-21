@@ -27,7 +27,7 @@ const PhotoPickerItem = (props: PhotoPickerItemProps) => {
       {mediaObj?.id ? (
         <>
           <div className="mb-2 text-center bg-gray-300">
-            <img src={`//${mediaObj.url}`} className="max-w-full max-h-full block" />
+            <img src={mediaObj.url} className="max-w-full max-h-full block" />
           </div>
           <Button onClick={() => handlePhotoClear()} className="float-right">
             <DeleteOutlined />

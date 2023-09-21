@@ -143,7 +143,7 @@ const Media = (props: MediaProps) => {
                       <div
                         className="w-full h-full"
                         style={{
-                          background: `url(//${item.url}?imageMogr2/thumbnail/114x)`,
+                          background: `url(${item.url}?imageMogr2/thumbnail/114x)`,
                           backgroundRepeat: 'no-repeat',
                           backgroundSize: 'contain',
                           backgroundPosition: 'center',
@@ -155,7 +155,7 @@ const Media = (props: MediaProps) => {
                     <div className="absolute text-2xl transition-all inset-0 flex text-white justify-center opacity-0 hover:opacity-100 hover:bg-black/40">
                       <Space>
                         <CopyToClipboard
-                          text={`//${item?.url}`}
+                          text={item?.url}
                           onCopy={() => message.success('已复制至剪切板')}
                         >
                           <CopyOutlined title={'复制链接'} />
