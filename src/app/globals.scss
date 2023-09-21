@@ -34,6 +34,9 @@ p {
 .markdown-body {
   position: relative;
   z-index: 999;
+  img {
+    max-width: 100%;
+  }
 }
 
 /* 可排序树 */

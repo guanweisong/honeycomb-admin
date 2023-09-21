@@ -5,14 +5,12 @@ import { Button, Card, Form, Input, message } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import showdown from 'showdown';
 import PageService from '../service';
 import { PageStatus } from '../types/PageStatus';
 import type { PageEntity } from '../types/page.entity';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
-const converter = new showdown.Converter();
 const FormItem = Form.Item;
 
 const styles: any = {};
@@ -35,9 +33,6 @@ const Page = () => {
     if (typeof values.id !== 'undefined') {
       result = await PageService.indexPageDetail(values);
       result = result.data;
-      if (result.content) {
-        result.content = converter.makeMarkdown(result.content);
-      }
     }
     setCurrentItem(result);
   };

@@ -14,7 +14,6 @@ import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import showdown from 'showdown';
 import AddCategoryModal from '../category/components/AddCategoryModal';
 import CategoryService from '../category/service';
 import type { CategoryEntity } from '../category/types/category.entity';
@@ -28,8 +27,6 @@ import type { PhotoPickerItemProps } from './components/PhotoPickerItem';
 import PhotoPickerItem from './components/PhotoPickerItem';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
-
-const converter = new showdown.Converter();
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -81,9 +78,6 @@ const PostDetail = () => {
       if (result.galleryTime) {
         // @ts-ignore
         result.galleryTime = dayjs(result.galleryTime);
-      }
-      if (result.content) {
-        result.content = converter.makeMarkdown(result.content);
       }
       setDetail(result);
     }
