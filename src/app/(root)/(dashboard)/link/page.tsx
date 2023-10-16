@@ -218,6 +218,17 @@ const Link = () => {
           </Form.Item>
           <Form.Item
             {...formItemLayout}
+            name="logo"
+            label="logo网址"
+            rules={[
+              { required: true, message: '请输入链接URL' },
+              { type: 'url', message: '请输入正确的链接地址' },
+            ]}
+          >
+            <Input placeholder="请以http://或者https://开头" autoComplete="off" maxLength={200} />
+          </Form.Item>
+          <Form.Item
+            {...formItemLayout}
             name="description"
             label="链接描述："
             rules={[{ required: true, message: '请输入链接描述' }]}
