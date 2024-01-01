@@ -1,3 +1,5 @@
+import MultiLangText from '@/components/MultiLangText';
+import { MultiLang } from '@/types/MulitLang';
 import { SortOrder } from '@/types/SortOrder';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Popconfirm } from 'antd';
@@ -15,6 +17,7 @@ export const tagTableColumns = (props: TagTableColumnsProps) =>
       title: '标签名称',
       dataIndex: 'name',
       key: 'name',
+      render: (text: MultiLang) => <MultiLangText text={text} />,
     },
     {
       title: '添加时间',

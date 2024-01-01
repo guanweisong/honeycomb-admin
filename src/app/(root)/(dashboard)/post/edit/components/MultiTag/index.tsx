@@ -119,7 +119,7 @@ const MultiTag = (props: MultiTagProps) => {
       result.data.list.forEach((r) => {
         items.push({
           value: r.id,
-          text: r.name,
+          text: r.name.zh,
         });
       });
       callback(items);
@@ -143,7 +143,7 @@ const MultiTag = (props: MultiTagProps) => {
       {getTags().map((tag) => {
         const tagElem = (
           <Tag key={tag.id} closable onClose={() => handleClose(tag.id)}>
-            {tag.name}
+            {tag.name.zh}
           </Tag>
         );
         return tagElem;

@@ -1,4 +1,5 @@
 import type { BaseEntity } from '@/types/BaseEntity';
+import { MultiLang } from '@/types/MulitLang';
 import type { PageStatus } from './PageStatus';
 
 export interface PageAuthorReadonly {
@@ -9,8 +10,8 @@ export interface PageAuthorReadonly {
 export interface PageEntity extends BaseEntity {
   id: string;
   views: number;
-  title: string;
-  content: string;
+  title: MultiLang;
+  content: MultiLang;
   status: PageStatus;
   author: string | PageAuthorReadonly;
 }

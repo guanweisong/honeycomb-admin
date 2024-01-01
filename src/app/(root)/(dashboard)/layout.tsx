@@ -102,7 +102,7 @@ export default ({ children }: { children: React.ReactNode }) => {
       logo="/logo.jpg"
       route={route}
       layout="mix"
-      title={setting?.siteName}
+      title={setting?.siteName.zh}
       pageTitleRender={false}
       breadcrumbRender={() => []}
       menuProps={{
@@ -112,7 +112,7 @@ export default ({ children }: { children: React.ReactNode }) => {
         openKeys: openKeys,
       }}
       footerRender={() => (
-        <div className="text-gray-400 text-center pb-6">{setting?.siteSignature}</div>
+        <div className="text-gray-400 text-center pb-6">{setting?.siteSignature.zh}</div>
       )}
       waterMarkProps={{
         // @ts-ignore

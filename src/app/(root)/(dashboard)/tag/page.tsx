@@ -1,5 +1,6 @@
 'use client';
 
+import MultiLangFormItem from '@/components/MultiLangFormItem';
 import { formItemLayout } from '@/constants/formItemLayout';
 import { ModalType, ModalTypeName } from '@/types/ModalType';
 import { PlusOutlined } from '@ant-design/icons';
@@ -35,11 +36,11 @@ const Tag = () => {
     params: { pageSize: number; current: number; name?: string },
     sort: any,
   ) => {
-    const { pageSize, current } = params;
+    const { pageSize, current, name } = params;
     const data: TagIndexRequest = {
       page: current,
       limit: pageSize,
-      name: params.name,
+      name,
     };
 
     const sortKeys = Object.keys(sort);
@@ -195,14 +196,19 @@ const Tag = () => {
         onCancel={() => setModalProps({ open: false })}
       >
         <Form form={form}>
-          <Form.Item
-            {...formItemLayout}
-            name="name"
-            label="标签名称"
-            rules={[{ required: true, message: '请输入标签名称' }, { validator: validateTagName }]}
-          >
-            <Input maxLength={20} />
-          </Form.Item>
+          <MultiLangFormItem>
+            <Form.Item
+              {...formItemLayout}
+              name={'name'}
+              label="标签名称"
+              rules={[
+                { required: true, message: '请输入标签名称' },
+                { validator: validateTagName },
+              ]}
+            >
+              <Input maxLength={100} />
+            </Form.Item>
+          </MultiLangFormItem>
         </Form>
       </Modal>
     </PageContainer>

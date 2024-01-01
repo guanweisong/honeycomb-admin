@@ -1,5 +1,6 @@
 'use client';
 
+import MultiLangFormItem from '@/components/MultiLangFormItem';
 import { formItemLayout } from '@/constants/formItemLayout';
 import { EnableType, enableOptions } from '@/types/EnableType';
 import { ModalType, ModalTypeName } from '@/types/ModalType';
@@ -114,19 +115,21 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
       onCancel={handleModalCancel}
     >
       <Form form={form}>
+        <MultiLangFormItem>
+          <Form.Item
+            {...formItemLayout}
+            name={'title'}
+            label="分类名称"
+            rules={[{ required: true, message: '请输入分类名称' }]}
+          >
+            <Input maxLength={20} />
+          </Form.Item>
+        </MultiLangFormItem>
         <Form.Item
           {...formItemLayout}
-          name="title"
-          label="分类名称"
-          rules={[{ required: true, message: '请输入分类名称' }]}
-        >
-          <Input maxLength={20} />
-        </Form.Item>
-        <Form.Item
-          {...formItemLayout}
-          name="titleEn"
-          label="分类英文名"
-          rules={[{ required: true, message: '请输入分类英文名' }]}
+          name="path"
+          label="分类路径"
+          rules={[{ required: true, message: '请输入分类路径' }]}
         >
           <Input placeholder="输入小写字母，单词间以中划线分隔，用于URL显示" maxLength={20} />
         </Form.Item>
@@ -144,19 +147,21 @@ const AddCategoryModal = (props: AddCategoryModalProps) => {
                 key={option.id}
                 disabled={option.id === modalProps.record?.id}
               >
-                {creatCategoryTitleByDepth(option.title, option)}
+                {creatCategoryTitleByDepth(option.title.zh, option)}
               </Option>
             ))}
           </Select>
         </Form.Item>
-        <Form.Item
-          {...formItemLayout}
-          name="description"
-          label="分类描述："
-          rules={[{ required: true, message: '请输入分类描述' }]}
-        >
-          <Input.TextArea rows={3} autoComplete="off" maxLength={200} />
-        </Form.Item>
+        <MultiLangFormItem>
+          <Form.Item
+            {...formItemLayout}
+            name={'description'}
+            label="分类描述："
+            rules={[{ required: true, message: '请输入分类描述' }]}
+          >
+            <Input.TextArea rows={3} autoComplete="off" maxLength={200} />
+          </Form.Item>
+        </MultiLangFormItem>
         <Form.Item {...formItemLayout} name="status" label="状态">
           <Radio.Group buttonStyle="solid" options={enableOptions} />
         </Form.Item>

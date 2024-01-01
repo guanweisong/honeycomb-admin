@@ -150,6 +150,7 @@ const Menu = () => {
     checkedList.forEach((item) => {
       format.push({
         ...item,
+        title: item.title.zh,
         subtitle: MenuTypeName[MenuType[item.type]],
         expanded: true,
       });
@@ -205,7 +206,7 @@ const Menu = () => {
                         checked={getCheckedStatus(item)}
                         disabled={getDisabledStatus(item)}
                       >
-                        {creatCategoryTitleByDepth(item.title, item)}
+                        {creatCategoryTitleByDepth(item.title.zh, item)}
                       </Checkbox>
                     </div>
                   ))}
@@ -221,7 +222,7 @@ const Menu = () => {
                         defaultChecked={getCheckedStatus(item)}
                         disabled={getDisabledStatus(item)}
                       >
-                        {item.title}
+                        {item.title.zh}
                       </Checkbox>
                     </div>
                   ))}

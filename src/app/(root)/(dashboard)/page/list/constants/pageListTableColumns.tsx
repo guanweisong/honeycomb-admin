@@ -1,3 +1,5 @@
+import MultiLangText from '@/components/MultiLangText';
+import { MultiLang } from '@/types/MulitLang';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Popconfirm } from 'antd';
 import dayjs from 'dayjs';
@@ -16,6 +18,7 @@ export const pageListTableColumns = (props: PageListTableColumnsProps) =>
       title: '文章名称',
       dataIndex: 'title',
       key: 'title',
+      render: (text: MultiLang) => <MultiLangText text={text} />,
     },
     {
       title: '作者',

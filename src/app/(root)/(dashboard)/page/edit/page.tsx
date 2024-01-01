@@ -1,5 +1,6 @@
 'use client';
 
+import MultiLangFormItem from '@/components/MultiLangFormItem';
 import { FooterToolbar, PageContainer } from '@ant-design/pro-components';
 import { Button, Card, Form, Input, message } from 'antd';
 import dynamic from 'next/dynamic';
@@ -138,12 +139,16 @@ const Page = () => {
         <Form form={form}>
           <div className={styles.main}>
             <div className={styles.mainArea}>
-              <FormItem name="title">
-                <Input type="text" size="large" placeholder="在此输入文章标题" />
-              </FormItem>
-              <FormItem name="content">
-                <SimpleMDE className="markdown-body" />
-              </FormItem>
+              <MultiLangFormItem>
+                <FormItem name={'title'}>
+                  <Input type="text" size="large" placeholder="在此输入文章标题" />
+                </FormItem>
+              </MultiLangFormItem>
+              <MultiLangFormItem>
+                <FormItem name={'content'}>
+                  <SimpleMDE className="markdown-body" />
+                </FormItem>
+              </MultiLangFormItem>
             </div>
           </div>
         </Form>

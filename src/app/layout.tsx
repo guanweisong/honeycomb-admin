@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
         />
         <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css" />
-        <Script src="https://ssl.captcha.qq.com/TCaptcha.js" strategy="lazyOnload" />
+        <Script src="https://ssl.captcha.qq.com/TCaptcha.js" />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-15D5ZQ68JX" />
         <Script id="google-analytics">
           {`

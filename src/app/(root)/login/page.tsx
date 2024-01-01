@@ -56,7 +56,7 @@ const Login = () => {
       <div className="bg-white/10 backdrop-blur inline-block rounded overflow-hidden relative z-10 text-left">
         <LoginForm
           form={form}
-          title={<div className="font-normal text-2xl text-white">{setting?.siteName}</div>}
+          title={<div className="font-normal text-2xl text-white">{setting?.siteName.zh}</div>}
           message={<div className="text-center text-gray-400 my-4">游客账号：guest 123456</div>}
           initialValues={{
             autoLogin: true,

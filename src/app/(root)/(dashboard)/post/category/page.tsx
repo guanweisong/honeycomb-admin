@@ -33,12 +33,12 @@ const Category = () => {
     pageSize: number;
     current: number;
     title?: string;
-    titleEn?: string;
+    path?: string;
   }) => {
-    const { pageSize, current, title, titleEn } = params;
+    const { pageSize, current, title, path } = params;
     const result = await CategoryService.index({
       title,
-      titleEn,
+      path,
       page: current,
       limit: pageSize,
     });

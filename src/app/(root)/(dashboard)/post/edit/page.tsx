@@ -4,6 +4,7 @@ import type { MediaEntity } from '@/app/(root)/(dashboard)/media/types/media.ent
 import PostService from '@/app/(root)/(dashboard)/post/service';
 import TagService from '@/app/(root)/(dashboard)/tag/service';
 import type { TagEntity } from '@/app/(root)/(dashboard)/tag/types/tag.entity';
+import MultiLangFormItem from '@/components/MultiLangFormItem';
 import PhotoPickerModal from '@/components/PhotoPicker';
 import { ModalType } from '@/types/ModalType';
 import { creatCategoryTitleByDepth } from '@/utils/help';
@@ -181,7 +182,7 @@ const PostDetail = () => {
     name: 'movieActors' | 'movieDirectors' | 'movieStyles' | 'galleryStyles',
     tag_name: string,
   ) => {
-    const result = await TagService.create({ name: tag_name });
+    const result = await TagService.create({ name: { zh: tag_name, en: '' } });
     if (result && result.status === 201) {
       setDetail({
         ...detail,
@@ -328,34 +329,52 @@ const PostDetail = () => {
               {([PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(detail.type) ||
                 !detail.type) && (
                 <>
-                  <FormItem name="title" rules={[{ required: true, message: '请输入标题' }]}>
-                    <Input type="text" size="large" placeholder="在此输入文章标题" maxLength={20} />
-                  </FormItem>
-                  <FormItem
-                    name="content"
-                    rules={[
-                      { max: 20000, message: '最多只能输入20000个字符' },
-                      { required: true, message: '请输入内容' },
-                    ]}
-                  >
-                    <SimpleMDE className="markdown-body" />
-                  </FormItem>
-                  <FormItem name="excerpt">
-                    <TextArea rows={4} placeholder="内容简介" maxLength={200} />
-                  </FormItem>
+                  <MultiLangFormItem>
+                    <FormItem name={'title'} rules={[{ required: true, message: '请输入标题' }]}>
+                      <Input
+                        type="text"
+                        size="large"
+                        placeholder="在此输入文章标题"
+                        maxLength={20}
+                      />
+                    </FormItem>
+                  </MultiLangFormItem>
+                  <MultiLangFormItem>
+                    <FormItem
+                      name={'content'}
+                      rules={[
+                        { max: 20000, message: '最多只能输入20000个字符' },
+                        { required: true, message: '请输入内容' },
+                      ]}
+                    >
+                      <SimpleMDE className="markdown-body" />
+                    </FormItem>
+                  </MultiLangFormItem>
+                  <MultiLangFormItem>
+                    <FormItem name={'excerpt'}>
+                      <TextArea rows={4} placeholder="内容简介" maxLength={200} />
+                    </FormItem>
+                  </MultiLangFormItem>
                 </>
               )}
               {[PostType.QUOTE].includes(detail.type) && (
                 <>
-                  <FormItem name="quoteContent" rules={[{ required: true, message: '请输入内容' }]}>
-                    <TextArea rows={4} placeholder="请输入话语" maxLength={500} />
-                  </FormItem>
-                  <FormItem
-                    name="quoteAuthor"
-                    rules={[{ required: true, message: '请输入作者名' }]}
-                  >
-                    <Input type="text" size="large" placeholder="请输入作者" max={50} />
-                  </FormItem>
+                  <MultiLangFormItem>
+                    <FormItem
+                      name={'quoteContent'}
+                      rules={[{ required: true, message: '请输入内容' }]}
+                    >
+                      <TextArea rows={4} placeholder="请输入话语" maxLength={500} />
+                    </FormItem>
+                  </MultiLangFormItem>
+                  <MultiLangFormItem>
+                    <FormItem
+                      name={'quoteAuthor'}
+                      rules={[{ required: true, message: '请输入作者名' }]}
+                    >
+                      <Input type="text" size="large" placeholder="请输入作者" max={50} />
+                    </FormItem>
+                  </MultiLangFormItem>
                 </>
               )}
             </div>
@@ -377,7 +396,7 @@ const PostDetail = () => {
                   >
                     {list.map((option) => (
                       <Select.Option value={option.id} key={option.id}>
-                        {creatCategoryTitleByDepth(option.title, option)}
+                        {creatCategoryTitleByDepth(option.title.zh, option)}
                       </Select.Option>
                     ))}
                   </Select>
@@ -392,11 +411,6 @@ const PostDetail = () => {
               )}
               {detail.type === PostType.MOVIE && (
                 <>
-                  <Block title="电影英文名">
-                    <FormItem name="movieNameEn" className="mb-0">
-                      <Input type="text" placeholder="请输入英文名" />
-                    </FormItem>
-                  </Block>
                   <Block title="上映年代">
                     <FormItem name="movieTime" className="mb-0">
                       <DatePicker placeholder="请选择上映年代" />
@@ -409,11 +423,13 @@ const PostDetail = () => {
               )}
               {detail.type === PostType.PHOTOGRAPH && (
                 <>
-                  <Block title="拍摄地点">
-                    <FormItem name="galleryLocation" className="mb-0">
-                      <Input type="text" placeholder="请填写地址" />
-                    </FormItem>
-                  </Block>
+                  <MultiLangFormItem>
+                    <Block title="拍摄地点">
+                      <FormItem name="galleryLocation" className="mb-0">
+                        <Input type="text" placeholder="请填写地址" />
+                      </FormItem>
+                    </Block>
+                  </MultiLangFormItem>
                   <Block title="拍摄时间">
                     <FormItem name="galleryTime" className="mb-0">
                       <DatePicker placeholder="请选择拍摄时间" />

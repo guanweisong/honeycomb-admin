@@ -1,4 +1,6 @@
+import MultiLangText from '@/components/MultiLangText';
 import { EnableType, EnableTypeName } from '@/types/EnableType';
+import { MultiLang } from '@/types/MulitLang';
 import { creatCategoryTitleByDepth } from '@/utils/help';
 import { ProColumns } from '@ant-design/pro-components';
 import { Popconfirm } from 'antd';
@@ -16,18 +18,21 @@ export const categoryListTableColumns = (props: CategoryListTableColumnsProps) =
       title: '分类名称',
       dataIndex: 'title',
       key: 'title',
-      render: (text: string, record) => creatCategoryTitleByDepth(text, record),
+      width: 120,
+      render: (text: MultiLang, record) =>
+        creatCategoryTitleByDepth(<MultiLangText text={text} />, record),
     },
     {
-      title: '分类英文名',
-      dataIndex: 'titleEn',
-      key: 'titleEn',
+      title: '路径',
+      dataIndex: 'path',
+      key: 'path',
     },
     {
       title: '分类描述',
-      dataIndex: 'description',
+      dataIndex: ['description'],
       key: 'description',
       search: false,
+      render: (text: MultiLang) => <MultiLangText text={text} />,
     },
     {
       title: '状态',

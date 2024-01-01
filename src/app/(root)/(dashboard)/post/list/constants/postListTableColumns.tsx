@@ -3,6 +3,8 @@ import {
   PostEntity,
   UserReadOnly,
 } from '@/app/(root)/(dashboard)/post/types/post.entity';
+import MultiLangText from '@/components/MultiLangText';
+import { MultiLang } from '@/types/MulitLang';
 import { SortOrder } from '@/types/SortOrder';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Popconfirm } from 'antd';
@@ -22,6 +24,7 @@ export const PostListTableColumns = (props: PostListTableColumnsProps) =>
       dataIndex: 'title',
       key: 'title',
       width: 200,
+      render: (text: MultiLang) => <MultiLangText text={text} />,
     },
     {
       title: '引用内容',
@@ -29,14 +32,15 @@ export const PostListTableColumns = (props: PostListTableColumnsProps) =>
       key: 'quoteContent',
       search: false,
       width: 200,
+      render: (text: MultiLang) => <MultiLangText text={text} />,
     },
     {
       title: '分类',
       dataIndex: 'category',
       key: 'category',
       search: false,
-      width: 60,
-      render: (text: CategoryReadOnly) => text.title,
+      width: 120,
+      render: (text: CategoryReadOnly) => <MultiLangText text={text.title} />,
     },
     {
       title: '类型',
