@@ -45,7 +45,7 @@ const Login = () => {
   return (
     <div className="min-h-screen box-border pt-48 text-center bg-green-700">
       <video
-        src="https://honeycomb-1257715480.cos.ap-shanghai.myqcloud.com/common/rainAndBird.mp4"
+        src="https://static.guanweisong.com/common/rainAndBird.mp4"
         className="fixed inset-0 object-fill"
         autoPlay={true}
         muted={true}
