@@ -6,6 +6,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    domains: ['static.guanweisong.com'],
+    formats: ['image/avif', 'image/webp'],
+  },
   compiler: {
     removeConsole:
       process.env.NODE_ENV === 'production'

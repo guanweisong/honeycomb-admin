@@ -4,6 +4,7 @@ import { CopyOutlined, DeleteOutlined, FileOutlined, InboxOutlined } from '@ant-
 import { PageContainer } from '@ant-design/pro-components';
 import { Card, Popconfirm, Space, Spin, Upload, UploadProps, message } from 'antd';
 import classNames from 'classnames';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import MediaService from './service';
@@ -140,14 +141,11 @@ const Media = (props: MediaProps) => {
                     title={item.name}
                   >
                     {item.type.indexOf('image') !== -1 ? (
-                      <div
-                        className="w-full h-full"
-                        style={{
-                          background: `url(${item.url}?imageMogr2/thumbnail/114x)`,
-                          backgroundRepeat: 'no-repeat',
-                          backgroundSize: 'contain',
-                          backgroundPosition: 'center',
-                        }}
+                      <Image
+                        className="w-full h-full absolute object-contain"
+                        fill
+                        src={item.url}
+                        alt={item.name}
                       />
                     ) : (
                       <FileOutlined className="text-2xl" />
