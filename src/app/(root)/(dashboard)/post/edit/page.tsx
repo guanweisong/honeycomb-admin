@@ -352,7 +352,7 @@ const PostDetail = () => {
                   </MultiLangFormItem>
                   <MultiLangFormItem>
                     <FormItem name={'excerpt'}>
-                      <TextArea rows={4} placeholder="内容简介" maxLength={200} />
+                      <TextArea rows={4} placeholder="内容简介" maxLength={1000} />
                     </FormItem>
                   </MultiLangFormItem>
                 </>
