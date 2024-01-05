@@ -423,13 +423,13 @@ const PostDetail = () => {
               )}
               {detail.type === PostType.PHOTOGRAPH && (
                 <>
-                  <MultiLangFormItem>
-                    <Block title="拍摄地点">
+                  <Block title="拍摄地点">
+                    <MultiLangFormItem>
                       <FormItem name="galleryLocation" className="mb-0">
                         <Input type="text" placeholder="请填写地址" />
                       </FormItem>
-                    </Block>
-                  </MultiLangFormItem>
+                    </MultiLangFormItem>
+                  </Block>
                   <Block title="拍摄时间">
                     <FormItem name="galleryTime" className="mb-0">
                       <DatePicker placeholder="请选择拍摄时间" />
