@@ -35,6 +35,11 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
       key: 'email',
     },
     {
+      title: '评论人网站',
+      dataIndex: 'site',
+      key: 'site',
+    },
+    {
       title: '评论IP',
       dataIndex: 'ip',
       key: 'ip',
