@@ -214,7 +214,7 @@ const Link = () => {
               { validator: validateLinkUrl },
             ]}
           >
-            <Input placeholder="请以http://或者https://开头" autoComplete="off" maxLength={20} />
+            <Input placeholder="请以http://或者https://开头" autoComplete="off" maxLength={200} />
           </Form.Item>
           <Form.Item
             {...formItemLayout}
