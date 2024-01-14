@@ -1,3 +1,4 @@
+import MultiLangText from '@/components/MultiLangText';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Popconfirm } from 'antd';
 import dayjs from 'dayjs';
@@ -20,8 +21,16 @@ export const commentTableColumns = (props: CommentTableColumnsProps) =>
       title: '评论文章',
       dataIndex: 'postId',
       key: 'postId',
-      render: (text: any) => {
-        return text?.post_title;
+      render: (text, record, index) => {
+        if (record.postId) {
+          return <MultiLangText text={record.post?.title!} />;
+        }
+        if (record.pageId) {
+          return <MultiLangText text={record.page?.title!} />;
+        }
+        if (record.custom) {
+          return <MultiLangText text={record.custom?.title!} />;
+        }
       },
     },
     {
