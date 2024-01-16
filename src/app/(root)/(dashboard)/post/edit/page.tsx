@@ -10,7 +10,7 @@ import { ModalType } from '@/types/ModalType';
 import { creatCategoryTitleByDepth } from '@/utils/help';
 import { PlusOutlined } from '@ant-design/icons';
 import { FooterToolbar, PageContainer } from '@ant-design/pro-components';
-import { Button, Card, DatePicker, Form, Input, Select, message } from 'antd';
+import { Button, Card, DatePicker, Form, Input, Popconfirm, Select, message } from 'antd';
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -294,6 +294,12 @@ const PostDetail = () => {
           <Button type="primary" onClick={() => handleSubmit(PostStatus.PUBLISHED, 'update')}>
             更新
           </Button>,
+          <Popconfirm
+            title="确定要撤回吗？"
+            onConfirm={() => handleSubmit(PostStatus.DRAFT, 'update')}
+          >
+            <Button type={'dashed'}>撤回为草稿</Button>
+          </Popconfirm>,
         );
       }
       if (detail.status === PostStatus.DRAFT) {
