@@ -44,7 +44,7 @@ const User = () => {
       level?: UserLevel[];
       status?: UserStatus[];
     },
-    sort: any,
+    sort: any = {},
   ) => {
     const { pageSize, current, name, email, level, status } = params;
     const data: UserIndexRequest = {

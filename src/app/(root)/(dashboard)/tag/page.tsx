@@ -34,7 +34,7 @@ const Tag = () => {
    */
   const request = async (
     params: { pageSize: number; current: number; name?: string },
-    sort: any,
+    sort: any = {},
   ) => {
     const { pageSize, current, name } = params;
     const data: TagIndexRequest = {

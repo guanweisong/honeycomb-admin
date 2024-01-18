@@ -31,7 +31,7 @@ const PostList = () => {
       type?: PostType[];
       status?: PostStatus[];
     },
-    sort: any,
+    sort: any = {},
   ) => {
     const { pageSize, current, title, type, status } = params;
     const data: PostIndexRequest = {
