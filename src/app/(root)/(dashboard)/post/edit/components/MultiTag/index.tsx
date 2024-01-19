@@ -71,7 +71,7 @@ const MultiTag = (props: MultiTagProps) => {
    */
   const handleInputConfirm = (value: string, option: any) => {
     console.log('handleInputConfirm', value, option.props.children);
-    handleUpdateTags({ id: value, name: option.props.children });
+    handleUpdateTags({ id: value, name: { zh: option.props.children } });
     setInputVisible(false);
   };
 
@@ -97,7 +97,7 @@ const MultiTag = (props: MultiTagProps) => {
       onAddTag(name, value);
     } else {
       const obj = data.find((item) => item.text === value) as DataSourceItemObject;
-      handleUpdateTags({ id: obj.value, name: obj.text });
+      handleUpdateTags({ id: obj.value, name: { zh: obj.text } });
     }
     setInputVisible(false);
   };
@@ -119,7 +119,7 @@ const MultiTag = (props: MultiTagProps) => {
       result.data.list.forEach((r) => {
         items.push({
           value: r.id,
-          text: r.name.zh,
+          text: r.name.zh!,
         });
       });
       callback(items);
