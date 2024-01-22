@@ -150,7 +150,7 @@ const Menu = () => {
     checkedList.forEach((item) => {
       format.push({
         ...item,
-        title: item.title.zh,
+        title: item.title.zh ?? item.title,
         subtitle: MenuTypeName[MenuType[item.type]],
         expanded: true,
       });
