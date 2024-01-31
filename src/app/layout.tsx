@@ -2,6 +2,7 @@
 
 import { StyleProvider } from '@ant-design/cssinjs';
 import { ProConfigProvider } from '@ant-design/pro-provider';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { HoxRoot } from 'hox';
@@ -36,15 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css" />
         <Script src="https://ssl.captcha.qq.com/TCaptcha.js" />
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-15D5ZQ68JX" />
-        <Script id="google-analytics">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-15D5ZQ68JX');
-          `}
-        </Script>
       </head>
       <body>
         <Dynamic>
@@ -57,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </HoxRoot>
         </Dynamic>
       </body>
+      <GoogleAnalytics gaId="G-15D5ZQ68JX" />
     </html>
   );
 }
