@@ -56,14 +56,19 @@ const Dashboard = () => {
                   item: PostTypeName[PostType[n.item] as keyof typeof PostTypeName] as string,
                 })) ?? []
               }
-              statistic={{
-                title: {
-                  content: '文章',
+              annotations={[
+                {
+                  type: 'text',
                   style: {
-                    fontSize: '16px',
+                    text: '文章',
+                    x: '50%',
+                    y: '50%',
+                    textAlign: 'center',
+                    fontSize: 16,
+                    fontStyle: 'bold',
                   },
                 },
-              }}
+              ]}
             />
           </Card>
         </div>
@@ -80,14 +85,19 @@ const Dashboard = () => {
                   ] as string,
                 })) ?? []
               }
-              statistic={{
-                title: {
-                  content: '评论',
+              annotations={[
+                {
+                  type: 'text',
                   style: {
-                    fontSize: '16px',
+                    text: '评论',
+                    x: '50%',
+                    y: '50%',
+                    textAlign: 'center',
+                    fontSize: 16,
+                    fontStyle: 'bold',
                   },
                 },
-              }}
+              ]}
             />
           </Card>
         </div>
@@ -102,14 +112,19 @@ const Dashboard = () => {
                   item: UserLevelName[UserLevel[n.item] as keyof typeof UserLevelName] as string,
                 })) ?? []
               }
-              statistic={{
-                title: {
-                  content: '用户',
+              annotations={[
+                {
+                  type: 'text',
                   style: {
-                    fontSize: '16px',
+                    text: '用户',
+                    x: '50%',
+                    y: '50%',
+                    textAlign: 'center',
+                    fontSize: 16,
+                    fontStyle: 'bold',
                   },
                 },
-              }}
+              ]}
             />
           </Card>
         </div>
@@ -119,14 +134,19 @@ const Dashboard = () => {
               {...defaultConfig}
               // @ts-ignore
               data={statistics?.userPost ?? []}
-              statistic={{
-                title: {
-                  content: '贡献',
+              annotations={[
+                {
+                  type: 'text',
                   style: {
-                    fontSize: '16px',
+                    text: '贡献',
+                    x: '50%',
+                    y: '50%',
+                    textAlign: 'center',
+                    fontSize: 16,
+                    fontStyle: 'bold',
                   },
                 },
-              }}
+              ]}
             />
           </Card>
         </div>

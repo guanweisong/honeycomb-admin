@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@ant-design/charts": "^1.4.2",
+    "@ant-design/charts": "^2.0.3",
     "@ant-design/icons": "^5.1.4",
     "@ant-design/pro-components": "^2.6.8",
     "@next/third-parties": "^14.1.0",
