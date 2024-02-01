@@ -11,12 +11,12 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   compiler: {
-    removeConsole:
-      process.env.NODE_ENV === 'production'
-        ? {
-            exclude: ['error'],
-          }
-        : false,
+    // removeConsole:
+    //   process.env.NODE_ENV === 'production'
+    //     ? {
+    //         exclude: ['error'],
+    //       }
+    //     : false,
   },
   poweredByHeader: false,
 };

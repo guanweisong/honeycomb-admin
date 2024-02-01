@@ -5,7 +5,6 @@ import { ProConfigProvider } from '@ant-design/pro-provider';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
-import { HoxRoot } from 'hox';
 import Script from 'next/script';
 import { useEffect, useState } from 'react';
 
@@ -40,13 +39,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Dynamic>
-          <HoxRoot>
-            <ConfigProvider locale={zhCN}>
-              <ProConfigProvider>
-                <StyleProvider ssrInline={true}>{children}</StyleProvider>
-              </ProConfigProvider>
-            </ConfigProvider>
-          </HoxRoot>
+          <ConfigProvider locale={zhCN}>
+            <ProConfigProvider>
+              <StyleProvider ssrInline={true}>{children}</StyleProvider>
+            </ProConfigProvider>
+          </ConfigProvider>
         </Dynamic>
       </body>
       <GoogleAnalytics gaId="G-15D5ZQ68JX" />

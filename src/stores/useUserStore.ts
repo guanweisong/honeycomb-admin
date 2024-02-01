@@ -1,20 +1,25 @@
 import { UserEntity } from '@/app/(root)/(dashboard)/user/types/user.entity';
 import CommonService from '@/services/common';
-import { createGlobalStore } from 'hox';
-import { useState } from 'react';
+import { create } from 'zustand';
 
-export const [useUserStore, getUserStore] = createGlobalStore(() => {
-  const [user, setUser] = useState<UserEntity | false>();
+type Store = {
+  user?: UserEntity | false;
+  setUser: (data: UserEntity | false) => void;
+  queryUser: () => void;
+};
 
-  const queryUser = async () => {
+export const useUserStore = create<Store>((set) => ({
+  user: undefined,
+  setUser: (data) => {
+    set(() => ({ user: data }));
+  },
+  queryUser: async () => {
     CommonService.queryUser().then((result) => {
       if (result.data.id) {
-        setUser(result.data);
+        set(() => ({ user: result.data }));
       } else {
-        setUser(false);
+        set(() => ({ user: false }));
       }
     });
-  };
-
-  return { user, queryUser, setUser };
-});
+  },
+}));

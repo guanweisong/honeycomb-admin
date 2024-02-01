@@ -1,16 +1,17 @@
 import SettingService from '@/app/(root)/(dashboard)/setting/service';
 import { SettingEntity } from '@/app/(root)/(dashboard)/setting/types/setting.entity';
-import { createGlobalStore } from 'hox';
-import { useState } from 'react';
+import { create } from 'zustand';
 
-export const [useSettingStore, getSettingStore] = createGlobalStore(() => {
-  const [setting, setSetting] = useState<SettingEntity>();
+type Store = {
+  setting?: SettingEntity;
+  querySetting: () => void;
+};
 
-  const querySetting = async () => {
+export const useSettingStore = create<Store>((set) => ({
+  setting: undefined,
+  querySetting: async () => {
     SettingService.querySetting().then((result) => {
-      setSetting(result.data);
+      set(() => ({ setting: result.data }));
     });
-  };
-
-  return { setting, querySetting };
-});
+  },
+}));
