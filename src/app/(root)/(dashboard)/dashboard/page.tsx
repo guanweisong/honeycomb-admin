@@ -4,19 +4,14 @@ import {
   CommentStatus,
   CommentStatusName,
 } from '@/app/(root)/(dashboard)/comment/types/CommentStatus';
+import CustomPie from '@/app/(root)/(dashboard)/dashboard/components/CustomPie';
 import { PostType, PostTypeName } from '@/app/(root)/(dashboard)/post/types/PostType';
 import { UserLevel, UserLevelName } from '@/app/(root)/(dashboard)/user/types/UserLevel';
-import { PieConfig } from '@ant-design/charts';
 import { PageContainer } from '@ant-design/pro-components';
 import { Card, Space } from 'antd';
-import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import DashboardService from './service';
 import type { StatisticsType } from './types/StatisticsType';
-
-const Pie = dynamic(() => import('@ant-design/charts').then((mod) => mod.Pie) as any, {
-  ssr: false,
-});
 
 const Dashboard = () => {
   const [statistics, setStatistics] = useState<StatisticsType>();
@@ -32,122 +27,47 @@ const Dashboard = () => {
     index();
   }, []);
 
-  const defaultConfig: PieConfig = {
-    data: [],
-    width: 250,
-    height: 250,
-    angleField: 'count',
-    colorField: 'item',
-    radius: 1,
-    innerRadius: 0.64,
-  };
-
   return (
     <PageContainer>
       <Space wrap={true}>
         <div className="w-80 h-80">
           <Card>
-            <Pie
-              {...defaultConfig}
-              // @ts-ignore
-              data={
-                statistics?.postType?.map((n) => ({
-                  ...n,
-                  item: PostTypeName[PostType[n.item] as keyof typeof PostTypeName] as string,
-                })) ?? []
-              }
-              annotations={[
-                {
-                  type: 'text',
-                  style: {
-                    text: '文章',
-                    x: '50%',
-                    y: '50%',
-                    textAlign: 'center',
-                    fontSize: 16,
-                    fontStyle: 'bold',
-                  },
-                },
-              ]}
+            <CustomPie
+              data={statistics?.postType?.map((n) => ({
+                ...n,
+                item: PostTypeName[PostType[n.item] as keyof typeof PostTypeName] as string,
+              }))}
+              title={'文章'}
             />
           </Card>
         </div>
         <div className="w-80 h-80">
           <Card>
-            <Pie
-              {...defaultConfig}
-              // @ts-ignore
-              data={
-                statistics?.commentStatus?.map((n) => ({
-                  ...n,
-                  item: CommentStatusName[
-                    CommentStatus[n.item] as keyof typeof CommentStatusName
-                  ] as string,
-                })) ?? []
-              }
-              annotations={[
-                {
-                  type: 'text',
-                  style: {
-                    text: '评论',
-                    x: '50%',
-                    y: '50%',
-                    textAlign: 'center',
-                    fontSize: 16,
-                    fontStyle: 'bold',
-                  },
-                },
-              ]}
+            <CustomPie
+              data={statistics?.commentStatus?.map((n) => ({
+                ...n,
+                item: CommentStatusName[
+                  CommentStatus[n.item] as keyof typeof CommentStatusName
+                ] as string,
+              }))}
+              title="评论"
             />
           </Card>
         </div>
         <div className="w-80 h-80">
           <Card>
-            <Pie
-              {...defaultConfig}
-              // @ts-ignore
-              data={
-                statistics?.userType?.map((n) => ({
-                  ...n,
-                  item: UserLevelName[UserLevel[n.item] as keyof typeof UserLevelName] as string,
-                })) ?? []
-              }
-              annotations={[
-                {
-                  type: 'text',
-                  style: {
-                    text: '用户',
-                    x: '50%',
-                    y: '50%',
-                    textAlign: 'center',
-                    fontSize: 16,
-                    fontStyle: 'bold',
-                  },
-                },
-              ]}
+            <CustomPie
+              data={statistics?.userType?.map((n) => ({
+                ...n,
+                item: UserLevelName[UserLevel[n.item] as keyof typeof UserLevelName] as string,
+              }))}
+              title="用户"
             />
           </Card>
         </div>
         <div className="w-80 h-80">
           <Card>
-            <Pie
-              {...defaultConfig}
-              // @ts-ignore
-              data={statistics?.userPost ?? []}
-              annotations={[
-                {
-                  type: 'text',
-                  style: {
-                    text: '贡献',
-                    x: '50%',
-                    y: '50%',
-                    textAlign: 'center',
-                    fontSize: 16,
-                    fontStyle: 'bold',
-                  },
-                },
-              ]}
-            />
+            <CustomPie data={statistics?.userPost} title="贡献" />
           </Card>
         </div>
       </Space>
