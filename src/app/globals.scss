@@ -33,9 +33,14 @@ p {
 
 .markdown-body {
   position: relative;
-  z-index: 999;
   img {
     max-width: 100%;
+  }
+  .editor-toolbar.fullscreen {
+    z-index: 200;
+  }
+  .EasyMDEContainer .CodeMirror-fullscreen {
+    z-index: 200;
   }
 }
 

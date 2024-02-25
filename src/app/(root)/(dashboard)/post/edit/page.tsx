@@ -330,8 +330,8 @@ const PostDetail = () => {
             setDetail({ ...detail, ...changedValues });
           }}
         >
-          <div className="flex">
-            <div className="flex-1">
+          <div className="lg:flex">
+            <div className="lg:flex-1">
               {([PostType.ARTICLE, PostType.MOVIE, PostType.PHOTOGRAPH].includes(detail.type) ||
                 !detail.type) && (
                 <>
@@ -384,7 +384,7 @@ const PostDetail = () => {
                 </>
               )}
             </div>
-            <div className="w-80 ml-8">
+            <div className="lg:w-80 lg:ml-8">
               <Block title="文章类型">
                 <FormItem name="type" className="mb-0">
                   <Select options={postTypeOptions} />
